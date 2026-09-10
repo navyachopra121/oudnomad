@@ -1,0 +1,23 @@
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+//
+// Phase 0: datasource + generator only — no models yet.
+// Domain models (User, Product, Order, etc.) are added in Phase 1+
+// as part of the data modelling phase.
+//
+// Run after schema changes:
+//   pnpm db:generate      → regenerate Prisma Client
+//   pnpm db:migrate:dev   → create + apply a new migration (dev)
+//   pnpm db:migrate       → apply pending migrations (staging/prod)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // directUrl is used for migrations (bypasses connection pooling)
+  // Uncomment and set DIRECT_URL if using Supabase's pooled connection (port 6543) for DATABASE_URL
+  // directUrl = env("DIRECT_URL")
+}
