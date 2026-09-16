@@ -1,0 +1,16 @@
+services:
+  app:
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-org/oudnomad}/app:${IMAGE_TAG:-latest}
+    environment:
+      NODE_ENV: staging
+      LOG_LEVEL: debug
+
+  web:
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-org/oudnomad}/web:${IMAGE_TAG:-latest}
+    environment:
+      NODE_ENV: staging
+
+  notification-worker:
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-org/oudnomad}/notification-worker:${IMAGE_TAG:-latest}
+    environment:
+      NODE_ENV: staging

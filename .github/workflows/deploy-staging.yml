@@ -1,0 +1,27 @@
+name: Deploy Staging
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd /opt/app
+            export IMAGE_TAG=${{ github.sha }}
+            export GITHUB_REPOSITORY=${{ github.repository }}
+            docker compose -f docker-compose.yml -f docker-compose.staging.yml pull
+            docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d
+            docker compose -f docker-compose.yml -f docker-compose.staging.yml exec -T app npx prisma migrate deploy
+            sleep 5
+            curl -f http://localhost:3001/api/health || (echo "Staging health check failed post-deploy" && exit 1)

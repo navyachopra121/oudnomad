@@ -1,0 +1,33 @@
+{
+  "name": "notification-worker",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Kafka consumer that sends transactional emails for oudnomad",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx --watch src/index.ts",
+    "start": "node --experimental-specifier-resolution=node dist/index.js",
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.0.0",
+    "@prisma/client": "^6.12.0",
+    "@react-email/components": "^0.0.36",
+    "@react-email/render": "^1.0.5",
+    "kafkajs": "^2.2.4",
+    "node-cron": "^3.0.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "resend": "^4.0.0",
+    "zod": "^3.25.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/node-cron": "^3.0.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "tsx": "^4.23.13",
+    "typescript": "^5.8.3"
+  }
+}

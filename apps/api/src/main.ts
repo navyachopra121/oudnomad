@@ -1,16 +1,29 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module.js';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  });
+
+  // Serve static files from local uploads directory
+  app.useStaticAssets(join(process.cwd(), 'uploads'), {
+    prefix: '/uploads/',
+  });
 
   // Enable CORS for the frontend
   const corsOrigins = process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()) ?? [
     'http://localhost:3000',
   ];
   app.enableCors({ origin: corsOrigins, credentials: true });
+
+  // Cookie parser for refresh tokens
+  app.use(cookieParser());
 
   // Global validation pipe — strips unknown properties, transforms payloads
   app.useGlobalPipes(
@@ -28,6 +41,7 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`🚀 API running on http://localhost:${port}/api`);
   console.log(`🏥 Health check: http://localhost:${port}/api/health`);
+  console.log(`📁 Local Storage static endpoint: http://localhost:${port}/uploads/`);
 }
 
 await bootstrap();

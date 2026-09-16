@@ -1,26 +1,445 @@
 @import "tailwindcss";
 
+/*
+ * OudNomad brand palette — light-first (warm ivory surface, espresso ink type).
+ * Tailwind: bg-ivory, text-espresso, text-antique-gold, bg-aged-gold, etc.
+ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surfaces & type (roles swapped from legacy dark theme) */
+  --ivory: #f8f3e9;
+  --espresso: #1c140f;
+
+  /* Gold — antique for text/icons; aged for fills */
+  --antique-gold: #96730c;
+  --aged-gold: #c9a227;
+
+  /* Accent swatches */
+  --deep-emerald: #0e4f40;
+  --champagne-sand: #d9b876;
+
+  /* Legacy dark / wood tones (unchanged — readable on ivory) */
+  --antique-brass: #6f5535;
+  --mahogany: #3d2314;
+  --brick-oxblood: #6e332e;
+  --obsidian: #0e0d0b;
+
+  /* Semantic aliases */
+  --background: var(--ivory);
+  --foreground: var(--espresso);
+  --surface: var(--ivory);
+  --surface-muted: #f0e8dc;
+  --border: #e5dcc8;
+  --border-strong: #d4c4a8;
+  --muted: #5c4f45;
+  --accent: var(--antique-gold);
+  --accent-fill: var(--aged-gold);
+  --accent-on-fill: var(--espresso);
+  --link: var(--antique-gold);
+  --link-hover: var(--mahogany);
+  --focus-ring: var(--antique-gold);
+
+  /*
+   * ── Breakpoint scale ──────────────────────────────────────────────────────
+   * xs:  0px     small phones
+   * sm:  480px   large phones
+   * md:  768px   tablets (portrait)
+   * lg:  1024px  tablets landscape / small laptops
+   * xl:  1280px  laptops
+   * 2xl: 1600px  desktop monitors  ← container max-width
+   * 3xl: 1920px  large monitors
+   * Use min-width media queries in this order (mobile-first).
+   * Do NOT introduce one-off breakpoints inside individual components.
+   * ─────────────────────────────────────────────────────────────────────────
+   */
+
+  /*
+   * ── Fluid typography ──────────────────────────────────────────────────────
+   * Use these clamp() values for display text so size scales smoothly between
+   * viewports rather than jumping at fixed breakpoints.
+   *
+   *   --fs-hero:     hero headline  (≈28px on 375px phone → 52px on 1600px)
+   *   --fs-h2:       section h2     (≈24px → 40px)
+   *   --fs-h3:       product h3     (≈22px → 36px)
+   *   --fs-quote:    blockquote     (≈20px → 30px)
+   *   --fs-eyebrow:  10px fixed; 12px at md+
+   * ─────────────────────────────────────────────────────────────────────────
+   */
+  --fs-hero:   clamp(1.75rem, 1rem + 4vw, 3.25rem);
+  --fs-h2:     clamp(1.5rem,  0.9rem + 3vw, 2.5rem);
+  --fs-h3:     clamp(1.375rem,0.85rem + 2.5vw, 2.25rem);
+  --fs-quote:  clamp(1.25rem, 0.8rem + 2.2vw, 1.875rem);
+
+  /*
+   * ── Fluid section vertical padding ───────────────────────────────────────
+   * 48px on phones → 72px on tablets → 96px on desktop.
+   * Apply as: padding-block: var(--section-py)
+   * ─────────────────────────────────────────────────────────────────────────
+   */
+  --section-py: clamp(2rem, 1.5rem + 3vw, 4rem);
+  /* Dark Luxury Canvas & Boutique Speakeasy Palette */
+  --obsidian-canvas: #0b0908;
+  --obsidian-card: #14110e;
+  --obsidian-elevated: #1c1713;
+  --mahogany-noir: #241610;
+  --brick-vignette: #381a17;
+  --emerald-velvet: #0a4d3c;
+  --emerald-deep: #062b22;
+  --emerald-glow: rgba(10, 77, 60, 0.45);
+  --gold-foil: #d4af37;
+  --champagne-gold: #e8d7a7;
+  --linen-cream: #ede8e1;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-ivory: var(--ivory);
+  --color-espresso: var(--espresso);
+  --color-antique-gold: var(--antique-gold);
+  --color-aged-gold: var(--aged-gold);
+  --color-deep-emerald: var(--deep-emerald);
+  --color-champagne-sand: var(--champagne-sand);
+  --color-antique-brass: var(--antique-brass);
+  --color-mahogany: var(--mahogany);
+  --color-brick-oxblood: var(--brick-oxblood);
+  --color-obsidian: var(--obsidian);
+
+  --color-obsidian-canvas: var(--obsidian-canvas);
+  --color-obsidian-card: var(--obsidian-card);
+  --color-obsidian-elevated: var(--obsidian-elevated);
+  --color-mahogany-noir: var(--mahogany-noir);
+  --color-brick-vignette: var(--brick-vignette);
+  --color-emerald-velvet: var(--emerald-velvet);
+  --color-emerald-deep: var(--emerald-deep);
+  --color-gold-foil: var(--gold-foil);
+  --color-champagne-gold: var(--champagne-gold);
+  --color-linen-cream: var(--linen-cream);
+
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-on-fill: var(--accent-on-fill);
+
+  --font-sans: var(--font-ui);
+  --font-display: var(--font-display);
+  --font-arabic: var(--font-arabic);
+
+  --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 400ms;
+  --duration-medium: 550ms;
+  --duration-slow: 700ms;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Preloader — cinematic sand & gold intro (additive; does not replace existing palette) ── */
+:root {
+  --preloader-void: #0a0806;
+  --preloader-void-2: #120d09;
+  --preloader-oud-red: #5a1c12;
+  --preloader-oud-red-deep: #3a120b;
+  --preloader-gold: #c9a961;
+  --preloader-gold-bright: #f1d999;
+  --preloader-gold-dim: #8a7040;
+  --preloader-sand: #a2864a;
+  --preloader-cream: #efe4cd;
+}
+
+@theme inline {
+  --color-preloader-void: var(--preloader-void);
+  --color-preloader-void-2: var(--preloader-void-2);
+  --color-preloader-oud-red: var(--preloader-oud-red);
+  --color-preloader-oud-red-deep: var(--preloader-oud-red-deep);
+  --color-preloader-gold: var(--preloader-gold);
+  --color-preloader-gold-bright: var(--preloader-gold-bright);
+  --color-preloader-gold-dim: var(--preloader-gold-dim);
+  --color-preloader-sand: var(--preloader-sand);
+  --color-preloader-cream: var(--preloader-cream);
+}
+
+html {
+  color-scheme: light;
+  /* Prevent horizontal scrollbar from any 100vw full-bleed section */
+  overflow-x: hidden;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-ui), system-ui, sans-serif;
 }
+
+.font-display {
+  font-family: var(--font-display), "Cormorant Garamond", Georgia, serif;
+}
+
+.font-arabic {
+  font-family: var(--font-arabic), "Noto Naskh Arabic", serif;
+}
+
+/* Center-growing nav underline */
+.nav-link {
+  position: relative;
+  color: var(--espresso);
+  transition: color var(--duration-fast) var(--ease-luxury);
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -0.35rem;
+  width: 0;
+  height: 1px;
+  background: var(--antique-gold);
+  transform: translateX(-50%);
+  transition: width var(--duration-medium) var(--ease-luxury);
+}
+
+.nav-link:hover,
+.nav-link:focus-visible,
+.nav-link:active {
+  color: var(--antique-gold);
+  outline: none;
+}
+
+.nav-link:hover::after,
+.nav-link:focus-visible::after,
+.nav-link:active::after {
+  width: 100%;
+}
+
+.utility-link {
+  color: var(--muted);
+  transition: color var(--duration-fast) var(--ease-luxury);
+}
+
+.utility-link:hover,
+.utility-link:focus-visible,
+.utility-link:active {
+  color: var(--antique-gold);
+  outline: none;
+}
+
+.header-damask-edge {
+  height: 3px;
+  background-color: var(--border);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='6' viewBox='0 0 48 6'%3E%3Cpath fill='%2396730C' fill-opacity='0.22' d='M0 3c4-2 8 2 12 0s8-2 12 0 8 2 12 0 8-2 12 0v3H0z'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 48px 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-link::after,
+  .nav-link,
+  .utility-link {
+    transition: none;
+  }
+}
+
+::selection {
+  background: color-mix(in srgb, var(--aged-gold) 35%, var(--ivory));
+  color: var(--espresso);
+}
+
+/* ── Homepage section utilities ── */
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Fluid display text helpers ──────────────────────────────────────────── */
+/* Apply as className="text-fluid-hero" etc. */
+
+.text-fluid-hero {
+  font-size: var(--fs-hero);
+}
+
+.text-fluid-h2 {
+  font-size: var(--fs-h2);
+}
+
+.text-fluid-h3 {
+  font-size: var(--fs-h3);
+}
+
+.text-fluid-quote {
+  font-size: var(--fs-quote);
+}
+
+/* ── Fluid section padding helper ─────────────────────────────────────────── */
+.section-py {
+  padding-block: var(--section-py);
+}
+
+/* ── Gallery image scale — pointer devices only ──────────────────────────── */
+@media (hover: hover) {
+  .group:hover .gallery-img {
+    transform: scale(1.03);
+  }
+}
+/* Tap fallback for touch-primary devices */
+.group:active .gallery-img {
+  transform: scale(1.03);
+}
+.gallery-img {
+  transition: transform 700ms var(--ease-luxury);
+}
+
+.hero-cinematic-bg {
+  background-color: var(--obsidian);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 70% 40%, color-mix(in srgb, var(--mahogany) 55%, transparent), transparent),
+    radial-gradient(ellipse 50% 40% at 20% 80%, color-mix(in srgb, var(--brick-oxblood) 35%, transparent), transparent),
+    linear-gradient(160deg, #1a1208 0%, var(--obsidian) 45%, #0a0908 100%);
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+}
+
+.editorial-photo-placeholder {
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--mahogany) 70%, var(--obsidian)) 0%, var(--obsidian) 100%);
+}
+
+.heritage-brick-texture {
+  background-color: var(--obsidian);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      color-mix(in srgb, var(--brick-oxblood) 18%, transparent) 28px,
+      color-mix(in srgb, var(--brick-oxblood) 18%, transparent) 30px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 60px,
+      color-mix(in srgb, var(--mahogany) 12%, transparent) 60px,
+      color-mix(in srgb, var(--mahogany) 12%, transparent) 62px
+    );
+  background-size: 100% 30px, 62px 100%;
+}
+
+.heritage-photo-placeholder {
+  background:
+    radial-gradient(ellipse at 30% 70%, color-mix(in srgb, var(--antique-brass) 25%, transparent), transparent 60%),
+    linear-gradient(180deg, #2a1a10 0%, var(--obsidian) 100%);
+}
+
+.gallery-photo-placeholder {
+  background:
+    linear-gradient(135deg, var(--surface-muted) 0%, color-mix(in srgb, var(--champagne-sand) 30%, var(--ivory)) 100%);
+}
+
+.ritual-smoke-panel {
+  background: radial-gradient(circle at 50% 60%, color-mix(in srgb, var(--deep-emerald) 8%, var(--ivory)), var(--ivory));
+}
+
+@keyframes ritual-smoke-drift {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.65;
+    transform: translateY(-6px);
+  }
+}
+
+.ritual-smoke-path {
+  animation: ritual-smoke-drift 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ritual-smoke-path {
+    animation: none;
+  }
+}
+
+/* ── Dark Luxury & Ottoman Speakeasy Visual Utilities ── */
+
+.chandelier-glow {
+  background: radial-gradient(
+    ellipse 60% 45% at 50% 0%,
+    rgba(212, 175, 55, 0.15) 0%,
+    rgba(201, 162, 39, 0.06) 45%,
+    transparent 75%
+  );
+  pointer-events: none;
+}
+
+.chandelier-glow-intense {
+  background: radial-gradient(
+    ellipse 50% 50% at 50% 20%,
+    rgba(229, 211, 161, 0.18) 0%,
+    rgba(212, 175, 55, 0.08) 50%,
+    transparent 80%
+  );
+  pointer-events: none;
+}
+
+.vitrine-glass-card {
+  background: linear-gradient(
+    170deg,
+    rgba(24, 20, 17, 0.85) 0%,
+    rgba(14, 11, 9, 0.95) 100%
+  );
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  backdrop-filter: blur(12px);
+  transition: border-color 600ms var(--ease-luxury), box-shadow 600ms var(--ease-luxury), transform 600ms var(--ease-luxury);
+}
+
+.vitrine-glass-card:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7), 0 0 24px -4px rgba(10, 77, 60, 0.25);
+}
+
+.emerald-velvet-backing {
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 40%, rgba(14, 79, 64, 0.22) 0%, transparent 80%),
+    linear-gradient(180deg, #0e1412 0%, #080c0a 100%);
+}
+
+.gold-foil-text {
+  background: linear-gradient(135deg, #f2e3be 0%, #d4af37 50%, #aa8524 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-hairline {
+  border-color: rgba(212, 175, 55, 0.2);
+}
+
+.brick-vignette-bg {
+  background-color: var(--obsidian-canvas);
+  background-image:
+    radial-gradient(circle at center, transparent 35%, rgba(11, 9, 8, 0.88) 85%, #0b0908 100%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 26px,
+      rgba(74, 30, 26, 0.22) 26px,
+      rgba(74, 30, 26, 0.22) 28px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 58px,
+      rgba(40, 22, 16, 0.25) 58px,
+      rgba(40, 22, 16, 0.25) 60px
+    );
+  background-size: 100% 100%, 100% 28px, 60px 100%;
+}
+

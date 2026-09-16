@@ -1,0 +1,19 @@
+services:
+  app:
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-org/oudnomad}/app:${IMAGE_TAG:?IMAGE_TAG required for production deploy}
+    environment:
+      NODE_ENV: production
+      LOG_LEVEL: info
+    restart: always
+
+  web:
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-org/oudnomad}/web:${IMAGE_TAG:?IMAGE_TAG required for production deploy}
+    environment:
+      NODE_ENV: production
+    restart: always
+
+  notification-worker:
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-org/oudnomad}/notification-worker:${IMAGE_TAG:?IMAGE_TAG required for production deploy}
+    environment:
+      NODE_ENV: production
+    restart: always

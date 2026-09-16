@@ -1,0 +1,32 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Git SHA of the image to deploy (must already exist in ghcr.io)'
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm image exists in ghcr.io
+        run: |
+          docker manifest inspect ghcr.io/${{ github.repository }}/app:${{ github.event.inputs.image_tag }} \
+            || (echo "Image tag not found in registry — build it via CI first." && exit 1)
+
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd /opt/app
+            export IMAGE_TAG=${{ github.event.inputs.image_tag }}
+            export GITHUB_REPOSITORY=${{ github.repository }}
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T app npx prisma migrate deploy
+            sleep 5
+            curl -f http://localhost:3001/api/health || (echo "Health check failed post-deploy" && exit 1)
