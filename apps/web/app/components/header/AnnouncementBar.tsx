@@ -16,7 +16,7 @@ export default function AnnouncementBar({ visible, reduceMotion }: Props) {
 
   return (
     <div
-      className="bg-surface-muted border-b border-border text-espresso overflow-hidden"
+      className="bg-surface-muted border-b border-antique-gold/20 text-espresso overflow-hidden"
       style={{
         maxHeight: visible ? 96 : 0,
         opacity: visible ? 1 : 0,
@@ -25,29 +25,25 @@ export default function AnnouncementBar({ visible, reduceMotion }: Props) {
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-2.5 text-[11px] sm:text-xs tracking-wide">
-          <p className="text-center sm:text-left text-espresso/90 leading-snug">
-            <span className="hidden md:inline">Complimentary shipping on orders above </span>
-            <span className="font-medium text-antique-gold">AED 500</span>
-            <span className="hidden md:inline"> within the UAE — each flacon prepared in our atelier.</span>
-            <span className="md:hidden"> Complimentary UAE shipping over AED 500.</span>
+        <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-1.5 sm:gap-4 py-2 sm:py-2.5 text-[10px] sm:text-xs tracking-wide">
+          <p className="text-center sm:text-left text-espresso font-medium tracking-[0.10em] sm:tracking-[0.14em] uppercase shrink-0">
+            Complimentary UAE shipping over AED 500
           </p>
 
           <nav
             aria-label="Utility"
-            className="flex flex-wrap items-center justify-center sm:justify-end gap-x-4 gap-y-1"
+            className="flex items-center justify-center sm:justify-end gap-x-3 sm:gap-x-5 uppercase tracking-[0.12em] sm:tracking-[0.16em] shrink-0"
           >
-            <Link href="/stores" className="utility-link inline-flex items-center gap-1.5 uppercase tracking-[0.16em]">
-              <IconMapPin className="w-3.5 h-3.5 shrink-0 text-antique-gold" />
-              Store Locator
+            <Link href="/stores" className="utility-link inline-flex items-center gap-1 sm:gap-1.5">
+              <IconMapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-antique-gold" />
+              <span>Store Locator</span>
             </Link>
-            <Link href="/track-order" className="utility-link inline-flex items-center gap-1.5 uppercase tracking-[0.16em]">
+            <Link href="/track-order" className="utility-link inline-flex items-center gap-1 sm:gap-1.5">
               <IconPackage className="w-3.5 h-3.5 shrink-0 text-antique-gold" />
-              Track Order
+              <span>Track Order</span>
             </Link>
-            <div className="inline-flex items-center gap-1.5 uppercase tracking-[0.16em]">
-              <IconGlobe className="w-3.5 h-3.5 shrink-0 text-antique-gold" aria-hidden />
-              <span className="sr-only">Display language (English primary site)</span>
+            <div className="inline-flex items-center gap-1 sm:gap-1.5">
+              <IconGlobe className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-antique-gold" aria-hidden />
               <button
                 type="button"
                 className={`utility-link px-0.5 ${language === 'en' ? 'text-antique-gold font-medium' : ''}`}
@@ -69,7 +65,6 @@ export default function AnnouncementBar({ visible, reduceMotion }: Props) {
                 <span dir="rtl" lang="ar">
                   ع
                 </span>
-                <span className="sr-only">Arabic (selective brand text)</span>
               </button>
             </div>
           </nav>

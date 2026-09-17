@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
@@ -54,10 +55,10 @@ export default function SiteHeader() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50">
+      <header className="  fixed top-0 left-0 right-0 z-50">
         <AnnouncementBar visible={announcementVisible} reduceMotion={reduceMotion} />
 
-        <div className="bg-ivory/95 backdrop-blur-sm border-b border-border text-espresso">
+        <div className="bg-ivory/95 backdrop-blur-sm border-b border-antique-gold/20 text-espresso">
           <Container>
             <div
               className={`grid grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-3 transition-all duration-[550ms]`}
@@ -99,31 +100,23 @@ export default function SiteHeader() {
               {/* Center logo */}
               <Link
                 href="/"
-                className="justify-self-center text-center group shrink-0"
+                className="relative z-30 justify-self-center text-center group shrink-0 flex items-center justify-center"
                 aria-label="Oud Nomad home"
               >
-                <span
-                  className={`block font-display font-semibold tracking-[0.28em] text-espresso group-hover:text-antique-gold transition-all duration-[550ms] leading-none`}
+                <Image
+                  src="/logo.png"
+                  alt="OUD NOMAD"
+                  width={220}
+                  height={80}
+                  priority
+                  className="relative z-30 object-contain max-w-none transition-all duration-[550ms] drop-shadow-sm"
                   style={{
-                    fontSize: compact ? '1.125rem' : '1.35rem',
+                    height: compact ? '48px' : '74px',
+                    transform: compact ? 'translateY(0)' : 'translateY(-12px)',
+                    width: 'auto',
                     transitionTimingFunction: 'var(--ease-luxury)',
                   }}
-                >
-                  OUD NOMAD
-                </span>
-                <span
-                  className={`block font-arabic text-muted mt-0.5 transition-all duration-[550ms] overflow-hidden`}
-                  dir="rtl"
-                  lang="ar"
-                  style={{
-                    fontSize: compact ? '0.65rem' : '0.72rem',
-                    maxHeight: compact ? 0 : 24,
-                    opacity: compact ? 0 : 1,
-                    transitionTimingFunction: 'var(--ease-luxury)',
-                  }}
-                >
-                  عود نوماد
-                </span>
+                />
               </Link>
 
               {/* Right actions */}
