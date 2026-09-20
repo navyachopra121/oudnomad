@@ -2,11 +2,15 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Header from '../components/Header';
-import { StoreApi } from '../store-api';
 import Link from 'next/link';
+import Image from 'next/image';
+import SiteHeader from '../components/header/SiteHeader';
+import Container from '../components/Container';
+import { StoreApi } from '../store-api';
+import { useCurrency } from '../components/concierge/CurrencyContext';
 
 function SearchContent() {
+  const { formatPrice } = useCurrency();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
   const initialCategory = searchParams.get('category') || '';
@@ -49,177 +53,166 @@ function SearchContent() {
     fetchResults();
   };
 
-  const handleWishlistToggle = async (productId: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    try {
-      await StoreApi.addToWishlist(productId);
-      alert('Item added to wishlist!');
-    } catch (err: any) {
-      alert(`Wishlist action: ${err.message}`);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans">
-      <Header />
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-serif">
+      <SiteHeader />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-stone-100 tracking-tight">Search Catalog</h1>
-          <p className="text-sm text-stone-400 mt-1">
-            Discover exquisite perfumes, rare ouds, and signature fragrances.
-          </p>
-        </div>
-
-        {/* Filter bar */}
-        <form
-          onSubmit={handleFilterSubmit}
-          className="bg-stone-900 border border-stone-800 rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end"
-        >
-          <div>
-            <label className="block text-xs font-semibold text-stone-400 mb-1.5 uppercase tracking-wider">
-              Keyword
-            </label>
-            <input
-              type="text"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Product name..."
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
-            />
+      <main className="flex-1 w-full py-6 sm:py-2">
+        <Container className="space-y-10">
+          <div className="space-y-2">
+            <span className="text-[11px] font-sans tracking-[0.28em] uppercase text-antique-gold font-medium">
+              Catalog Search
+            </span>
+            <h1 className="font-display text-3xl sm:text-4xl text-espresso tracking-tight">
+              Search Archives
+            </h1>
+            <p className="text-xs sm:text-sm text-muted font-sans">
+              Discover bespoke perfumes, rare wild agarwood extraits, and signature attar oils.
+            </p>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-stone-400 mb-1.5 uppercase tracking-wider">
-              Category
-            </label>
-            <input
-              type="text"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="e.g. Perfumes"
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-stone-400 mb-1.5 uppercase tracking-wider">
-              Price Range ($)
-            </label>
-            <div className="flex items-center gap-2">
+          {/* Sticky Filter Bar */}
+          <form
+            onSubmit={handleFilterSubmit}
+            className="sticky top-[64px] lg:top-[80px] z-40 bg-ivory/95 backdrop-blur-md shadow-sm border border-border p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end font-sans text-xs transition-all duration-300"
+          >
+            <div>
+              <label className="block text-[10px] font-semibold text-muted mb-1.5 uppercase tracking-wider">
+                Keyword
+              </label>
               <input
-                type="number"
-                placeholder="Min"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
-              />
-              <span className="text-stone-600">-</span>
-              <input
-                type="number"
-                placeholder="Max"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
+                type="text"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Product name..."
+                className="w-full bg-ivory border border-border px-3 py-2 text-espresso outline-none focus:border-antique-gold"
               />
             </div>
-          </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-stone-400 mb-1.5 uppercase tracking-wider">
-              Min Rating
-            </label>
-            <select
-              value={minRating}
-              onChange={(e) => setMinRating(e.target.value)}
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
-            >
-              <option value="">Any Rating</option>
-              <option value="4">4+ Stars</option>
-              <option value="3">3+ Stars</option>
-              <option value="2">2+ Stars</option>
-            </select>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              className="w-full bg-amber-600 hover:bg-amber-500 text-stone-950 font-semibold py-2 px-4 rounded-xl text-sm transition-all shadow-md"
-            >
-              Apply Filters
-            </button>
-          </div>
-        </form>
-
-        {/* Results */}
-        {loading ? (
-          <div className="text-center py-16 text-stone-500">Searching products...</div>
-        ) : error ? (
-          <div className="p-4 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl text-sm">
-            {error}
-          </div>
-        ) : results && results.items ? (
-          <div>
-            <div className="text-sm text-stone-400 mb-4">
-              Found <span className="text-stone-100 font-semibold">{results.total}</span> products
+            <div>
+              <label className="block text-[10px] font-semibold text-muted mb-1.5 uppercase tracking-wider">
+                Category
+              </label>
+              <input
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="e.g. attars, oud"
+                className="w-full bg-ivory border border-border px-3 py-2 text-espresso outline-none focus:border-antique-gold"
+              />
             </div>
 
-            {results.items.length === 0 ? (
-              <div className="bg-stone-900 border border-stone-800 rounded-2xl p-12 text-center text-stone-400">
-                <div className="text-4xl mb-3">🔍</div>
-                <h3 className="text-lg font-semibold text-stone-200">No products found</h3>
-                <p className="text-sm text-stone-500 mt-1">Try adjusting your query or price filters.</p>
+            <div>
+              <label className="block text-[10px] font-semibold text-muted mb-1.5 uppercase tracking-wider">
+                Price ($)
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  className="w-full bg-ivory border border-border px-3 py-2 text-espresso outline-none focus:border-antique-gold"
+                />
+                <span className="text-muted">-</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  className="w-full bg-ivory border border-border px-3 py-2 text-espresso outline-none focus:border-antique-gold"
+                />
               </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {results.items.map((prod: any) => (
-                  <div
-                    key={prod.productId}
-                    className="bg-stone-900 border border-stone-800 hover:border-amber-500/40 rounded-2xl p-5 flex flex-col justify-between group transition-all"
-                  >
-                    <div>
-                      <div className="flex items-start justify-between gap-2 mb-3">
-                        <span className="px-2.5 py-0.5 bg-stone-800 text-stone-400 rounded-md text-[11px] font-semibold">
-                          {prod.category}
-                        </span>
-                        <button
-                          onClick={(e) => handleWishlistToggle(prod.productId, e)}
-                          title="Add to Wishlist"
-                          className="text-stone-500 hover:text-red-400 transition-colors text-lg"
-                        >
-                          ❤️
-                        </button>
-                      </div>
+            </div>
 
-                      <h3 className="font-semibold text-stone-100 group-hover:text-amber-400 transition-colors text-base mb-1">
-                        {prod.name}
-                      </h3>
-                      <p className="text-xs text-stone-400 line-clamp-2 mb-4">
-                        {prod.description}
-                      </p>
-                    </div>
+            <div>
+              <label className="block text-[10px] font-semibold text-muted mb-1.5 uppercase tracking-wider">
+                Rating
+              </label>
+              <select
+                value={minRating}
+                onChange={(e) => setMinRating(e.target.value)}
+                className="w-full bg-ivory border border-border px-3 py-2 text-espresso outline-none focus:border-antique-gold"
+              >
+                <option value="">Any Rating</option>
+                <option value="4">4+ Stars</option>
+                <option value="3">3+ Stars</option>
+              </select>
+            </div>
 
-                    <div className="pt-4 border-t border-stone-800 flex items-center justify-between">
+            <div>
+              <button
+                type="submit"
+                className="w-full bg-aged-gold hover:bg-antique-gold text-accent-on-fill font-medium py-2.5 px-4 text-xs uppercase tracking-[0.2em] transition-all shadow-sm"
+              >
+                Apply Filters
+              </button>
+            </div>
+          </form>
+
+          {/* Results */}
+          {loading ? (
+            <div className="text-center py-16 text-muted text-xs uppercase tracking-[0.22em] font-sans">
+              Searching archives...
+            </div>
+          ) : error ? (
+            <div className="p-4 bg-red-500/10 border border-red-500/30 text-red-700 text-xs font-sans">
+              {error}
+            </div>
+          ) : results && results.items ? (
+            <div className="space-y-6 font-sans">
+              <div className="text-xs text-muted">
+                Found <span className="text-espresso font-semibold">{results.total}</span> products
+              </div>
+
+              {results.items.length === 0 ? (
+                <div className="bg-surface-muted/30 border border-border p-12 text-center text-muted">
+                  <h3 className="font-display text-lg text-espresso mb-1">No products found</h3>
+                  <p className="text-xs">Try adjusting your query or price filters.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {results.items.map((prod: any) => (
+                    <article
+                      key={prod.productId}
+                      className="group bg-surface-muted/40 border border-border hover:border-antique-gold/50 p-4 transition-all flex flex-col justify-between"
+                    >
                       <div>
-                        <div className="text-xs text-stone-500 flex items-center gap-1">
-                          <span className="text-amber-400">★</span>
-                          <span>{prod.avgRating ? prod.avgRating.toFixed(1) : '0.0'}</span>
-                          <span>({prod.reviewCount || 0})</span>
-                        </div>
-                        <div className="text-base font-bold text-amber-300">
-                          ${((prod.priceMinor || 0) / 100).toFixed(2)}
-                        </div>
+                        <Link href={`/products/${prod.slug}`} className="block aspect-[4/5] bg-background border border-border mb-4 relative overflow-hidden">
+                          <Image
+                            src={prod.images?.[0] || `https://picsum.photos/seed/${prod.slug || prod.productId}/600/800`}
+                            alt={prod.name}
+                            fill
+                            className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                          />
+                        </Link>
+                        <span className="text-[10px] uppercase tracking-widest text-muted">{prod.category}</span>
+                        <Link href={`/products/${prod.slug}`}>
+                          <h3 className="font-display text-base text-espresso group-hover:text-antique-gold transition-colors mt-0.5 mb-1">
+                            {prod.name}
+                          </h3>
+                        </Link>
+                        <p className="text-xs text-muted line-clamp-2 leading-relaxed mb-4">{prod.description}</p>
                       </div>
-                      <span className="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-medium rounded-full">
-                        In Stock
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : null}
+
+                      <div className="pt-3 border-t border-border flex items-center justify-between">
+                        <span className="text-sm font-mono font-medium text-antique-gold">
+                          {formatPrice((prod.priceMinor || 0) / 100)}
+                        </span>
+                        <Link
+                          href={`/products/${prod.slug}`}
+                          className="px-3 py-1.5 border border-antique-gold/60 text-antique-gold hover:bg-aged-gold hover:text-accent-on-fill text-[10px] uppercase tracking-[0.18em] transition-all"
+                        >
+                          Inspect
+                        </Link>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : null}
+        </Container>
       </main>
     </div>
   );
@@ -227,7 +220,7 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-stone-950 text-stone-400 flex items-center justify-center">Loading search page...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background text-muted flex items-center justify-center font-sans text-xs">Loading search page...</div>}>
       <SearchContent />
     </Suspense>
   );

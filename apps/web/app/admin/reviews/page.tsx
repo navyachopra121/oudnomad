@@ -48,11 +48,22 @@ export default function AdminReviewsPage() {
     fetchReported();
   }, []);
 
+  const handleApprove = async (reviewId: string) => {
+    try {
+      await AdminApi.approveReview(reviewId);
+      setActionSuccess('Review approved and kept in catalog.');
+      fetchReported();
+      setTimeout(() => setActionSuccess(null), 3000);
+    } catch (err: any) {
+      alert(`Approval failed: ${err.message}`);
+    }
+  };
+
   const handleRemove = async (reviewId: string) => {
     if (!confirm('Are you sure you want to remove this reported review?')) return;
     try {
       await AdminApi.deleteReview(reviewId);
-      setActionSuccess('Review removed successfully');
+      setActionSuccess('Review removed successfully.');
       fetchReported();
       setTimeout(() => setActionSuccess(null), 3000);
     } catch (err: any) {
@@ -127,6 +138,12 @@ export default function AdminReviewsPage() {
               </div>
 
               <div className="flex items-center gap-3 shrink-0">
+                <button
+                  onClick={() => handleApprove(rev.id)}
+                  className="px-4 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-semibold transition-all"
+                >
+                  ✓ Approve & Keep
+                </button>
                 <button
                   onClick={() => handleRemove(rev.id)}
                   className="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 rounded-xl text-xs font-semibold transition-all"

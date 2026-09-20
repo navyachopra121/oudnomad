@@ -124,7 +124,7 @@ export default function CollectionsMegaMenu({ compact, reduceMotion }: Props) {
             {categories.map((cat) => (
               <div key={cat.id} className="border-b sm:border-b-0 sm:border-r border-border/80 last:border-0 p-4 sm:p-5">
                 <Link
-                  href={`/search?category=${encodeURIComponent(cat.slug)}`}
+                  href={`/collections/${encodeURIComponent(cat.slug)}`}
                   className="font-display text-lg text-espresso hover:text-antique-gold transition-colors duration-[400ms]"
                   onClick={() => setOpen(false)}
                 >
@@ -138,7 +138,7 @@ export default function CollectionsMegaMenu({ compact, reduceMotion }: Props) {
                     {cat.children.map((child) => (
                       <li key={child.id}>
                         <Link
-                          href={`/search?category=${encodeURIComponent(child.slug)}`}
+                          href={`/collections/${encodeURIComponent(child.slug)}`}
                           className="text-xs text-muted hover:text-antique-gold transition-colors duration-[400ms]"
                           onClick={() => setOpen(false)}
                         >
@@ -151,13 +151,20 @@ export default function CollectionsMegaMenu({ compact, reduceMotion }: Props) {
               </div>
             ))}
           </div>
-          <div className="border-t border-border px-5 py-3 bg-surface-muted/60">
+          <div className="border-t border-border px-5 py-3 bg-surface-muted/60 flex items-center justify-between">
             <Link
-              href="/search"
+              href="/collections"
               className="text-xs uppercase tracking-[0.18em] text-antique-gold hover:text-mahogany transition-colors duration-[400ms]"
               onClick={() => setOpen(false)}
             >
               View full catalog →
+            </Link>
+            <Link
+              href="/reviews"
+              className="text-xs uppercase tracking-[0.18em] text-muted hover:text-antique-gold transition-colors duration-[400ms]"
+              onClick={() => setOpen(false)}
+            >
+              Collector Reviews →
             </Link>
           </div>
         </div>

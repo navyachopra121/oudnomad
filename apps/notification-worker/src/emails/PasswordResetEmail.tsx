@@ -28,7 +28,7 @@ export function PasswordResetEmail({
   return (
     <Html lang="en">
       <Head />
-      <Preview>Reset your Oudnomad password — link expires in {expiresInMin} minutes</Preview>
+      <Preview>{`Reset your Oudnomad password — link expires in ${expiresInMin} minutes`}</Preview>
       <Body style={body}>
         <Container style={container}>
           <Section style={header}>

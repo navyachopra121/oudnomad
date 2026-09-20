@@ -9,25 +9,33 @@ import Reveal from './Reveal';
 export default function MinimalHomepage() {
   const featuredProducts = VITRINE_MASTERPIECES.slice(0, 4);
 
+  const getProductSlug = (name: string) => {
+    if (name.includes('Malaki')) return 'malaki-extrait-no-1';
+    if (name.includes('Noor')) return 'noor-pure-attar';
+    if (name.includes('Dusk')) return 'dusk-mukhallat-imperiale';
+    if (name.includes('Cambodi')) return 'royal-cambodi-reserve';
+    return name.toLowerCase().replace(/\s+/g, '-');
+  };
+
   const categories = [
     {
       name: 'Oud',
-      href: '/search?category=oud',
+      href: '/collections/oud',
       image: 'https://picsum.photos/seed/oud-category-tile/800/1000',
     },
     {
       name: 'Attars',
-      href: '/search?category=attars',
+      href: '/collections/attars',
       image: 'https://picsum.photos/seed/attars-category-tile/800/1000',
     },
     {
       name: 'Bakhoor',
-      href: '/search?category=bakhoor',
+      href: '/collections/bakhoor',
       image: 'https://picsum.photos/seed/bakhoor-category-tile/800/1000',
     },
     {
       name: 'Mukhallat',
-      href: '/search?category=mukhallat',
+      href: '/collections/mukhallat',
       image: 'https://picsum.photos/seed/mukhallat-category-tile/800/1000',
     },
   ];
@@ -66,7 +74,7 @@ export default function MinimalHomepage() {
 
             <div className="mt-10 sm:mt-12">
               <Link
-                href="#featured"
+                href="/collections"
                 className="inline-flex items-center justify-center px-8 py-4 text-xs uppercase tracking-[0.24em] font-medium bg-aged-gold text-accent-on-fill hover:bg-antique-gold transition-colors duration-500 shadow-md"
               >
                 Explore the Collection
@@ -77,7 +85,7 @@ export default function MinimalHomepage() {
       </section>
 
       {/* SECTION 4 — FEATURED PIECES (THE GRAND VITRINE) */}
-      <section id="featured" className="py-20 md:py-28 bg-background text-foreground border-b border-border">
+      <section id="featured" className="py-20 md:py-28 bg-background text-foreground">
         <Container>
           <Reveal>
             <div className="text-center max-w-xl mx-auto mb-14 md:mb-20">
@@ -90,12 +98,12 @@ export default function MinimalHomepage() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
             {featuredProducts.map((product, idx) => (
               <Reveal key={product.id} delayMs={idx * 100}>
-                <article className="group flex flex-col justify-between h-full bg-surface-muted/40 border border-border hover:border-antique-gold/40 p-4 sm:p-5 transition-all duration-500">
+                <article className="group flex flex-col justify-between h-full">
                   <div>
-                    <div className="relative aspect-[4/5] w-full overflow-hidden bg-background border border-border mb-5">
+                    <div className="relative aspect-[4/5] w-full overflow-hidden bg-surface-muted/30 mb-5">
                       <Image
                         src={product.image.src}
                         alt={product.image.alt}
@@ -107,13 +115,13 @@ export default function MinimalHomepage() {
                     <h3 className="font-display text-lg sm:text-xl text-foreground group-hover:text-antique-gold transition-colors duration-300 mb-1">
                       {product.name}
                     </h3>
-                    <p className="text-xs sm:text-sm font-medium text-antique-gold mb-6">
+                    <p className="text-xs sm:text-sm font-medium text-antique-gold mb-5">
                       {product.price}
                     </p>
                   </div>
                   <Link
-                    href={`/search?q=${encodeURIComponent(product.name)}`}
-                    className="w-full inline-flex items-center justify-center py-3 text-[10px] uppercase tracking-[0.22em] font-medium border border-antique-gold/60 text-antique-gold hover:bg-aged-gold hover:text-accent-on-fill hover:border-aged-gold transition-all duration-400"
+                    href={`/products/${getProductSlug(product.name)}`}
+                    className="w-full inline-flex items-center justify-center py-3 text-[10px] uppercase tracking-[0.22em] font-medium bg-aged-gold/10 text-antique-gold hover:bg-aged-gold hover:text-accent-on-fill transition-all duration-300"
                   >
                     Acquire Flacon
                   </Link>
@@ -125,7 +133,7 @@ export default function MinimalHomepage() {
       </section>
 
       {/* SECTION 5 — BRAND STATEMENT */}
-      <section className="py-24 sm:py-32 bg-background text-foreground border-b border-border">
+      <section className="py-24 sm:py-32 bg-background text-foreground">
         <Container className="text-center max-w-3xl mx-auto px-4">
           <Reveal>
             <p className="font-display text-2xl sm:text-3xl md:text-4xl text-foreground font-normal leading-relaxed mb-8">
@@ -133,7 +141,7 @@ export default function MinimalHomepage() {
             </p>
             <Link
               href="/about"
-              className="inline-flex items-center text-xs uppercase tracking-[0.25em] text-antique-gold hover:text-foreground font-medium transition-colors duration-400 border-b border-antique-gold/40 hover:border-foreground pb-1"
+              className="inline-flex items-center text-xs uppercase tracking-[0.25em] text-antique-gold hover:text-foreground font-medium transition-colors duration-400 pb-1"
             >
               Discover Our Story &rarr;
             </Link>
@@ -142,7 +150,7 @@ export default function MinimalHomepage() {
       </section>
 
       {/* SECTION 6 — SHOP BY CATEGORY */}
-      <section className="py-20 md:py-28 bg-background text-foreground border-b border-border">
+      <section className="py-20 md:py-28 bg-background text-foreground">
         <Container>
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl text-foreground font-normal text-center mb-12 md:mb-16">
@@ -155,7 +163,7 @@ export default function MinimalHomepage() {
               <Reveal key={cat.name} delayMs={idx * 100}>
                 <Link
                   href={cat.href}
-                  className="group relative aspect-[3/4] overflow-hidden bg-surface-muted border border-border hover:border-antique-gold/50 transition-all duration-500 flex items-end p-6"
+                  className="group relative aspect-[3/4] overflow-hidden bg-surface-muted transition-all duration-500 flex items-end p-6"
                 >
                   <Image
                     src={cat.image}
@@ -164,7 +172,7 @@ export default function MinimalHomepage() {
                     sizes="(max-width: 640px) 50vw, 25vw"
                     className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
                   <span className="relative z-10 font-display text-xl sm:text-2xl text-foreground tracking-wide group-hover:text-antique-gold transition-colors duration-300">
                     {cat.name}
                   </span>
@@ -176,7 +184,7 @@ export default function MinimalHomepage() {
       </section>
 
       {/* SECTION 7 — TESTIMONIAL */}
-      <section className="py-24 sm:py-32 bg-background text-foreground border-b border-border">
+      <section className="py-24 sm:py-32 bg-background text-foreground">
         <Container className="text-center max-w-3xl mx-auto px-4">
           <Reveal>
             <blockquote className="space-y-6">

@@ -5,20 +5,9 @@
  * -------------
  * Cinematic once-per-session intro: gold/oud dust assembles into the
  * Oud Nomad camel mark (sampled live from the logo), holds, then the
- * wordmark burns in as the dust blows away on the wind. A desert
- * curtain parts to reveal the page underneath.
+ * dust blows away on the wind as a desert curtain parts to reveal the page.
  *
- * Gated by sessionStorage — shows once per browser session, on
- * whichever page the visitor lands on first, then stays quiet for the
- * rest of the session (per product decision).
- *
- * Mount this once in app/layout.tsx, as a sibling of {children},
- * near the top of <body>. It's `position: fixed` and manages its own
- * stacking (z-[9999]) and lifecycle — no props required.
- *
- * Respects prefers-reduced-motion (skips the particle/camera work
- * entirely and does a plain fade) and reduces particle count on
- * small viewports.
+ * Gated by sessionStorage — shows once per browser session.
  */
 
 import gsap from 'gsap';
@@ -27,7 +16,7 @@ import * as THREE from 'three';
 import styles from './preloader/Preloader.module.css';
 import { OUD_NOMAD_LOGO_DATA_URI } from './preloader/preloader-logo';
 
-const SESSION_KEY = 'oud-nomad-intro-seen';
+const SESSION_KEY = 'oudnomad_preloader_seen';
 
 export default function Preloader() {
     const [visible, setVisible] = useState(true);
@@ -35,8 +24,16 @@ export default function Preloader() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
-        // Gated by sessionStorage disabled so preloader loads on every page reload for testing
-        // const seenThisSession = false;
+        // 1. Once Per Session Check
+        try {
+            const seen = sessionStorage.getItem(SESSION_KEY);
+            if (seen === 'true') {
+                setVisible(false);
+                return;
+            }
+        } catch (e) {
+            // fallback if storage disabled
+        }
 
         const root = rootRef.current;
         const canvas = canvasRef.current;
@@ -45,10 +42,12 @@ export default function Preloader() {
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const isMobile = window.innerWidth < 720;
 
-        // ---------------- three.js particle camel ----------------
+        // ---------------- three.js particle setup ----------------
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.set(0, 0, 6.4);
+        
+        // Positioning: Move camera back (Z: 7.6) and shift Y slightly on mobile so Camel + OUD + NOMAD fit with top/bottom margin
+        camera.position.set(0, isMobile ? 0.25 : 0, isMobile ? 7.6 : 6.4);
 
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -69,7 +68,7 @@ export default function Preloader() {
         }
         const sprite = makeSprite();
 
-        const MAX_PARTICLES = isMobile ? 1600 : 3400;
+        const MAX_PARTICLES = isMobile ? 1800 : 3400;
 
         let points: THREE.Points | null = null;
         let posAttr: THREE.BufferAttribute | null = null;
@@ -91,7 +90,7 @@ export default function Preloader() {
             startPos = new Float32Array(n * 3);
             targetPos = new Float32Array(n * 3);
             windDir = new Float32Array(n * 3);
-            seeds = new Float32Array(n * 4); // delay, speed, phase, unused
+            seeds = new Float32Array(n * 4);
 
             const posArr = new Float32Array(n * 3);
             const colArr = new Float32Array(n * 3);
@@ -146,7 +145,7 @@ export default function Preloader() {
             geometry.setAttribute('color', new THREE.BufferAttribute(colArr, 3));
 
             const material = new THREE.PointsMaterial({
-                size: isMobile ? 0.075 : 0.06,
+                size: isMobile ? 0.065 : 0.06,
                 map: sprite,
                 transparent: true,
                 opacity: 0.95,
@@ -200,7 +199,7 @@ export default function Preloader() {
             }
         };
         img.onload = onLogoReady;
-        img.onerror = () => console.warn('[Preloader] logo failed to load — particle formation skipped');
+        img.onerror = () => console.warn('[Preloader] logo failed to load');
         img.src = OUD_NOMAD_LOGO_DATA_URI;
         if (img.complete) {
             onLogoReady();
@@ -223,9 +222,10 @@ export default function Preloader() {
             rafId = requestAnimationFrame(animate);
             clock += 0.016;
 
-            camera.position.x += (mx * 0.5 - camera.position.x) * 0.03;
-            camera.position.y += (-my * 0.35 - camera.position.y) * 0.03;
-            camera.lookAt(0, 0, 0);
+            const baseCamY = isMobile ? 0.25 : 0;
+            camera.position.x += (mx * 0.4 - camera.position.x) * 0.03;
+            camera.position.y += (baseCamY - my * 0.3 - camera.position.y) * 0.03;
+            camera.lookAt(0, baseCamY, 0);
 
             if (particlesReady && posAttr) {
                 const arr = posAttr.array as Float32Array;
@@ -275,20 +275,16 @@ export default function Preloader() {
         animate();
 
         function onResize() {
+            const mobile = window.innerWidth < 720;
             camera.aspect = window.innerWidth / window.innerHeight;
+            camera.position.set(0, mobile ? 0.25 : 0, mobile ? 7.6 : 6.4);
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
         window.addEventListener('resize', onResize);
 
-        // ---------------- gsap orchestrated timeline ----------------
-        const chSpans = root.querySelectorAll<HTMLSpanElement>('[data-pl="ch"]');
+        // ---------------- gsap fast timeline ----------------
         const lineEl = root.querySelector<HTMLElement>('[data-pl="line"]');
-        const subEl = root.querySelector<HTMLElement>('[data-pl="sub"]');
-        const taglineEl = root.querySelector<HTMLElement>('[data-pl="tagline"]');
-        const barWrapEl = root.querySelector<HTMLElement>('[data-pl="bar-wrap"]');
-        const barFillEl = root.querySelector<HTMLElement>('[data-pl="bar-fill"]');
-        const pctEl = root.querySelector<HTMLElement>('[data-pl="pct"]');
         const panelLeftEl = root.querySelector<HTMLElement>('[data-pl="panel-left"]');
         const panelRightEl = root.querySelector<HTMLElement>('[data-pl="panel-right"]');
 
@@ -296,80 +292,56 @@ export default function Preloader() {
         const dispProxy = { v: 0 };
 
         const finish = () => {
-            // Session persistence disabled so preloader runs on each reload for checking
+            try {
+                sessionStorage.setItem(SESSION_KEY, 'true');
+            } catch (e) {
+                // ignore storage error
+            }
             setVisible(false);
         };
 
         const tl = gsap.timeline({ onComplete: finish });
 
         if (reduceMotion) {
-            tl.to(chSpans, { opacity: 1, y: 0, duration: 0.5, stagger: 0.03 })
-                .to([subEl, taglineEl, barWrapEl], { opacity: 1, duration: 0.5 })
-                .to({}, { duration: 0.6 })
-                .to(panelLeftEl, { xPercent: -100, duration: 0.8, ease: 'power3.inOut' })
-                .to(panelRightEl, { xPercent: 100, duration: 0.8, ease: 'power3.inOut' }, '<')
-                .to(root, { autoAlpha: 0, duration: 0.4 });
+            tl.to(panelLeftEl, { xPercent: -100, duration: 0.6, ease: 'power3.inOut' })
+                .to(panelRightEl, { xPercent: 100, duration: 0.6, ease: 'power3.inOut' }, '<')
+                .to(root, { autoAlpha: 0, duration: 0.3 });
         } else {
-            tl.to(lineEl, { width: '42vw', duration: 1.1, ease: 'power2.out' })
-                // sand assembles into the camel silhouette
+            tl.to(lineEl, { width: '42vw', duration: 0.5, ease: 'power2.out' })
+                // sand assembles quickly into camel & wordmark
                 .to(
                     formProxy,
                     {
                         v: 1,
-                        duration: 2.3,
+                        duration: 1.4,
                         ease: 'power2.out',
                         onUpdate: () => {
                             formT = formProxy.v;
                         },
                     },
-                    0.15
+                    0.05
                 )
-                // hold the formed camel a moment
-                .to({}, { duration: 0.55 })
-                // wordmark + arabic reveal while camel still glows behind
-                .to(chSpans, { opacity: 1, y: 0, duration: 0.7, stagger: 0.045, ease: 'power2.out' })
-                .to(chSpans, { backgroundPosition: '100% 0%', duration: 1.4, ease: 'sine.inOut' }, '<')
-                .to(subEl, { opacity: 1, duration: 0.7 }, '-=.3')
-                .to(taglineEl, { opacity: 1, duration: 0.7 }, '-=.5')
-                .to(barWrapEl, { opacity: 1, duration: 0.5 }, '-=.4')
-                // sand disperses on the wind as loading completes
+                // hold the formed sand logo briefly
+                .to({}, { duration: 0.3 })
+                // sand disperses on the wind
                 .to(
                     dispProxy,
                     {
                         v: 1,
-                        duration: 1.6,
+                        duration: 0.9,
                         ease: 'power1.in',
                         onUpdate: () => {
                             dispersion = dispProxy.v;
                         },
                     },
-                    '-=.2'
+                    '-=.05'
                 )
-                .to(barFillEl, { width: '100%', duration: 1.9, ease: 'power1.inOut' }, '<')
-                .to(
-                    pctEl,
-                    {
-                        duration: 1.9,
-                        ease: 'power1.inOut',
-                        onUpdate: function () {
-                            const p = Math.round(this.progress() * 100);
-                            if (pctEl) pctEl.textContent = (p < 10 ? '0' : '') + p + '%';
-                        },
-                    },
-                    '<'
-                )
-                .to({}, { duration: 0.5 })
-                // desert curtain parts to reveal the page
-                .to(panelLeftEl, { xPercent: -100, duration: 1.1, ease: 'power3.inOut' })
-                .to(panelRightEl, { xPercent: 100, duration: 1.1, ease: 'power3.inOut' }, '<')
-                .to(root, { autoAlpha: 0, duration: 0.5 }, '-=.3');
+                .to({}, { duration: 0.1 })
+                // desert curtain parts smoothly to reveal the site
+                .to(panelLeftEl, { xPercent: -100, duration: 0.7, ease: 'power3.inOut' })
+                .to(panelRightEl, { xPercent: 100, duration: 0.7, ease: 'power3.inOut' }, '<')
+                .to(root, { autoAlpha: 0, duration: 0.3 }, '-=.2');
         }
-
-        // NOTE: this timeline drives itself on a fixed schedule for the launch
-        // demo. To gate the reveal on real asset loading instead, replace the
-        // fixed-duration `formProxy`/`dispProxy` tweens with calls that resolve
-        // once your actual loading promise (fonts, hero image, etc.) settles,
-        // then call `tl.play()` / let it proceed from there.
 
         return () => {
             tl.kill();
@@ -400,44 +372,11 @@ export default function Preloader() {
             <div className={styles.horizon}>
                 <div className={styles.line} data-pl="line" />
             </div>
-            {/* 
-            <div className={styles.content}>
-                <div className={styles.mark}>
-                    <Word word="OUD" />
-                    <Word word="NOMAD" />
-                </div>
-                <div className={styles.sub} data-pl="sub" dir="rtl" lang="ar">
-                    عبق الصحراء
-                </div>
-                <div className={styles.tagline} data-pl="tagline">
-                    An ode to Arabian perfumery
-                </div>
-                <div className={styles.barWrap} data-pl="bar-wrap">
-                    <div className={styles.barTrack}>
-                        <div className={styles.barFill} data-pl="bar-fill" />
-                    </div>
-                    <div className={styles.pct} data-pl="pct">
-                        00%
-                    </div>
-                </div>
-            </div> */}
 
             <div className={styles.panels}>
                 <div className={styles.panel} data-pl="panel-left" />
                 <div className={styles.panel} data-pl="panel-right" />
             </div>
         </div>
-    );
-}
-
-function Word({ word }: { word: string }) {
-    return (
-        <span className={styles.word}>
-            {word.split('').map((ch, i) => (
-                <span key={i} className={styles.ch} data-pl="ch">
-                    {ch}
-                </span>
-            ))}
-        </span>
     );
 }

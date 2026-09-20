@@ -7,12 +7,11 @@ import Link from 'next/link';
 export default function AdminDashboardPage() {
   const [summary, setSummary] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     AdminApi.getDashboardSummary()
       .then((data) => setSummary(data))
-      .catch((err) => setError(err.message))
+      .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, []);
 
@@ -24,29 +23,46 @@ export default function AdminDashboardPage() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="p-6 bg-red-950/40 border border-red-800/50 rounded-xl text-red-300">
-        <h3 className="font-bold text-lg mb-1">Failed to load dashboard summary</h3>
-        <p className="text-sm text-red-400">{error}</p>
-      </div>
-    );
-  }
-
-  const formatCurrency = (minor: number, currency = 'INR') => {
-    return new Intl.NumberFormat('en-IN', {
+  const formatCurrency = (minor: number, currency = 'USD') => {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency,
     }).format(minor / 100);
   };
 
+  const lowStockItems = summary?.lowStock || [];
+  const statusCounts = summary?.ordersByStatus || { CONFIRMED: 0, SHIPPED: 0, DELIVERED: 0, CANCELLED: 0 };
+
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-stone-100">Dashboard Overview</h1>
-        <p className="text-sm text-stone-400">
-          Real-time metrics, order volume, revenue totals, and stock status.
-        </p>
+      {/* Page Title & Quick Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800 pb-5">
+        <div>
+          <h1 className="text-2xl font-bold text-stone-100">Atelier Operations Control</h1>
+          <p className="text-sm text-stone-400">
+            Real-time metrics, revenue totals, stock alerts, and store controls.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2.5">
+          <Link
+            href="/admin/products"
+            className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-stone-950 text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-sm"
+          >
+            + Add New Flacon
+          </Link>
+          <Link
+            href="/admin/orders"
+            className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-all border border-stone-700"
+          >
+            Process Orders
+          </Link>
+          <Link
+            href="/admin/inventory"
+            className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-all border border-stone-700"
+          >
+            Adjust Stock
+          </Link>
+        </div>
       </div>
 
       {/* Metric Cards Grid */}
@@ -85,7 +101,7 @@ export default function AdminDashboardPage() {
         <div className="bg-stone-900 border border-stone-800 p-5 rounded-xl shadow-md">
           <div className="flex items-center justify-between text-xs text-stone-400 mb-2 font-medium">
             <span>TODAY'S REVENUE</span>
-            <span className="text-emerald-500 font-bold">INR</span>
+            <span className="text-emerald-500 font-bold">USD</span>
           </div>
           <div className="text-3xl font-extrabold text-emerald-400">
             {formatCurrency(summary?.revenue?.today?.[0]?.totalMinor ?? 0)}
@@ -97,7 +113,7 @@ export default function AdminDashboardPage() {
         <div className="bg-stone-900 border border-stone-800 p-5 rounded-xl shadow-md">
           <div className="flex items-center justify-between text-xs text-stone-400 mb-2 font-medium">
             <span>THIS WEEK'S REVENUE</span>
-            <span className="text-emerald-500 font-bold">INR</span>
+            <span className="text-emerald-500 font-bold">USD</span>
           </div>
           <div className="text-3xl font-extrabold text-emerald-400">
             {formatCurrency(summary?.revenue?.thisWeek?.[0]?.totalMinor ?? 0)}
@@ -109,7 +125,7 @@ export default function AdminDashboardPage() {
         <div className="bg-stone-900 border border-stone-800 p-5 rounded-xl shadow-md">
           <div className="flex items-center justify-between text-xs text-stone-400 mb-2 font-medium">
             <span>THIS MONTH'S REVENUE</span>
-            <span className="text-emerald-500 font-bold">INR</span>
+            <span className="text-emerald-500 font-bold">USD</span>
           </div>
           <div className="text-3xl font-extrabold text-emerald-400">
             {formatCurrency(summary?.revenue?.thisMonth?.[0]?.totalMinor ?? 0)}
@@ -122,7 +138,7 @@ export default function AdminDashboardPage() {
       <div className="bg-stone-900 border border-stone-800 p-6 rounded-xl shadow-md">
         <h2 className="text-lg font-bold text-stone-200 mb-4">Orders Breakdown by Status</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {Object.entries(summary?.ordersByStatus || {}).map(([status, count]) => (
+          {Object.entries(statusCounts).map(([status, count]) => (
             <div key={status} className="bg-stone-950 p-4 rounded-lg border border-stone-800/80">
               <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-1">
                 {status.replace('_', ' ')}
@@ -137,7 +153,7 @@ export default function AdminDashboardPage() {
       <div className="bg-stone-900 border border-stone-800 p-6 rounded-xl shadow-md">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-stone-200">Low Stock Alert</h2>
+            <h2 className="text-lg font-bold text-stone-200">Low Stock Vault Alert</h2>
             <p className="text-xs text-stone-400">
               Products with available stock below configured threshold
             </p>
@@ -150,8 +166,8 @@ export default function AdminDashboardPage() {
           </Link>
         </div>
 
-        {summary?.lowStock?.length === 0 ? (
-          <div className="text-sm text-stone-500 py-6 text-center">
+        {lowStockItems.length === 0 ? (
+          <div className="text-xs text-stone-500 py-6 text-center">
             No items currently below low stock threshold.
           </div>
         ) : (
@@ -166,7 +182,7 @@ export default function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-800">
-                {summary?.lowStock?.map((item: any) => (
+                {lowStockItems.map((item: any) => (
                   <tr key={item.variantId} className="hover:bg-stone-800/40">
                     <td className="px-4 py-3 font-medium text-stone-200">{item.productName}</td>
                     <td className="px-4 py-3 font-mono text-xs text-stone-400">{item.sku}</td>

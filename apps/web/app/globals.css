@@ -6,37 +6,62 @@
  */
 
 :root {
-  /* Surfaces & type (roles swapped from legacy dark theme) */
-  --ivory: #f8f3e9;
-  --espresso: #1c140f;
+  /*
+   * ── SAVED LIGHT THEME PALETTE (PRESERVED - COMMENTED OUT) ─────────────────
+   * --ivory: #f8f3e9;
+   * --espresso: #1c140f;
+   * --antique-gold: #96730c;
+   * --aged-gold: #c9a227;
+   * --deep-emerald: #0e4f40;
+   * --champagne-sand: #d9b876;
+   * --antique-brass: #6f5535;
+   * --mahogany: #3d2314;
+   * --brick-oxblood: #6e332e;
+   * --obsidian: #0e0d0b;
+   * --background: #f8f3e9;
+   * --foreground: #1c140f;
+   * --surface: #f8f3e9;
+   * --surface-muted: #f0e8dc;
+   * --border: #e5dcc8;
+   * --border-strong: #d4c4a8;
+   * --muted: #5c4f45;
+   * --accent: #96730c;
+   * --accent-fill: #c9a227;
+   * --accent-on-fill: #1c140f;
+   * ──────────────────────────────────────────────────────────────────────────
+   */
 
-  /* Gold — antique for text/icons; aged for fills */
-  --antique-gold: #96730c;
+  /* PRIMARY DEFAULT DARK LUXURY PALETTE */
+  --ivory: #080706;                 /* Rich obsidian canvas */
+  --espresso: #f8f3e9;              /* Linen cream text */
+
+  /* Gold — metallic gold text/icons & warm gold fills */
+  --antique-gold: #d4af37;
   --aged-gold: #c9a227;
 
   /* Accent swatches */
-  --deep-emerald: #0e4f40;
-  --champagne-sand: #d9b876;
+  --deep-emerald: #0a4d3c;
+  --champagne-sand: #e8d7a7;
 
-  /* Legacy dark / wood tones (unchanged — readable on ivory) */
-  --antique-brass: #6f5535;
-  --mahogany: #3d2314;
-  --brick-oxblood: #6e332e;
-  --obsidian: #0e0d0b;
+  /* Wood & dark tones */
+  --antique-brass: #8a7040;
+  --mahogany: #241610;
+  --brick-oxblood: #3a120b;
+  --obsidian: #080706;
 
-  /* Semantic aliases */
-  --background: var(--ivory);
-  --foreground: var(--espresso);
-  --surface: var(--ivory);
-  --surface-muted: #f0e8dc;
-  --border: #e5dcc8;
-  --border-strong: #d4c4a8;
-  --muted: #5c4f45;
+  /* Semantic aliases — Default Primary Dark Theme */
+  --background: #080706;
+  --foreground: #f8f3e9;
+  --surface: #14110e;
+  --surface-muted: #1c1713;
+  --border: rgba(212, 175, 55, 0.15);
+  --border-strong: rgba(212, 175, 55, 0.35);
+  --muted: #a69888;
   --accent: var(--antique-gold);
   --accent-fill: var(--aged-gold);
-  --accent-on-fill: var(--espresso);
+  --accent-on-fill: #080706;
   --link: var(--antique-gold);
-  --link-hover: var(--mahogany);
+  --link-hover: var(--champagne-sand);
   --focus-ring: var(--antique-gold);
 
   /*
@@ -175,18 +200,6 @@ body.theme-dark {
   --color-antique-brass: var(--antique-brass);
   --color-mahogany: var(--mahogany);
   --color-brick-oxblood: var(--brick-oxblood);
-  --color-obsidian: var(--obsidian);
-
-  --color-obsidian-canvas: var(--obsidian-canvas);
-  --color-obsidian-card: var(--obsidian-card);
-  --color-obsidian-elevated: var(--obsidian-elevated);
-  --color-mahogany-noir: var(--mahogany-noir);
-  --color-brick-vignette: var(--brick-vignette);
-  --color-emerald-velvet: var(--emerald-velvet);
-  --color-emerald-deep: var(--emerald-deep);
-  --color-gold-foil: var(--gold-foil);
-  --color-champagne-gold: var(--champagne-gold);
-  --color-linen-cream: var(--linen-cream);
 
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
@@ -198,7 +211,9 @@ body.theme-dark {
   --color-accent-on-fill: var(--accent-on-fill);
 
   --font-sans: var(--font-ui);
+  --font-serif: var(--font-display);
   --font-display: var(--font-display);
+  --font-mono: var(--font-ui);
   --font-arabic: var(--font-arabic);
 
   --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
@@ -232,24 +247,49 @@ body.theme-dark {
   --color-preloader-cream: var(--preloader-cream);
 }
 
+*,
+*::before,
+*::after {
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+}
+
 html {
-  color-scheme: light;
+  color-scheme: dark;
+  background-color: #080706;
+  color: #f8f3e9;
   /* Prevent horizontal scrollbar from any 100vw full-bleed section */
   overflow-x: hidden;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-ui), system-ui, sans-serif;
+  background-color: #080706;
+  color: #f8f3e9;
+  font-family: var(--font-ui), Inter, system-ui, sans-serif;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
 }
 
-.font-display {
+.font-display,
+.font-serif {
   font-family: var(--font-display), "Cormorant Garamond", Georgia, serif;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+}
+
+.font-sans,
+.font-mono {
+  font-family: var(--font-ui), Inter, system-ui, sans-serif;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
 }
 
 .font-arabic {
   font-family: var(--font-arabic), "Noto Naskh Arabic", serif;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
 }
 
 /* Center-growing nav underline */

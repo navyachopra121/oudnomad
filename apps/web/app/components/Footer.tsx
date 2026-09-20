@@ -3,26 +3,32 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import Container from './Container';
+import { useCurrency } from './concierge/CurrencyContext';
 
 const SHOP_LINKS = [
-  { label: 'All fragrances', href: '/search' },
-  { label: 'Collections', href: '/search' },
-  { label: 'Wishlist', href: '/account/wishlist' },
+  { label: 'All Fragrances', href: '/collections' },
+  { label: 'Royal Oud & Extrait', href: '/collections/oud' },
+  { label: 'Pure Concentrated Attars', href: '/collections/attars' },
+  { label: 'Bakhoor & Incense', href: '/collections/bakhoor' },
+  { label: 'Saved Wishlist', href: '/account/wishlist' },
 ];
 
 const CARE_LINKS = [
-  { label: 'Store locator', href: '/stores' },
-  { label: 'Track order', href: '/track-order' },
-  { label: 'Contact', href: 'mailto:support@oudnomad.com' },
+  { label: 'Order Tracking Dossier', href: '/account/orders' },
+  { label: 'Collector Appraisals', href: '/reviews' },
+  { label: 'Store Locator & Atelier', href: '/stores' },
+  { label: 'Atelier Concierge', href: 'mailto:concierge@oudnomad.com' },
 ];
 
 const LEGAL_LINKS = [
-  { label: 'Privacy', href: '/legal/privacy' },
-  { label: 'Terms', href: '/legal/terms' },
-  { label: 'Refunds', href: '/legal/refund-policy' },
+  { label: 'Privacy Policy', href: '/legal/privacy' },
+  { label: 'Terms of Service', href: '/legal/terms' },
+  { label: 'Shipping & Delivery', href: '/legal/shipping' },
+  { label: 'Returns & Refunds', href: '/legal/refund-policy' },
 ];
 
 export default function Footer() {
+  const { currency, setIsModalOpen } = useCurrency();
   // Mobile accordion open states
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
@@ -160,7 +166,18 @@ export default function Footer() {
         <Container className="py-4 md:py-6">
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-[11px] md:text-xs text-ivory/45">
             <p>© {new Date().getFullYear()} Oud Nomad. All rights reserved.</p>
-            <p className="text-ivory/40">support@oudnomad.com · grievance@oudnomad.com</p>
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase tracking-wider text-champagne-sand hover:text-ivory transition-colors border border-ivory/20 hover:border-champagne-sand/50 rounded-xs"
+              >
+                <span>{currency.flag}</span>
+                <span>{currency.code} ({currency.symbol})</span>
+                <span className="text-[9px] opacity-60 ml-0.5">▼</span>
+              </button>
+              <p className="text-ivory/40">support@oudnomad.com · grievance@oudnomad.com</p>
+            </div>
           </div>
         </Container>
       </div>

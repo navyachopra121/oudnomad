@@ -3,8 +3,12 @@ import { Cormorant_Garamond, Inter, Noto_Naskh_Arabic } from "next/font/google";
 import "./globals.css";
 import Footer from "./components/Footer";
 import CookieConsent from "./components/CookieConsent";
-import Preloader from "./components/Preloader"
-
+import Preloader from "./components/Preloader";
+import { CartProvider } from "./components/cart/CartContext";
+import CartDrawer from "./components/cart/CartDrawer";
+import { AuthProvider } from "./components/auth/AuthContext";
+import { CurrencyProvider } from "./components/concierge/CurrencyContext";
+import CurrencySelectorModal from "./components/concierge/CurrencySelectorModal";
 
 const display = Cormorant_Garamond({
   variable: "--font-display",
@@ -67,10 +71,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground" suppressHydrationWarning>
-        <Preloader />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <CookieConsent />
+        <AuthProvider>
+          <CurrencyProvider>
+            <CartProvider>
+              <Preloader />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <CookieConsent />
+              <CartDrawer />
+              <CurrencySelectorModal />
+            </CartProvider>
+          </CurrencyProvider>
+        </AuthProvider>
       </body>
     </html>
   );

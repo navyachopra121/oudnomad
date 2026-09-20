@@ -40,7 +40,7 @@ export default function AdminAuditLogsPage() {
       header: 'Action',
       cell: (row) => (
         <span className="px-2.5 py-1 text-[11px] font-bold uppercase rounded-md bg-stone-800 text-amber-400 border border-stone-700">
-          {row.action}
+          {row.actionType || row.action}
         </span>
       ),
     },
@@ -126,7 +126,7 @@ export default function AdminAuditLogsPage() {
 
             <div className="text-xs space-y-2">
               <div><span className="text-stone-400">Log ID:</span> <span className="font-mono text-stone-200">{selectedLog.id}</span></div>
-              <div><span className="text-stone-400">Action:</span> <span className="font-bold text-amber-400">{selectedLog.action}</span></div>
+              <div><span className="text-stone-400">Action:</span> <span className="font-bold text-amber-400">{selectedLog.actionType || selectedLog.action}</span></div>
               <div><span className="text-stone-400">Actor Admin ID:</span> <span className="font-mono text-stone-200">{selectedLog.actorId}</span></div>
               <div><span className="text-stone-400">Target:</span> <span className="font-semibold text-stone-200">{selectedLog.targetType} ({selectedLog.targetId})</span></div>
             </div>

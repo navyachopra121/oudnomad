@@ -11,6 +11,8 @@ import CollectionsMegaMenu from './CollectionsMegaMenu';
 import { IconBag, IconHeart, IconMenu, IconSearch, IconUser } from './icons';
 import MobileNavDrawer from './MobileNavDrawer';
 import { useHeaderScroll } from './use-header-scroll';
+import { useCart } from '../cart/CartContext';
+import { useCurrency } from '../concierge/CurrencyContext';
 
 type CategoryNode = {
   id: string;
@@ -28,6 +30,8 @@ const FALLBACK_CATEGORIES: CategoryNode[] = [
 export default function SiteHeader() {
   const router = useRouter();
   const { announcementVisible, compact, reduceMotion } = useHeaderScroll();
+  const { openDrawer, totalItems } = useCart();
+  const { currency, setIsModalOpen } = useCurrency();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -112,7 +116,7 @@ export default function SiteHeader() {
                   className="relative z-30 object-contain max-w-none transition-all duration-[550ms] drop-shadow-sm"
                   style={{
                     height: compact ? '48px' : '74px',
-                    transform: compact ? 'translateY(0)' : 'translateY(-12px)',
+                    transform: compact ? 'translateY(0)' : 'translateY(0)',
                     width: 'auto',
                     transitionTimingFunction: 'var(--ease-luxury)',
                   }}
@@ -121,6 +125,15 @@ export default function SiteHeader() {
 
               {/* Right actions */}
               <div className="flex items-center gap-0 sm:gap-1 justify-self-end">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(true)}
+                  className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-xs uppercase tracking-wider text-antique-gold hover:text-espresso transition-colors font-medium border border-antique-gold/20 hover:border-antique-gold/50 rounded-xs mr-1"
+                  title="Select Currency & Region"
+                >
+                  <span className="text-sm">{currency.flag}</span>
+                  <span>{currency.code}</span>
+                </button>
                 <button
                   type="button"
                   className="min-w-[44px] min-h-[44px] flex items-center justify-center text-antique-gold hover:text-espresso active:text-espresso transition-colors duration-[400ms]"
@@ -145,13 +158,19 @@ export default function SiteHeader() {
                 >
                   <IconUser className="w-[1.15rem] h-[1.15rem]" />
                 </Link>
-                <Link
-                  href="/cart"
-                  className="min-w-[44px] min-h-[44px] flex items-center justify-center text-antique-gold hover:text-espresso active:text-espresso transition-colors duration-[400ms]"
+                <button
+                  type="button"
+                  onClick={openDrawer}
+                  className="relative min-w-[44px] min-h-[44px] flex items-center justify-center text-antique-gold hover:text-espresso active:text-espresso transition-colors duration-[400ms]"
                   aria-label="Shopping bag"
                 >
                   <IconBag className="w-[1.15rem] h-[1.15rem]" />
-                </Link>
+                  {totalItems > 0 && (
+                    <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] bg-aged-gold text-accent-on-fill text-[10px] font-mono font-bold rounded-full flex items-center justify-center px-1">
+                      {totalItems}
+                    </span>
+                  )}
+                </button>
               </div>
             </div>
 

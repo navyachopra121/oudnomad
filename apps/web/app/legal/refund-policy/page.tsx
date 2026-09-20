@@ -1,53 +1,75 @@
-import React from 'react';
+'use client';
 
-export const metadata = {
-  title: 'Refund & Return Policy | OudNomad',
-  description: 'OudNomad Refund & Return Policy detailing statutory withdrawal windows, return procedures, and Stripe refund processing.',
-};
+import React from 'react';
+import Link from 'next/link';
+import SiteHeader from '../../components/header/SiteHeader';
+import Container from '../../components/Container';
 
 export default function RefundPolicyPage() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 text-stone-800">
-      {/* Attorney Review Disclaimer Banner */}
-      <div className="mb-8 p-4 bg-amber-50 border-l-4 border-amber-500 text-amber-900 text-sm rounded">
-        <strong>DRAFT — NOT LEGAL ADVICE — REQUIRES ATTORNEY REVIEW BEFORE PUBLISHING</strong>
-        <p className="mt-1">
-          Return/refund windows and disclosure requirements are specifically regulated under India's Consumer Protection (E-Commerce) Rules 2020 and statutory rights in destination countries (e.g. EU 14-day withdrawal right). Must be reviewed by a lawyer before publishing.
-        </p>
-      </div>
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-serif">
+      <SiteHeader />
 
-      <h1 className="text-3xl font-serif font-bold text-stone-900 mb-6">Refund & Return Policy</h1>
-      <p className="text-sm text-stone-500 mb-8">Last Updated: September 13, 2026</p>
+      <main className="flex-1 w-full py-8 sm:py-16">
+        <Container className="max-w-4xl space-y-10 font-sans">
+          {/* Breadcrumbs */}
+          <nav className="text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-muted flex flex-wrap items-center gap-1.5 sm:gap-2 leading-relaxed py-1">
+            <Link href="/" className="hover:text-espresso transition-colors shrink-0">Home</Link>
+            <span className="opacity-50">/</span>
+            <span className="text-muted shrink-0">Legal</span>
+            <span className="opacity-50">/</span>
+            <span className="text-antique-gold font-medium shrink-0">Returns & Refunds</span>
+          </nav>
 
-      <section className="space-y-6">
-        <div>
-          <h2 className="text-xl font-semibold mb-2">1. Return Window</h2>
-          <p className="text-stone-600 leading-relaxed">
-            Items may be returned within 14 days of delivery. For EU residents, a non-waivable 14-day statutory right of withdrawal applies.
-          </p>
-        </div>
+          {/* Header */}
+          <div className="border-b border-border pb-6 space-y-2">
+            <span className="text-[10px] tracking-[0.28em] uppercase text-antique-gold font-semibold block">
+              Atelier Guarantee & Consumer Rights
+            </span>
+            <h1 className="font-display text-3xl sm:text-4xl text-espresso tracking-tight">
+              Returns, Exchanges & Refund Policy
+            </h1>
+            <p className="text-xs text-muted">
+              Last Updated: September 17, 2026 • Honoring 14-Day Statutory Returns
+            </p>
+          </div>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-2">2. Condition & Eligibility</h2>
-          <p className="text-stone-600 leading-relaxed">
-            Perfumes, attars, and luxury items must be unused, sealed in original packaging, with intact security tags to qualify for a full refund.
-          </p>
-        </div>
+          <div className="space-y-8 text-xs sm:text-sm text-espresso/90 leading-relaxed">
+            <section className="space-y-3">
+              <h2 className="font-display text-xl text-espresso">1. 14-Day Return Window</h2>
+              <p>
+                We offer a 14-day return window from the timestamp of courier delivery. Collectors in the European Union benefit from an unconditional 14-day statutory right of withdrawal.
+              </p>
+            </section>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-2">3. Refund Processing</h2>
-          <p className="text-stone-600 leading-relaxed">
-            Approved refunds are credited to the original payment method via Stripe. Order status transitions to <code>REFUNDED</code> once Stripe webhook verification completes.
-          </p>
-        </div>
+            <section className="space-y-3">
+              <h2 className="font-display text-xl text-espresso">2. Flacon Integrity & Conditions for Return</h2>
+              <p>
+                Due to the intimate, sanitary, and volatile nature of haute perfumery and concentrated attars:
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-xs text-muted">
+                <li>Flacons must remain unopened in their original coffret with wax seal and tamper-evident band intact.</li>
+                <li>Crystal dipsticks and presentation droppers must not have contacted human skin.</li>
+                <li>Discovery sample sets included complimentary with select orders may be sampled prior to opening the main flacon.</li>
+              </ul>
+            </section>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-2">4. Damaged or Defective Goods</h2>
-          <p className="text-stone-600 leading-relaxed">
-            If an item arrives damaged, report to <code>support@oudnomad.com</code> within 48 hours with photograph evidence for immediate replacement or full refund.
-          </p>
-        </div>
-      </section>
+            <section className="space-y-3">
+              <h2 className="font-display text-xl text-espresso">3. Transit Damage Guarantee</h2>
+              <p>
+                In the rare event that a crystal bottle or coffret sustains damage during courier transit, contact us at <a href="mailto:support@oudnomad.com" className="text-antique-gold underline">support@oudnomad.com</a> within 48 hours of delivery with photographic documentation. We will immediately dispatch a priority replacement or issue a full refund.
+              </p>
+            </section>
+
+            <section className="space-y-3">
+              <h2 className="font-display text-xl text-espresso">4. Refund Issuance & Timelines</h2>
+              <p>
+                Upon inspection of the returned flacon at our Dubai atelier, refunds are credited back to the original payment source (Stripe / Telr / Credit Card) within 3 to 5 business days.
+              </p>
+            </section>
+          </div>
+        </Container>
+      </main>
     </div>
   );
 }

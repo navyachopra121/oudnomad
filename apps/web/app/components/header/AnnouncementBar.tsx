@@ -42,7 +42,7 @@ export default function AnnouncementBar({ visible, reduceMotion }: Props) {
               <IconPackage className="w-3.5 h-3.5 shrink-0 text-antique-gold" />
               <span>Track Order</span>
             </Link>
-            <div className="inline-flex items-center gap-1 sm:gap-1.5">
+            {/* <div className="inline-flex items-center gap-1 sm:gap-1.5">
               <IconGlobe className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-antique-gold" aria-hidden />
               <button
                 type="button"
@@ -66,7 +66,7 @@ export default function AnnouncementBar({ visible, reduceMotion }: Props) {
                   ع
                 </span>
               </button>
-            </div>
+            </div> */}
           </nav>
         </div>
       </div>
