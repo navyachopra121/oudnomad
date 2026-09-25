@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { IconClose } from './icons';
 
 type CategoryNode = {
@@ -18,7 +18,9 @@ type Props = {
   reduceMotion: boolean;
 };
 
-export default function MobileNavDrawer({ open, onClose, categories, reduceMotion }: Props) {
+export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) {
+  const [catalogExpanded, setCatalogExpanded] = useState(false);
+
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -33,16 +35,16 @@ export default function MobileNavDrawer({ open, onClose, categories, reduceMotio
     };
   }, [open, onClose]);
 
-  const slide = reduceMotion ? 'none' : 'transform 550ms var(--ease-luxury)';
+  const slide = reduceMotion ? 'none' : 'transform 400ms cubic-bezier(0.16, 1, 0.3, 1)';
 
   return (
     <>
       <div
-        className="fixed inset-0 z-[60] bg-obsidian/40 lg:hidden"
+        className="fixed inset-0 z-[60] bg-black/70 lg:hidden backdrop-blur-xs"
         style={{
           opacity: open ? 1 : 0,
           pointerEvents: open ? 'auto' : 'none',
-          transition: reduceMotion ? 'none' : 'opacity 400ms var(--ease-luxury)',
+          transition: reduceMotion ? 'none' : 'opacity 300ms ease',
         }}
         aria-hidden={!open}
         onClick={onClose}
@@ -52,79 +54,146 @@ export default function MobileNavDrawer({ open, onClose, categories, reduceMotio
         role="dialog"
         aria-modal="true"
         aria-label="Site menu"
-        className="fixed inset-y-0 left-0 z-[70] w-[min(100vw-3rem,22rem)] bg-ivory border-r border-border shadow-2xl lg:hidden flex flex-col"
+        className="fixed inset-y-0 left-0 z-[70] w-[min(100vw-3rem,20rem)] bg-[#000000] border-r border-[#d89527]/30 shadow-2xl lg:hidden flex flex-col text-white"
         style={{
           transform: open ? 'translateX(0)' : 'translateX(-100%)',
           transition: slide,
         }}
         hidden={!open}
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <span className="font-display text-xl tracking-[0.12em]">Menu</span>
+        {/* Top bar with close X */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[#d89527]/20">
+          <span className="font-display text-lg tracking-[0.2em] text-[#d89527] uppercase font-bold">
+            OUD NOMAD
+          </span>
           <button
             type="button"
-            className="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-antique-gold hover:text-espresso active:text-espresso transition-colors duration-[400ms]"
+            className="min-w-[40px] min-h-[40px] -mr-2 flex items-center justify-center text-[#d89527] hover:text-white transition-colors"
             aria-label="Close menu"
             onClick={onClose}
           >
-            <IconClose className="w-5 h-5" />
+            <IconClose className="w-6 h-6" />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-5 py-6 space-y-6">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.24em] text-muted mb-3">Collections</p>
-            <ul className="space-y-2">
-              {categories.map((cat) => (
-                <li key={cat.id}>
-                  <Link
-                    href={`/search?category=${encodeURIComponent(cat.slug)}`}
-                    className="font-display text-lg text-espresso hover:text-antique-gold active:text-antique-gold block py-2.5"
-                    onClick={onClose}
-                  >
-                    {cat.name}
-                  </Link>
-                  {cat.children.length > 0 ? (
-                    <ul className="pl-3 mt-1 space-y-1 border-l border-border">
-                      {cat.children.map((child) => (
-                        <li key={child.id}>
-                          <Link
-                            href={`/search?category=${encodeURIComponent(child.slug)}`}
-                            className="text-sm text-muted hover:text-antique-gold active:text-antique-gold block py-2"
-                            onClick={onClose}
-                          >
-                            {child.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
+        {/* Navigation list */}
+        <nav className="flex-1 overflow-y-auto px-6 py-6 space-y-4 text-xs uppercase font-semibold tracking-[0.2em]">
+          <Link
+            href="/"
+            className="block py-2.5 text-white hover:text-[#d89527] transition-colors border-b border-white/10"
+            onClick={onClose}
+          >
+            HOME
+          </Link>
+
+          {/* CATALOG Accordion */}
+          <div className="border-b border-white/10 pb-2">
+            <button
+              type="button"
+              onClick={() => setCatalogExpanded((v) => !v)}
+              className="w-full flex items-center justify-between py-2.5 text-white hover:text-[#d89527] transition-colors"
+            >
+              <span>CATALOG</span>
+              <span className="text-[#d89527] text-sm font-light">
+                {catalogExpanded ? '−' : '+'}
+              </span>
+            </button>
+
+            {catalogExpanded && (
+              <div className="pl-4 py-2 space-y-2.5 text-[11px] font-normal tracking-[0.16em]">
+                <Link
+                  href="/collections"
+                  className="block text-white/80 hover:text-[#d89527] transition-colors"
+                  onClick={onClose}
+                >
+                  All Fragrances
+                </Link>
+                <Link
+                  href="/collections/perfumes"
+                  className="block text-white/80 hover:text-[#d89527] transition-colors"
+                  onClick={onClose}
+                >
+                  Perfumes
+                </Link>
+                <Link
+                  href="/collections/attars"
+                  className="block text-white/80 hover:text-[#d89527] transition-colors"
+                  onClick={onClose}
+                >
+                  Attars & Oils
+                </Link>
+                <Link
+                  href="/collections/bakhoor"
+                  className="block text-white/80 hover:text-[#d89527] transition-colors"
+                  onClick={onClose}
+                >
+                  Bakhoor
+                </Link>
+              </div>
+            )}
           </div>
 
-          <div className="space-y-3 pt-4 border-t border-border">
-            <Link href="/search" className="nav-link block text-xs uppercase tracking-[0.2em] py-2" onClick={onClose}>
-              Search catalog
-            </Link>
-            <Link href="/#heritage" className="nav-link block text-xs uppercase tracking-[0.2em] py-2" onClick={onClose}>
-              Our story
-            </Link>
-            <Link
-              href="/account/wishlist"
-              className="nav-link block text-xs uppercase tracking-[0.2em] py-2"
-              onClick={onClose}
-            >
-              Wishlist
-            </Link>
-          </div>
+          <Link
+            href="/about"
+            className="block py-2.5 text-white hover:text-[#d89527] transition-colors border-b border-white/10"
+            onClick={onClose}
+          >
+            ABOUT US
+          </Link>
+
+          <Link
+            href="/contact"
+            className="block py-2.5 text-white hover:text-[#d89527] transition-colors border-b border-white/10"
+            onClick={onClose}
+          >
+            CONTACT
+          </Link>
+
+          <Link
+            href="/account"
+            className="block py-2.5 text-[#d89527] hover:text-white transition-colors"
+            onClick={onClose}
+          >
+            MY ACCOUNT
+          </Link>
         </nav>
 
-        <div className="px-5 py-4 border-t border-border bg-surface-muted/50">
-          <p className="font-arabic text-sm text-muted text-center" dir="rtl" lang="ar">
-            عود نوماد — دار عطور
-          </p>
+        {/* Social Box Bottom Bar */}
+        <div className="p-4 border-t border-[#d89527]/20 bg-[#0a0a0a]">
+          <div className="grid grid-cols-4 gap-1.5 text-center text-[9px] tracking-wider text-[#d89527] font-semibold">
+            <a
+              href="https://www.instagram.com/oudnomaddubai?stkn=NWtkMGc4ZmFvc3pv&utm_source=qr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2 border border-[#d89527]/30 hover:border-[#d89527] hover:bg-[#d89527] hover:text-black transition-all"
+            >
+              INSTAGRAM
+            </a>
+            <a
+              href="https://x.com/oudnomad?s=11"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2 border border-[#d89527]/30 hover:border-[#d89527] hover:bg-[#d89527] hover:text-black transition-all"
+            >
+              X / TWITTER
+            </a>
+            <a
+              href="https://www.linkedin.com/posts/oud-nomad_oudnomad-luxuryfragrance-activity-7508052849604435968-vmRv?utm_source=share&utm_medium=member_ios&rcm=ACoAAEW4eq0Bm-115qea9ir7xuPfrWztpoN0l_4"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2 border border-[#d89527]/30 hover:border-[#d89527] hover:bg-[#d89527] hover:text-black transition-all"
+            >
+              LINKEDIN
+            </a>
+            <a
+              href="https://pin.it/7xTiv852Y"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2 border border-[#d89527]/30 hover:border-[#d89527] hover:bg-[#d89527] hover:text-black transition-all"
+            >
+              PINTEREST
+            </a>
+          </div>
         </div>
       </aside>
     </>

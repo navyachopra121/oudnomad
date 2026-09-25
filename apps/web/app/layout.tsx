@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter, Noto_Naskh_Arabic } from "next/font/google";
+import { Cormorant_Garamond, Poppins, Noto_Naskh_Arabic } from "next/font/google";
 import "./globals.css";
 import Footer from "./components/Footer";
 import CookieConsent from "./components/CookieConsent";
@@ -16,9 +16,10 @@ const display = Cormorant_Garamond({
   weight: ["400", "500", "600", "700"],
 });
 
-const ui = Inter({
+const ui = Poppins({
   variable: "--font-ui",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const arabic = Noto_Naskh_Arabic({

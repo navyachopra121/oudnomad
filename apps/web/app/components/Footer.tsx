@@ -1,183 +1,171 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import Container from './Container';
 import { useCurrency } from './concierge/CurrencyContext';
 
-const SHOP_LINKS = [
-  { label: 'All Fragrances', href: '/collections' },
-  { label: 'Royal Oud & Extrait', href: '/collections/oud' },
-  { label: 'Pure Concentrated Attars', href: '/collections/attars' },
-  { label: 'Bakhoor & Incense', href: '/collections/bakhoor' },
-  { label: 'Saved Wishlist', href: '/account/wishlist' },
-];
-
-const CARE_LINKS = [
-  { label: 'Order Tracking Dossier', href: '/account/orders' },
-  { label: 'Collector Appraisals', href: '/reviews' },
-  { label: 'Store Locator & Atelier', href: '/stores' },
-  { label: 'Atelier Concierge', href: 'mailto:concierge@oudnomad.com' },
-];
-
-const LEGAL_LINKS = [
-  { label: 'Privacy Policy', href: '/legal/privacy' },
-  { label: 'Terms of Service', href: '/legal/terms' },
-  { label: 'Shipping & Delivery', href: '/legal/shipping' },
-  { label: 'Returns & Refunds', href: '/legal/refund-policy' },
+const QUICK_LINKS = [
+  { label: 'CATALOGUE', href: '/collections' },
+  { label: 'GCC SHIPPING', href: '/collections' },
+  { label: 'MY ACCOUNT', href: '/account' },
+  { label: 'ABOUT US', href: '/about' },
+  { label: 'PRIVACY POLICY', href: '/legal/privacy' },
+  { label: 'SHIPPING & RETURNS', href: '/legal/shipping' },
+  { label: 'TERMS OF SERVICE', href: '/legal/terms' },
 ];
 
 export default function Footer() {
   const { currency, setIsModalOpen } = useCurrency();
-  // Mobile accordion open states
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
 
-  const toggleSection = (sectionKey: string) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [sectionKey]: !prev[sectionKey],
-    }));
+  const handleSubscribe = (e: FormEvent) => {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubscribed(true);
+      setEmail('');
+    }
   };
 
   return (
-    <footer className="bg-obsidian text-ivory/75 mt-auto border-t border-antique-gold/35">
-      <div className="header-damask-edge opacity-60" aria-hidden />
-
-      <Container className="py-10 md:py-16 lg:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-          {/* Brand Column */}
-          <div className="lg:col-span-1 border-b border-ivory/10 pb-6 md:border-none md:pb-0">
-            <p className="font-display text-xl md:text-2xl tracking-[0.2em] text-ivory">OUD NOMAD</p>
-            <p className="font-arabic text-xs md:text-sm text-ivory/60 mt-1.5" dir="rtl" lang="ar">
-              دار عطور عربية
-            </p>
-            <p className="mt-3 md:mt-5 text-xs md:text-sm leading-relaxed text-ivory/65 max-w-xs">
-              Artisanal oud, attars, and mukhallat — composed in Dubai for those who enter expecting another world.
-            </p>
-            <p className="mt-4 md:mt-6 text-[11px] md:text-xs uppercase tracking-[0.18em] text-champagne-sand/80">
-              Visit us in Dubai →{' '}
-              <Link href="/stores" className="underline-offset-4 hover:underline active:underline">
-                Store locator
-              </Link>
-            </p>
-          </div>
-
-          {/* Shop Column (Accordion on mobile) */}
-          <div className="border-b border-ivory/10 pb-4 md:border-none md:pb-0">
-            <button
-              type="button"
-              onClick={() => toggleSection('shop')}
-              className="w-full flex items-center justify-between text-left text-xs uppercase tracking-[0.22em] text-champagne-sand font-medium md:cursor-default"
-              aria-expanded={!!openSections['shop']}
-            >
-              <span>Shop</span>
-              <span className="md:hidden text-champagne-sand/70 text-sm font-light">
-                {openSections['shop'] ? '−' : '+'}
-              </span>
-            </button>
-            <ul
-              className={`${
-                openSections['shop'] ? 'block' : 'hidden'
-              } md:block mt-3 space-y-2.5 text-xs md:text-sm transition-all duration-300`}
-            >
-              {SHOP_LINKS.map((l) => (
-                <li key={l.href + l.label}>
-                  <Link
-                    href={l.href}
-                    className="block py-1 hover:text-champagne-sand active:text-champagne-sand transition-colors duration-[400ms]"
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Client Care Column (Accordion on mobile) */}
-          <div className="border-b border-ivory/10 pb-4 md:border-none md:pb-0">
-            <button
-              type="button"
-              onClick={() => toggleSection('care')}
-              className="w-full flex items-center justify-between text-left text-xs uppercase tracking-[0.22em] text-champagne-sand font-medium md:cursor-default"
-              aria-expanded={!!openSections['care']}
-            >
-              <span>Client Care</span>
-              <span className="md:hidden text-champagne-sand/70 text-sm font-light">
-                {openSections['care'] ? '−' : '+'}
-              </span>
-            </button>
-            <ul
-              className={`${
-                openSections['care'] ? 'block' : 'hidden'
-              } md:block mt-3 space-y-2.5 text-xs md:text-sm transition-all duration-300`}
-            >
-              {CARE_LINKS.map((l) => (
-                <li key={l.label}>
-                  <Link
-                    href={l.href}
-                    className="block py-1 hover:text-champagne-sand active:text-champagne-sand transition-colors duration-[400ms]"
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Legal Column (Accordion on mobile) */}
+    <footer className="bg-[#000000] text-white border-t border-[#d89527]/30 mt-auto font-sans">
+      <Container className="py-14 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12">
+          {/* Col 1: Brand Logo & About Oud Nomad */}
           <div>
-            <button
-              type="button"
-              onClick={() => toggleSection('legal')}
-              className="w-full flex items-center justify-between text-left text-xs uppercase tracking-[0.22em] text-champagne-sand font-medium md:cursor-default"
-              aria-expanded={!!openSections['legal']}
-            >
-              <span>Legal</span>
-              <span className="md:hidden text-champagne-sand/70 text-sm font-light">
-                {openSections['legal'] ? '−' : '+'}
-              </span>
-            </button>
-            <ul
-              className={`${
-                openSections['legal'] ? 'block' : 'hidden'
-              } md:block mt-3 space-y-2.5 text-xs md:text-sm transition-all duration-300`}
-            >
-              {LEGAL_LINKS.map((l) => (
-                <li key={l.href}>
+            <Link href="/" className="inline-block mb-4">
+              <Image
+                src="/logo.png"
+                alt="Oud Nomad Dubai"
+                width={180}
+                height={60}
+                className="object-contain max-h-16 w-auto"
+              />
+            </Link>
+            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#d89527] font-semibold mb-3">
+              ABOUT OUD NOMAD
+            </h3>
+            <p className="text-xs leading-relaxed text-white/80 font-normal">
+              Oud Nomad Dubai offers artisanal luxury oriental perfumes, aged pure attars, and bespoke bakhoor incense crafted with rare ingredients for connoisseurs worldwide.
+            </p>
+          </div>
+
+          {/* Col 2: Customer Care & Express Shipping */}
+          <div>
+            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#d89527] font-semibold mb-4">
+              CUSTOMER CARE
+            </h3>
+            <div className="text-xs leading-relaxed text-white/80 space-y-2">
+              <p>Email: <a href="mailto:info@oudnomad.com" className="hover:text-[#d89527] transition-colors">info@oudnomad.com</a></p>
+              <p>Phone: <a href="tel:+97140000000" className="hover:text-[#d89527] transition-colors">+971 4 000 0000</a></p>
+              <p className="pt-1 text-[#d89527]">Express Delivery: UAE, KSA, Qatar, Kuwait, Oman & Bahrain</p>
+            </div>
+          </div>
+
+          {/* Col 3: Quick Links */}
+          <div>
+            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#d89527] font-semibold mb-4">
+              QUICK LINKS
+            </h3>
+            <ul className="space-y-2 text-xs font-medium tracking-[0.14em]">
+              {QUICK_LINKS.map((link) => (
+                <li key={link.href + link.label}>
                   <Link
-                    href={l.href}
-                    className="block py-1 hover:text-champagne-sand active:text-champagne-sand transition-colors duration-[400ms]"
+                    href={link.href}
+                    className="text-white/80 hover:text-[#d89527] transition-colors uppercase"
                   >
-                    {l.label}
+                    {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-            <div className="mt-6 md:mt-8 flex gap-4 text-[10px] uppercase tracking-[0.16em] text-ivory/45">
-              <span>Visa</span>
-              <span>Mastercard</span>
-              <span>Apple Pay</span>
+          </div>
+
+          {/* Col 4: Newsletter & Social */}
+          <div>
+            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#d89527] font-semibold mb-4">
+              GET NOTIFIED ABOUT NEW PRODUCTS
+            </h3>
+            {subscribed ? (
+              <p className="text-xs text-[#d89527] font-medium">Thank you for joining our inner circle.</p>
+            ) : (
+              <form onSubmit={handleSubscribe} className="space-y-3">
+                <div className="relative border-b border-white/40 focus-within:border-[#d89527] transition-colors">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="ENTER YOUR EMAIL"
+                    className="w-full bg-transparent py-2 text-xs text-white placeholder:text-white/40 uppercase tracking-wider focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-[#d89527] hover:text-white transition-colors"
+                    aria-label="Subscribe"
+                  >
+                    ➔
+                  </button>
+                </div>
+              </form>
+            )}
+
+            <div className="mt-8 flex flex-wrap items-center gap-3 text-[11px] tracking-wider text-[#d89527] font-semibold uppercase">
+              <a
+                href="https://www.instagram.com/oudnomaddubai?stkn=NWtkMGc4ZmFvc3pv&utm_source=qr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                INSTAGRAM
+              </a>
+              <span>·</span>
+              <a
+                href="https://x.com/oudnomad?s=11"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                X / TWITTER
+              </a>
+              <span>·</span>
+              <a
+                href="https://www.linkedin.com/posts/oud-nomad_oudnomad-luxuryfragrance-activity-7508052849604435968-vmRv?utm_source=share&utm_medium=member_ios&rcm=ACoAAEW4eq0Bm-115qea9ir7xuPfrWztpoN0l_4"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                LINKEDIN
+              </a>
+              <span>·</span>
+              <a
+                href="https://pin.it/7xTiv852Y"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                PINTEREST
+              </a>
             </div>
           </div>
         </div>
       </Container>
 
-      <div className="border-t border-ivory/10">
-        <Container className="py-4 md:py-6">
-          <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-[11px] md:text-xs text-ivory/45">
-            <p>© {new Date().getFullYear()} Oud Nomad. All rights reserved.</p>
-            <div className="flex items-center gap-4">
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(true)}
-                className="flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase tracking-wider text-champagne-sand hover:text-ivory transition-colors border border-ivory/20 hover:border-champagne-sand/50 rounded-xs"
-              >
-                <span>{currency.flag}</span>
-                <span>{currency.code} ({currency.symbol})</span>
-                <span className="text-[9px] opacity-60 ml-0.5">▼</span>
-              </button>
-              <p className="text-ivory/40">support@oudnomad.com · grievance@oudnomad.com</p>
-            </div>
+      {/* Bottom Copyright Bar */}
+      <div className="border-t border-white/10 py-6 text-center text-[11px] text-white/50 tracking-wider">
+        <Container className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p>&copy; {new Date().getFullYear()} Oud Nomad Private Limited. All Rights Reserved.</p>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] uppercase tracking-wider text-[#d89527] border border-[#d89527]/30 rounded-xs hover:text-white transition-colors"
+            >
+              <span>{currency.flag}</span>
+              <span>{currency.code} ({currency.symbol})</span>
+            </button>
           </div>
         </Container>
       </div>

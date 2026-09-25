@@ -31,13 +31,14 @@
    * ──────────────────────────────────────────────────────────────────────────
    */
 
-  /* PRIMARY DEFAULT DARK LUXURY PALETTE */
-  --ivory: #080706;                 /* Rich obsidian canvas */
-  --espresso: #f8f3e9;              /* Linen cream text */
+  /* PRIMARY DEFAULT DARK LUXURY PALETTE (oudarabiadubai.com exact match) */
+  --ivory: #000000;                 /* Pitch black canvas */
+  --espresso: #ffffff;              /* Crisp white text */
 
-  /* Gold — metallic gold text/icons & warm gold fills */
-  --antique-gold: #d4af37;
-  --aged-gold: #c9a227;
+  /* Gold — signature warm gold #D89527 & metallic highlights */
+  --antique-gold: #d89527;
+  --aged-gold: #d89527;
+  --gold-accent: #d89528;
 
   /* Accent swatches */
   --deep-emerald: #0a4d3c;
@@ -45,23 +46,23 @@
 
   /* Wood & dark tones */
   --antique-brass: #8a7040;
-  --mahogany: #241610;
-  --brick-oxblood: #3a120b;
-  --obsidian: #080706;
+  --mahogany: #141414;
+  --brick-oxblood: #1e1e1e;
+  --obsidian: #000000;
 
-  /* Semantic aliases — Default Primary Dark Theme */
-  --background: #080706;
-  --foreground: #f8f3e9;
-  --surface: #14110e;
-  --surface-muted: #1c1713;
-  --border: rgba(212, 175, 55, 0.15);
-  --border-strong: rgba(212, 175, 55, 0.35);
-  --muted: #a69888;
+  /* Semantic aliases — Pitch Black + Gold Theme */
+  --background: #000000;
+  --foreground: #ffffff;
+  --surface: #0a0a0a;
+  --surface-muted: #121212;
+  --border: rgba(216, 149, 39, 0.2);
+  --border-strong: rgba(216, 149, 39, 0.4);
+  --muted: #a0a0a0;
   --accent: var(--antique-gold);
   --accent-fill: var(--aged-gold);
-  --accent-on-fill: #080706;
+  --accent-on-fill: #ffffff;
   --link: var(--antique-gold);
-  --link-hover: var(--champagne-sand);
+  --link-hover: #ffffff;
   --focus-ring: var(--antique-gold);
 
   /*
@@ -256,8 +257,8 @@ body.theme-dark {
 
 html {
   color-scheme: dark;
-  background-color: #080706;
-  color: #f8f3e9;
+  background-color: #000000;
+  color: #ffffff;
   /* Prevent horizontal scrollbar from any 100vw full-bleed section */
   overflow-x: hidden;
   font-variant-numeric: lining-nums tabular-nums;
@@ -265,9 +266,9 @@ html {
 }
 
 body {
-  background-color: #080706;
-  color: #f8f3e9;
-  font-family: var(--font-ui), Inter, system-ui, sans-serif;
+  background-color: #000000;
+  color: #ffffff;
+  font-family: var(--font-ui), Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-variant-numeric: lining-nums tabular-nums;
   font-feature-settings: "lnum" 1, "tnum" 1;
 }

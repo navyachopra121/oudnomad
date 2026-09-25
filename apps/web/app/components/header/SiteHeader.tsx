@@ -1,14 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 import { StoreApi } from '../../store-api';
 import Container from '../Container';
 import AnnouncementBar from './AnnouncementBar';
-import CollectionsMegaMenu from './CollectionsMegaMenu';
-import { IconBag, IconHeart, IconMenu, IconSearch, IconUser } from './icons';
+import { IconBag, IconMenu, IconSearch, IconUser } from './icons';
 import MobileNavDrawer from './MobileNavDrawer';
 import { useHeaderScroll } from './use-header-scroll';
 import { useCart } from '../cart/CartContext';
@@ -22,8 +20,8 @@ type CategoryNode = {
 };
 
 const FALLBACK_CATEGORIES: CategoryNode[] = [
-  { id: 'attars', name: 'Pure Attars', slug: 'attars', children: [] },
-  { id: 'oud', name: 'Oud & Mukhallat', slug: 'oud', children: [] },
+  { id: 'perfumes', name: 'All Perfumes', slug: 'perfumes', children: [] },
+  { id: 'attars', name: 'Attars & Oils', slug: 'attars', children: [] },
   { id: 'bakhoor', name: 'Bakhoor & Incense', slug: 'bakhoor', children: [] },
 ];
 
@@ -34,6 +32,7 @@ export default function SiteHeader() {
   const { currency, setIsModalOpen } = useCurrency();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [catalogOpen, setCatalogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [categories, setCategories] = useState<CategoryNode[]>(FALLBACK_CATEGORIES);
 
@@ -53,29 +52,28 @@ export default function SiteHeader() {
     setSearchOpen(false);
   };
 
-  const announcementHeight = announcementVisible ? 44 : 0;
-  const mainNavHeight = compact ? 64 : 80;
+  const announcementHeight = announcementVisible ? 36 : 0;
+  const mainNavHeight = compact ? 60 : 72;
   const spacerHeight = announcementHeight + mainNavHeight + (searchOpen ? 52 : 0);
 
   return (
     <>
-      <header className="  fixed top-0 left-0 right-0 z-50">
+      <header className="fixed top-0 left-0 right-0 z-50">
         <AnnouncementBar visible={announcementVisible} reduceMotion={reduceMotion} />
 
-        <div className="bg-ivory/95 backdrop-blur-sm border-b border-antique-gold/20 text-espresso">
+        <div className="bg-[#000000]/95 backdrop-blur-md border-b border-[#d89527]/20 text-white">
           <Container>
             <div
-              className={`grid grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-3 transition-all duration-[550ms]`}
+              className="grid grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-3 transition-all duration-500"
               style={{
                 height: mainNavHeight,
-                transitionTimingFunction: 'var(--ease-luxury)',
               }}
             >
-              {/* Left — mobile menu + desktop nav */}
-              <div className="flex items-center gap-4 lg:gap-8 justify-self-start">
+              {/* Left Side: Mobile Menu + Desktop Nav Links */}
+              <div className="flex items-center gap-3 lg:gap-6 justify-self-start">
                 <button
                   type="button"
-                  className="lg:hidden min-w-[44px] min-h-[44px] -ml-2 flex items-center justify-center text-antique-gold hover:text-espresso active:text-espresso transition-colors duration-[400ms]"
+                  className="lg:hidden min-w-[38px] min-h-[38px] -ml-1 flex items-center justify-center text-[#d89527]"
                   aria-expanded={mobileOpen}
                   aria-controls="mobile-nav-drawer"
                   aria-label="Open menu"
@@ -84,107 +82,157 @@ export default function SiteHeader() {
                   <IconMenu className="w-5 h-5" />
                 </button>
 
-                <nav aria-label="Primary" className="hidden lg:flex items-center gap-8">
-                  <CollectionsMegaMenu compact={compact} reduceMotion={reduceMotion} />
+                <button
+                  type="button"
+                  className="hidden lg:flex items-center justify-center text-white/80 hover:text-[#d89527] transition-colors pr-2"
+                  aria-label="Search"
+                  onClick={() => setSearchOpen((v) => !v)}
+                >
+                  <IconSearch className="w-4 h-4" />
+                </button>
+
+                <nav aria-label="Primary Left" className="hidden lg:flex items-center gap-6 text-[11px] font-medium tracking-[0.22em] uppercase">
                   <Link
-                    href="/#sanctuary"
-                    className="nav-link text-xs uppercase tracking-[0.22em] font-medium text-espresso"
+                    href="/"
+                    className="text-white/90 hover:text-[#d89527] transition-colors py-2"
                   >
-                    The Sanctuary
+                    HOME
                   </Link>
-                  <Link
-                    href="/#vitrine"
-                    className="nav-link text-xs uppercase tracking-[0.22em] font-medium text-espresso"
+
+                  <div
+                    className="relative group"
+                    onMouseEnter={() => setCatalogOpen(true)}
+                    onMouseLeave={() => setCatalogOpen(false)}
                   >
-                    Grand Vitrine
-                  </Link>
+                    <Link
+                      href="/collections"
+                      className="text-white/90 hover:text-[#d89527] transition-colors py-2 flex items-center gap-1"
+                    >
+                      <span>CATALOG</span>
+                      <span className="text-[9px] opacity-70">▼</span>
+                    </Link>
+
+                    {/* Dropdown Menu */}
+                    {catalogOpen && (
+                      <div className="absolute top-full left-0 w-48 bg-[#0a0a0a] border border-[#d89527]/30 shadow-2xl py-2 z-50 flex flex-col gap-0.5">
+                        <Link
+                          href="/collections"
+                          className="px-4 py-2 text-[11px] uppercase tracking-wider text-white/80 hover:text-[#d89527] hover:bg-white/5 transition-colors"
+                        >
+                          All Fragrances
+                        </Link>
+                        <Link
+                          href="/collections/perfumes"
+                          className="px-4 py-2 text-[11px] uppercase tracking-wider text-white/80 hover:text-[#d89527] hover:bg-white/5 transition-colors"
+                        >
+                          Perfumes
+                        </Link>
+                        <Link
+                          href="/collections/attars"
+                          className="px-4 py-2 text-[11px] uppercase tracking-wider text-white/80 hover:text-[#d89527] hover:bg-white/5 transition-colors"
+                        >
+                          Attars & Oils
+                        </Link>
+                        <Link
+                          href="/collections/bakhoor"
+                          className="px-4 py-2 text-[11px] uppercase tracking-wider text-white/80 hover:text-[#d89527] hover:bg-white/5 transition-colors"
+                        >
+                          Bakhoor
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 </nav>
               </div>
 
-              {/* Center logo */}
+              {/* Center Logo: OUD NOMAD DUBAI */}
               <Link
                 href="/"
-                className="relative z-30 justify-self-center text-center group shrink-0 flex items-center justify-center"
-                aria-label="Oud Nomad home"
+                className="justify-self-center text-center shrink-0 flex flex-col items-center justify-center py-1 cursor-pointer select-none"
+                aria-label="Oud Nomad Dubai Home"
               >
-                <Image
-                  src="/logo.png"
-                  alt="OUD NOMAD"
-                  width={220}
-                  height={80}
-                  priority
-                  className="relative z-30 object-contain max-w-none transition-all duration-[550ms] drop-shadow-sm"
-                  style={{
-                    height: compact ? '48px' : '74px',
-                    transform: compact ? 'translateY(0)' : 'translateY(0)',
-                    width: 'auto',
-                    transitionTimingFunction: 'var(--ease-luxury)',
-                  }}
-                />
+                <div className="flex items-start justify-center">
+                  <span className="font-display text-lg sm:text-2xl lg:text-3xl font-semibold tracking-[0.24em] text-[#d89527] uppercase leading-none">
+                    OUD NOMAD
+                  </span>
+                  <span className="text-[8px] sm:text-[10px] text-[#d89527] font-semibold -mt-1 ml-0.5">®</span>
+                </div>
+                <span className="text-[8px] sm:text-[10px] font-medium tracking-[0.38em] text-white/70 uppercase mt-0.5">
+                  DUBAI
+                </span>
               </Link>
 
-              {/* Right actions */}
-              <div className="flex items-center gap-0 sm:gap-1 justify-self-end">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(true)}
-                  className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-xs uppercase tracking-wider text-antique-gold hover:text-espresso transition-colors font-medium border border-antique-gold/20 hover:border-antique-gold/50 rounded-xs mr-1"
-                  title="Select Currency & Region"
-                >
-                  <span className="text-sm">{currency.flag}</span>
-                  <span>{currency.code}</span>
-                </button>
-                <button
-                  type="button"
-                  className="min-w-[44px] min-h-[44px] flex items-center justify-center text-antique-gold hover:text-espresso active:text-espresso transition-colors duration-[400ms]"
-                  aria-expanded={searchOpen}
-                  aria-controls="header-search-panel"
-                  aria-label={searchOpen ? 'Close search' : 'Open search'}
-                  onClick={() => setSearchOpen((v) => !v)}
-                >
-                  <IconSearch className="w-[1.15rem] h-[1.15rem]" />
-                </button>
-                <Link
-                  href="/account/wishlist"
-                  className="min-w-[44px] min-h-[44px] flex items-center justify-center text-antique-gold hover:text-espresso active:text-espresso transition-colors duration-[400ms]"
-                  aria-label="Wishlist"
-                >
-                  <IconHeart className="w-[1.15rem] h-[1.15rem]" />
-                </Link>
-                <Link
-                  href="/account"
-                  className="hidden sm:flex min-w-[44px] min-h-[44px] items-center justify-center text-antique-gold hover:text-espresso active:text-espresso transition-colors duration-[400ms]"
-                  aria-label="Account"
-                >
-                  <IconUser className="w-[1.15rem] h-[1.15rem]" />
-                </Link>
-                <button
-                  type="button"
-                  onClick={openDrawer}
-                  className="relative min-w-[44px] min-h-[44px] flex items-center justify-center text-antique-gold hover:text-espresso active:text-espresso transition-colors duration-[400ms]"
-                  aria-label="Shopping bag"
-                >
-                  <IconBag className="w-[1.15rem] h-[1.15rem]" />
-                  {totalItems > 0 && (
-                    <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] bg-aged-gold text-accent-on-fill text-[10px] font-mono font-bold rounded-full flex items-center justify-center px-1">
-                      {totalItems}
-                    </span>
-                  )}
-                </button>
+              {/* Right Side: Desktop Nav Links + Action Icons */}
+              <div className="flex items-center gap-3 lg:gap-5 justify-self-end">
+                <nav aria-label="Primary Right" className="hidden lg:flex items-center gap-6 text-[11px] font-medium tracking-[0.22em] uppercase">
+                  <Link href="/about" className="text-white/90 hover:text-[#d89527] transition-colors">
+                    ABOUT US
+                  </Link>
+                  <Link href="/collections" className="text-white/90 hover:text-[#d89527] transition-colors">
+                    GCC SHIPPING
+                  </Link>
+                  <Link href="/contact" className="text-white/90 hover:text-[#d89527] transition-colors">
+                    CONTACT
+                  </Link>
+                </nav>
+
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(true)}
+                    className="hidden sm:flex items-center gap-1 px-2 py-0.5 text-[10px] uppercase tracking-wider text-[#d89527] hover:text-white transition-colors font-medium border border-[#d89527]/30 rounded-xs"
+                    title="Select Currency"
+                  >
+                    <span>{currency.flag}</span>
+                    <span>{currency.code}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="lg:hidden min-w-[36px] min-h-[36px] flex items-center justify-center text-white/80 hover:text-[#d89527] transition-colors"
+                    aria-label={searchOpen ? 'Close search' : 'Open search'}
+                    onClick={() => setSearchOpen((v) => !v)}
+                  >
+                    <IconSearch className="w-4 h-4" />
+                  </button>
+
+                  <Link
+                    href="/account"
+                    className="hidden sm:flex min-w-[36px] min-h-[36px] items-center justify-center text-white/80 hover:text-[#d89527] transition-colors"
+                    aria-label="Account"
+                  >
+                    <IconUser className="w-4 h-4" />
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={openDrawer}
+                    className="relative min-w-[36px] min-h-[36px] flex items-center justify-center text-white/80 hover:text-[#d89527] transition-colors"
+                    aria-label="Shopping bag"
+                  >
+                    <IconBag className="w-4 h-4" />
+                    {totalItems > 0 && (
+                      <span className="absolute top-0 right-0 min-w-[15px] h-[15px] bg-[#d89527] text-black text-[9px] font-bold rounded-full flex items-center justify-center px-0.5">
+                        {totalItems}
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
+            {/* Search Panel */}
             <div
               id="header-search-panel"
-              className="overflow-hidden border-t border-border"
+              className="overflow-hidden border-t border-[#d89527]/20"
               style={{
                 maxHeight: searchOpen ? 52 : 0,
                 opacity: searchOpen ? 1 : 0,
-                transition: reduceMotion ? 'none' : 'max-height 550ms var(--ease-luxury), opacity 400ms var(--ease-luxury)',
+                transition: reduceMotion ? 'none' : 'max-height 350ms ease, opacity 250ms ease',
               }}
               hidden={!searchOpen}
             >
-              <form onSubmit={onSearchSubmit} className="py-3 flex gap-2">
+              <form onSubmit={onSearchSubmit} className="py-2 flex gap-2">
                 <label htmlFor="header-search-input" className="sr-only">
                   Search fragrances
                 </label>
@@ -193,15 +241,15 @@ export default function SiteHeader() {
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search extraits, attars, oud notes…"
-                  className="flex-1 bg-surface-muted border border-border rounded-sm px-4 py-2 text-sm text-espresso placeholder:text-muted/80 focus:outline-none focus:border-antique-gold transition-colors duration-[400ms]"
+                  placeholder="SEARCH PERFUMES, ATTARS, OUD..."
+                  className="flex-1 bg-[#121212] border border-[#d89527]/30 rounded-none px-4 py-1.5 text-[11px] text-white placeholder:text-white/40 focus:outline-none focus:border-[#d89527] uppercase tracking-wider"
                   autoComplete="off"
                 />
                 <button
                   type="submit"
-                  className="shrink-0 px-5 py-2 text-xs uppercase tracking-[0.18em] font-medium bg-aged-gold text-accent-on-fill hover:opacity-90 transition-opacity duration-[400ms]"
+                  className="shrink-0 px-5 py-1.5 text-[10px] uppercase tracking-[0.2em] font-semibold bg-[#d89527] text-black hover:bg-[#c58b2b] transition-colors"
                 >
-                  Search
+                  SEARCH
                 </button>
               </form>
             </div>
