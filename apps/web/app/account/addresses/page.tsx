@@ -30,12 +30,12 @@ const INITIAL_ADDRESSES: AddressItem[] = [
   },
   {
     id: 'addr-2',
-    label: 'International Atelier',
+    label: 'Regional Residence',
     name: 'Tariq Al-Mansoor',
-    line1: '45 Mayfair Square, Flat 3B',
-    city: 'London',
-    emirate: 'Greater London',
-    country: 'United Kingdom',
+    line1: 'Building 82, King Fahd Road, Al Olaya',
+    city: 'Riyadh',
+    emirate: 'Riyadh',
+    country: 'Saudi Arabia',
     isDefault: false,
   },
 ];
@@ -210,15 +210,20 @@ export default function AddressBookPage() {
 
                     <div className="space-y-1">
                       <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold">
-                        Country
+                        Country (GCC Only)
                       </label>
-                      <input
-                        type="text"
-                        required
+                      <select
                         value={country}
                         onChange={(e) => setCountry(e.target.value)}
                         className="w-full bg-surface-muted border border-border px-3 py-2 text-espresso outline-none focus:border-antique-gold"
-                      />
+                      >
+                        <option value="United Arab Emirates">United Arab Emirates</option>
+                        <option value="Saudi Arabia">Saudi Arabia</option>
+                        <option value="Qatar">Qatar</option>
+                        <option value="Kuwait">Kuwait</option>
+                        <option value="Oman">Oman</option>
+                        <option value="Bahrain">Bahrain</option>
+                      </select>
                     </div>
                   </div>
 

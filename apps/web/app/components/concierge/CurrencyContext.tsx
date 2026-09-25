@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'AED' | 'SAR' | 'INR';
+export type CurrencyCode = 'AED' | 'SAR' | 'QAR' | 'KWD' | 'OMR' | 'BHD' | 'USD';
 
 export interface CurrencyConfig {
   code: CurrencyCode;
@@ -13,12 +13,13 @@ export interface CurrencyConfig {
 }
 
 export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
-  USD: { code: 'USD', symbol: '$', name: 'United States Dollar', rate: 1.0, flag: '🇺🇸' },
-  EUR: { code: 'EUR', symbol: '€', name: 'Euro', rate: 0.92, flag: '🇪🇺' },
-  GBP: { code: 'GBP', symbol: '£', name: 'British Pound', rate: 0.78, flag: '🇬🇧' },
   AED: { code: 'AED', symbol: 'AED ', name: 'UAE Dirham', rate: 3.67, flag: '🇦🇪' },
   SAR: { code: 'SAR', symbol: 'SAR ', name: 'Saudi Riyal', rate: 3.75, flag: '🇸🇦' },
-  INR: { code: 'INR', symbol: '₹', name: 'Indian Rupee', rate: 83.5, flag: '🇮🇳' },
+  QAR: { code: 'QAR', symbol: 'QAR ', name: 'Qatari Riyal', rate: 3.64, flag: '🇶🇦' },
+  KWD: { code: 'KWD', symbol: 'KWD ', name: 'Kuwaiti Dinar', rate: 0.31, flag: '🇰🇼' },
+  OMR: { code: 'OMR', symbol: 'OMR ', name: 'Omani Rial', rate: 0.38, flag: '🇴🇲' },
+  BHD: { code: 'BHD', symbol: 'BHD ', name: 'Bahraini Dinar', rate: 0.38, flag: '🇧🇭' },
+  USD: { code: 'USD', symbol: '$', name: 'US Dollar (GCC Base)', rate: 1.0, flag: '🇺🇸' },
 };
 
 interface CurrencyContextType {
@@ -32,7 +33,7 @@ interface CurrencyContextType {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [currency, setCurrencyState] = useState<CurrencyConfig>(CURRENCIES.USD);
+  const [currency, setCurrencyState] = useState<CurrencyConfig>(CURRENCIES.AED);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -51,12 +52,11 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 
   const formatPrice = (amountInUSD: number): string => {
     const converted = amountInUSD * currency.rate;
-    // Format based on currency type
-    if (currency.code === 'INR') {
-      return `${currency.symbol}${Math.round(converted).toLocaleString('en-IN')}`;
-    }
-    if (currency.code === 'AED' || currency.code === 'SAR') {
+    if (['AED', 'SAR', 'QAR'].includes(currency.code)) {
       return `${currency.symbol}${Math.round(converted).toLocaleString()}`;
+    }
+    if (['KWD', 'OMR', 'BHD'].includes(currency.code)) {
+      return `${currency.symbol}${converted.toFixed(2)}`;
     }
     return `${currency.symbol}${converted.toLocaleString('en-US', {
       minimumFractionDigits: 0,

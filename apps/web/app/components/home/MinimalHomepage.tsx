@@ -277,10 +277,10 @@ export default function MinimalHomepage() {
                 EXPRESS SHIPPING
               </span>
               <h2 className="font-sans text-sm sm:text-base md:text-lg text-white font-semibold uppercase tracking-[0.2em] mb-3 leading-snug">
-                DELIVERING ACROSS ALL GCC COUNTRIES & WORLDWIDE
+                DELIVERING ACROSS ALL GCC COUNTRIES
               </h2>
               <p className="text-[11px] sm:text-xs text-white/80 font-normal leading-relaxed mb-6">
-                Fast & insured courier shipping to UAE, Saudi Arabia (KSA), Qatar, Kuwait, Oman, Bahrain & International destinations.
+                Fast & insured courier shipping to UAE, Saudi Arabia, Qatar, Kuwait, Oman & Bahrain. UK shipping coming soon.
               </p>
               <Link
                 href="/collections"

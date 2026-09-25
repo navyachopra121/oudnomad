@@ -52,11 +52,25 @@ export default function CheckoutPage() {
   const estimatedTax = subtotal * 0.05;
   const grandTotal = subtotal + shippingFee + estimatedTax;
 
+  const ALLOWED_GCC_COUNTRIES = [
+    'United Arab Emirates',
+    'Saudi Arabia',
+    'Qatar',
+    'Kuwait',
+    'Oman',
+    'Bahrain',
+  ];
+
   const handleCompleteOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) {
       alert('Your cart is empty. Please add flacons before checking out.');
       router.push('/collections');
+      return;
+    }
+
+    if (!ALLOWED_GCC_COUNTRIES.includes(country)) {
+      setError('Purchases & shipping are currently restricted to GCC countries only (UAE, KSA, Qatar, Kuwait, Oman, Bahrain). International & UK shipping will open in the future.');
       return;
     }
 
@@ -216,13 +230,14 @@ export default function CheckoutPage() {
                       >
                         <option value="United Arab Emirates">United Arab Emirates (UAE)</option>
                         <option value="Saudi Arabia">Saudi Arabia (KSA)</option>
-                        <option value="Kuwait">Kuwait</option>
                         <option value="Qatar">Qatar</option>
-                        <option value="Bahrain">Bahrain</option>
+                        <option value="Kuwait">Kuwait</option>
                         <option value="Oman">Oman</option>
-                        <option value="United Kingdom">United Kingdom</option>
-                        <option value="United States">United States</option>
+                        <option value="Bahrain">Bahrain</option>
                       </select>
+                      <p className="text-[10px] text-antique-gold pt-1">
+                        * Deliveries currently limited to GCC region only. UK &amp; International opening in future phase.
+                      </p>
                     </div>
 
                     <div className="space-y-1">
@@ -298,9 +313,9 @@ export default function CheckoutPage() {
                             />
                             <div>
                               <span className="font-serif text-sm font-medium text-espresso block">
-                                DHL Express Worldwide Courier
+                                DHL Express GCC Regional Courier
                               </span>
-                              <span className="text-[11px] text-muted">Direct insulated delivery (2-4 business days)</span>
+                              <span className="text-[11px] text-muted">Direct insulated GCC delivery (1-3 business days)</span>
                             </div>
                           </div>
                           <span className="font-mono text-antique-gold font-medium">
@@ -324,9 +339,9 @@ export default function CheckoutPage() {
                             />
                             <div>
                               <span className="font-serif text-sm font-medium text-espresso block">
-                                FedEx International Priority
+                                Aramex / FedEx GCC Priority Express
                               </span>
-                              <span className="text-[11px] text-muted">Priority courier handling (1-3 business days)</span>
+                              <span className="text-[11px] text-muted">Priority regional courier handling (1-2 business days)</span>
                             </div>
                           </div>
                           <span className="font-mono text-antique-gold font-medium">$25 USD</span>

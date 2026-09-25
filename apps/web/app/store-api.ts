@@ -218,7 +218,7 @@ const FALLBACK_ORDER_DOSSIERS: Record<string, OrderDetail> = {
     date: 'September 14, 2026',
     status: 'In Transit',
     statusCode: 'SHIPPED',
-    carrier: 'DHL Express Worldwide Courier',
+    carrier: 'DHL Express GCC Regional Courier',
     trackingNumber: 'DHL-UAE-982173',
     estimatedDelivery: 'September 18, 2026',
     items: [
@@ -300,7 +300,7 @@ const FALLBACK_ORDER_DOSSIERS: Record<string, OrderDetail> = {
     date: 'July 12, 2026',
     status: 'Delivered',
     statusCode: 'DELIVERED',
-    carrier: 'DHL Express Worldwide Courier',
+    carrier: 'DHL Express GCC Regional Courier',
     trackingNumber: 'DHL-UAE-119284',
     estimatedDelivery: 'July 16, 2026',
     items: [
@@ -655,7 +655,7 @@ export const StoreApi = {
         date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
         status: 'Order Placed',
         statusCode: 'PLACED',
-        carrier: 'DHL Express Worldwide Courier',
+        carrier: 'DHL Express GCC Regional Courier',
         trackingNumber: `DHL-UAE-${Math.floor(100000 + Math.random() * 900000)}`,
         estimatedDelivery: '3-5 Business Days',
         items: [

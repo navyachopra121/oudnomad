@@ -42,6 +42,7 @@ export default function Footer() {
                 width={180}
                 height={60}
                 className="object-contain max-h-16 w-auto"
+                style={{ filter: 'brightness(0) saturate(100%) invert(62%) sepia(68%) saturate(450%) hue-rotate(3deg) brightness(95%) contrast(96%)' }}
               />
             </Link>
             <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#d89527] font-semibold mb-3">
@@ -58,9 +59,9 @@ export default function Footer() {
               CUSTOMER CARE
             </h3>
             <div className="text-xs leading-relaxed text-white/80 space-y-2">
-              <p>Email: <a href="mailto:info@oudnomad.com" className="hover:text-[#d89527] transition-colors">info@oudnomad.com</a></p>
+              <p>Email: <a href="mailto:hello.oudnomaddubai@gmail.com" className="hover:text-[#d89527] transition-colors">hello.oudnomaddubai@gmail.com</a></p>
               <p>Phone: <a href="tel:+97140000000" className="hover:text-[#d89527] transition-colors">+971 4 000 0000</a></p>
-              <p className="pt-1 text-[#d89527]">Express Delivery: UAE, KSA, Qatar, Kuwait, Oman & Bahrain</p>
+              <p className="pt-1 text-[#d89527]">Express Delivery: UAE, Saudi Arabia, Qatar, Kuwait, Oman & Bahrain</p>
             </div>
           </div>
 

@@ -9,6 +9,7 @@ import CartDrawer from "./components/cart/CartDrawer";
 import { AuthProvider } from "./components/auth/AuthContext";
 import { CurrencyProvider } from "./components/concierge/CurrencyContext";
 import CurrencySelectorModal from "./components/concierge/CurrencySelectorModal";
+import EmailSignupPopup from "./components/EmailSignupPopup";
 
 const display = Cormorant_Garamond({
   variable: "--font-display",
@@ -75,12 +76,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <CurrencyProvider>
             <CartProvider>
-              <Preloader />
+              {/* <Preloader /> */}
               <main className="flex-1">{children}</main>
               <Footer />
               <CookieConsent />
               <CartDrawer />
               <CurrencySelectorModal />
+              <EmailSignupPopup />
             </CartProvider>
           </CurrencyProvider>
         </AuthProvider>

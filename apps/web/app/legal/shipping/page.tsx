@@ -27,10 +27,10 @@ export default function ShippingPolicyPage() {
               Atelier Logistics & Courier Service
             </span>
             <h1 className="font-display text-3xl sm:text-4xl text-espresso tracking-tight">
-              International Shipping & Delivery Policy
+              GCC Express Shipping & Delivery Policy
             </h1>
             <p className="text-xs text-muted">
-              Last Updated: September 17, 2026 • Effective Worldwide
+              Last Updated: September 17, 2026 • Effective for GCC Region
             </p>
           </div>
 
@@ -39,7 +39,7 @@ export default function ShippingPolicyPage() {
             <section className="space-y-3">
               <h2 className="font-display text-xl text-espresso">1. White-Glove Courier Transit</h2>
               <p>
-                All OudNomad extraits, concentrated attars, and bakhoor resins are dispatched exclusively via our verified international courier partners: <strong>DHL Express Worldwide</strong> and <strong>FedEx International Priority</strong>.
+                All OudNomad extraits, concentrated attars, and bakhoor resins are dispatched exclusively via our verified international courier partners: <strong>DHL Express GCC Regional Courier</strong> and <strong>Aramex / FedEx GCC Priority Express</strong>.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                 <div className="p-4 bg-surface-muted/50 border border-border space-y-1 text-xs">
@@ -77,7 +77,7 @@ export default function ShippingPolicyPage() {
             <section className="space-y-3">
               <h2 className="font-display text-xl text-espresso">3. Complimentary Shipping Thresholds</h2>
               <p>
-                We provide complimentary worldwide express shipping on all orders totaling <strong>$250 USD</strong> (or local currency equivalent) or more. For acquisitions below this threshold, a flat-rate courier fee of <strong>$25 USD</strong> applies at checkout.
+                We provide complimentary GCC express shipping on all orders totaling <strong>$250 USD</strong> (or local currency equivalent) or more. For acquisitions below this threshold, a flat-rate courier fee of <strong>$25 USD</strong> applies at checkout.
               </p>
             </section>
 

@@ -18,7 +18,7 @@ export default function CurrencySelectorModal() {
               Global Concierge
             </span>
             <h3 className="font-serif text-xl text-primary font-medium mt-0.5">
-              Select Currency & Region
+              Select GCC Regional Currency
             </h3>
           </div>
           <button
@@ -31,7 +31,7 @@ export default function CurrencySelectorModal() {
         </div>
 
         {/* Currency Options */}
-        <div className="space-y-2.5">
+        <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
           {(Object.keys(CURRENCIES) as CurrencyCode[]).map((code) => {
             const item = CURRENCIES[code];
             const isSelected = currency.code === code;
@@ -69,7 +69,7 @@ export default function CurrencySelectorModal() {
 
         {/* Footer Note */}
         <div className="pt-2 text-center text-[11px] text-primary-muted font-light leading-relaxed border-t border-border/60">
-          Complimentary white-glove DHL Express & FedEx Priority shipping insured worldwide on orders over $250 USD equivalent.
+          Complimentary white-glove courier shipping insured across all GCC countries (UAE, KSA, Qatar, Kuwait, Oman &amp; Bahrain) on orders over $250 USD equivalent.
         </div>
       </div>
     </div>

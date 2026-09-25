@@ -52,16 +52,16 @@ export default function SiteHeader() {
     setSearchOpen(false);
   };
 
-  const announcementHeight = announcementVisible ? 36 : 0;
+  const announcementHeight = announcementVisible ? 38 : 0;
   const mainNavHeight = compact ? 60 : 72;
   const spacerHeight = announcementHeight + mainNavHeight + (searchOpen ? 52 : 0);
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50">
+      <header className="fixed top-0 left-0 right-0 z-50" style={{ top: 0 }}>
         <AnnouncementBar visible={announcementVisible} reduceMotion={reduceMotion} />
 
-        <div className="bg-[#000000]/95 backdrop-blur-md border-b border-[#d89527]/20 text-white">
+        <div className="bg-[#000000] border-b border-[#d89527]/20 text-white">
           <Container>
             <div
               className="grid grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-3 transition-all duration-500"
