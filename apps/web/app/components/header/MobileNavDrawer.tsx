@@ -40,7 +40,7 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
   return (
     <>
       <div
-        className="fixed inset-0 z-[60] bg-black/70 lg:hidden backdrop-blur-xs"
+        className="fixed inset-0 z-[60] bg-black/75 lg:hidden backdrop-blur-xs"
         style={{
           opacity: open ? 1 : 0,
           pointerEvents: open ? 'auto' : 'none',
@@ -54,7 +54,7 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
         role="dialog"
         aria-modal="true"
         aria-label="Site menu"
-        className="fixed inset-y-0 left-0 z-[70] w-[min(100vw-3rem,20rem)] bg-[#000000] border-r border-[#d89527]/30 shadow-2xl lg:hidden flex flex-col text-white"
+        className="fixed inset-y-0 left-0 z-[70] w-[min(100vw-3rem,22rem)] bg-[#000000] border-r border-[#ffb91d]/30 shadow-2xl lg:hidden flex flex-col text-white"
         style={{
           transform: open ? 'translateX(0)' : 'translateX(-100%)',
           transition: slide,
@@ -62,13 +62,18 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
         hidden={!open}
       >
         {/* Top bar with close X */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-[#d89527]/20">
-          <span className="font-display text-lg tracking-[0.2em] text-[#d89527] uppercase font-bold">
-            OUD NOMAD
-          </span>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[#ffb91d]/20">
+          <div className="flex flex-col">
+            <span className="font-sans text-lg tracking-[0.22em] text-[#ffb91d] uppercase font-bold">
+              OUD NOMAD
+            </span>
+            <span className="text-[9px] tracking-[0.38em] text-[#ffb91d] uppercase font-medium">
+              DUBAI
+            </span>
+          </div>
           <button
             type="button"
-            className="min-w-[40px] min-h-[40px] -mr-2 flex items-center justify-center text-[#d89527] hover:text-white transition-colors"
+            className="min-w-[40px] min-h-[40px] -mr-2 flex items-center justify-center text-white hover:text-[#ffb91d] transition-colors"
             aria-label="Close menu"
             onClick={onClose}
           >
@@ -77,10 +82,10 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
         </div>
 
         {/* Navigation list */}
-        <nav className="flex-1 overflow-y-auto px-6 py-6 space-y-4 text-xs uppercase font-semibold tracking-[0.2em]">
+        <nav className="flex-1 overflow-y-auto px-6 py-6 space-y-3.5 text-xs uppercase font-medium tracking-[0.2em]">
           <Link
             href="/"
-            className="block py-2.5 text-white hover:text-[#d89527] transition-colors border-b border-white/10"
+            className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors border-b border-white/10"
             onClick={onClose}
           >
             HOME
@@ -91,10 +96,10 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
             <button
               type="button"
               onClick={() => setCatalogExpanded((v) => !v)}
-              className="w-full flex items-center justify-between py-2.5 text-white hover:text-[#d89527] transition-colors"
+              className="w-full flex items-center justify-between py-2.5 text-white hover:text-[#ffb91d] transition-colors"
             >
               <span>CATALOG</span>
-              <span className="text-[#d89527] text-sm font-light">
+              <span className="text-[#ffb91d] text-base font-light">
                 {catalogExpanded ? '−' : '+'}
               </span>
             </button>
@@ -102,56 +107,78 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
             {catalogExpanded && (
               <div className="pl-4 py-2 space-y-2.5 text-[11px] font-normal tracking-[0.16em]">
                 <Link
-                  href="/collections"
-                  className="block text-white/80 hover:text-[#d89527] transition-colors"
+                  href="/collections/all"
+                  className="block text-white/80 hover:text-[#ffb91d] transition-colors py-1"
                   onClick={onClose}
                 >
                   All Fragrances
                 </Link>
                 <Link
+                  href="/collections/top-sellers"
+                  className="block text-white/80 hover:text-[#ffb91d] transition-colors py-1"
+                  onClick={onClose}
+                >
+                  Top Sellers
+                </Link>
+                <Link
                   href="/collections/perfumes"
-                  className="block text-white/80 hover:text-[#d89527] transition-colors"
+                  className="block text-white/80 hover:text-[#ffb91d] transition-colors py-1"
                   onClick={onClose}
                 >
                   Perfumes
                 </Link>
                 <Link
                   href="/collections/attars"
-                  className="block text-white/80 hover:text-[#d89527] transition-colors"
+                  className="block text-white/80 hover:text-[#ffb91d] transition-colors py-1"
                   onClick={onClose}
                 >
                   Attars & Oils
                 </Link>
                 <Link
-                  href="/collections/bakhoor"
-                  className="block text-white/80 hover:text-[#d89527] transition-colors"
+                  href="/collections/bakhoor-set"
+                  className="block text-white/80 hover:text-[#ffb91d] transition-colors py-1"
                   onClick={onClose}
                 >
-                  Bakhoor
+                  Bakhoor Set
+                </Link>
+                <Link
+                  href="/collections/emerald-collection"
+                  className="block text-white/80 hover:text-[#ffb91d] transition-colors py-1"
+                  onClick={onClose}
+                >
+                  Emerald Collection
                 </Link>
               </div>
             )}
           </div>
 
           <Link
-            href="/about"
-            className="block py-2.5 text-white hover:text-[#d89527] transition-colors border-b border-white/10"
-            onClick={onClose}
-          >
-            ABOUT US
-          </Link>
-
-          <Link
             href="/contact"
-            className="block py-2.5 text-white hover:text-[#d89527] transition-colors border-b border-white/10"
+            className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors border-b border-white/10"
             onClick={onClose}
           >
             CONTACT
           </Link>
 
           <Link
+            href="/stores"
+            className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors border-b border-white/10"
+            onClick={onClose}
+          >
+            STORES
+          </Link>
+
+          <Link
+            href="/about"
+            className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors border-b border-white/10"
+            onClick={onClose}
+          >
+            ABOUT US
+          </Link>
+
+          <Link
             href="/account"
-            className="block py-2.5 text-[#d89527] hover:text-white transition-colors"
+            className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors"
             onClick={onClose}
           >
             MY ACCOUNT
@@ -159,13 +186,13 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
         </nav>
 
         {/* Social Box Bottom Bar */}
-        <div className="p-4 border-t border-[#d89527]/20 bg-[#0a0a0a]">
-          <div className="grid grid-cols-4 gap-1.5 text-center text-[9px] tracking-wider text-[#d89527] font-semibold">
+        <div className="p-4 border-t border-[#ffb91d]/20 bg-[#0a0a0a]">
+          <div className="grid grid-cols-4 gap-1.5 text-center text-[9px] tracking-wider text-[#ffb91d] font-semibold">
             <a
               href="https://www.instagram.com/oudnomaddubai?stkn=NWtkMGc4ZmFvc3pv&utm_source=qr"
               target="_blank"
               rel="noopener noreferrer"
-              className="py-2 border border-[#d89527]/30 hover:border-[#d89527] hover:bg-[#d89527] hover:text-black transition-all"
+              className="py-2 border border-[#ffb91d]/30 hover:border-[#ffb91d] hover:bg-[#ffb91d] hover:text-black transition-all"
             >
               INSTAGRAM
             </a>
@@ -173,7 +200,7 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
               href="https://x.com/oudnomad?s=11"
               target="_blank"
               rel="noopener noreferrer"
-              className="py-2 border border-[#d89527]/30 hover:border-[#d89527] hover:bg-[#d89527] hover:text-black transition-all"
+              className="py-2 border border-[#ffb91d]/30 hover:border-[#ffb91d] hover:bg-[#ffb91d] hover:text-black transition-all"
             >
               X / TWITTER
             </a>
@@ -181,7 +208,7 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
               href="https://www.linkedin.com/posts/oud-nomad_oudnomad-luxuryfragrance-activity-7508052849604435968-vmRv?utm_source=share&utm_medium=member_ios&rcm=ACoAAEW4eq0Bm-115qea9ir7xuPfrWztpoN0l_4"
               target="_blank"
               rel="noopener noreferrer"
-              className="py-2 border border-[#d89527]/30 hover:border-[#d89527] hover:bg-[#d89527] hover:text-black transition-all"
+              className="py-2 border border-[#ffb91d]/30 hover:border-[#ffb91d] hover:bg-[#ffb91d] hover:text-black transition-all"
             >
               LINKEDIN
             </a>
@@ -189,7 +216,7 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
               href="https://pin.it/7xTiv852Y"
               target="_blank"
               rel="noopener noreferrer"
-              className="py-2 border border-[#d89527]/30 hover:border-[#d89527] hover:bg-[#d89527] hover:text-black transition-all"
+              className="py-2 border border-[#ffb91d]/30 hover:border-[#ffb91d] hover:bg-[#ffb91d] hover:text-black transition-all"
             >
               PINTEREST
             </a>

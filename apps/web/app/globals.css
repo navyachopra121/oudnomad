@@ -35,10 +35,11 @@
   --ivory: #000000;                 /* Pitch black canvas */
   --espresso: #ffffff;              /* Crisp white text */
 
-  /* Gold — signature warm gold #D89527 & metallic highlights */
-  --antique-gold: #d89527;
-  --aged-gold: #d89527;
-  --gold-accent: #d89528;
+  /* Gold — signature warm gold #ffb91d & metallic highlights */
+  --antique-gold: #ffb91d;
+  --aged-gold: #ffb91d;
+  --gold-accent: #ffb91d;
+  --color-heading: #ffb91d;
 
   /* Accent swatches */
   --deep-emerald: #0a4d3c;
@@ -51,19 +52,19 @@
   --obsidian: #000000;
 
   /* Semantic aliases — Pitch Black + Gold Theme */
-  --background: #000000;
+  --background: #000000;  
   --foreground: #ffffff;
   --surface: #0a0a0a;
   --surface-muted: #121212;
-  --border: rgba(216, 149, 39, 0.2);
-  --border-strong: rgba(216, 149, 39, 0.4);
+  --border: rgba(255, 185, 29, 0.2);
+  --border-strong: rgba(255, 185, 29, 0.4);
   --muted: #a0a0a0;
-  --accent: var(--antique-gold);
-  --accent-fill: var(--aged-gold);
-  --accent-on-fill: #ffffff;
-  --link: var(--antique-gold);
+  --accent: #ffb91d;
+  --accent-fill: #ffb91d;
+  --accent-on-fill: #000000;
+  --link: #ffb91d;
   --link-hover: #ffffff;
-  --focus-ring: var(--antique-gold);
+  --focus-ring: #ffb91d;
 
   /*
    * ── Breakpoint scale ──────────────────────────────────────────────────────
@@ -91,10 +92,17 @@
    *   --fs-eyebrow:  10px fixed; 12px at md+
    * ─────────────────────────────────────────────────────────────────────────
    */
-  --fs-hero:   clamp(1.75rem, 1rem + 4vw, 3.25rem);
-  --fs-h2:     clamp(1.5rem,  0.9rem + 3vw, 2.5rem);
-  --fs-h3:     clamp(1.375rem,0.85rem + 2.5vw, 2.25rem);
-  --fs-quote:  clamp(1.25rem, 0.8rem + 2.2vw, 1.875rem);
+  /* Reference site uses very small, refined typography:
+   * Section headings: 13-14px, font-weight 400, letter-spacing 0.3em, uppercase
+   * Body/quote text: 13-14px, font-weight 400, line-height 1.7
+   * Product names: 11px, font-weight 400, letter-spacing 0.16em
+   * Nav/buttons: 11px, font-weight 400, letter-spacing 0.22em
+   * Logo: 26px, font-weight 400, letter-spacing 0.25em
+   */
+  --fs-hero:   clamp(1.125rem, 0.9rem + 1vw, 1.375rem);
+  --fs-h2:     0.875rem;
+  --fs-h3:     0.6875rem;
+  --fs-quote:  0.875rem;
 
   /*
    * ── Fluid section vertical padding ───────────────────────────────────────
@@ -273,6 +281,20 @@ body {
   font-feature-settings: "lnum" 1, "tnum" 1;
 }
 
+/* ── Typography Rules: #ffb91d for Headings, White for Normal Text ── */
+/* Reference site oudarabiadubai.com uses very small refined type — exactly matched */
+h1, h2, h3, h4, h5, h6,
+.font-display,
+.heading-gold {
+  color: #ffb91d !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.2em;
+}
+
+p, span.normal-text, li, label, input, textarea, select {
+  color: #ffffff;
+}
+
 .font-display,
 .font-serif {
   font-family: var(--font-display), "Cormorant Garamond", Georgia, serif;
@@ -296,7 +318,7 @@ body {
 /* Center-growing nav underline */
 .nav-link {
   position: relative;
-  color: var(--espresso);
+  color: #ffffff;
   transition: color var(--duration-fast) var(--ease-luxury);
 }
 
@@ -306,8 +328,8 @@ body {
   left: 50%;
   bottom: -0.35rem;
   width: 0;
-  height: 1px;
-  background: var(--antique-gold);
+  height: 1.5px;
+  background: #ffb91d;
   transform: translateX(-50%);
   transition: width var(--duration-medium) var(--ease-luxury);
 }
@@ -315,7 +337,7 @@ body {
 .nav-link:hover,
 .nav-link:focus-visible,
 .nav-link:active {
-  color: var(--antique-gold);
+  color: #ffb91d;
   outline: none;
 }
 
@@ -554,4 +576,14 @@ body {
     );
   background-size: 100% 100%, 100% 28px, 60px 100%;
 }
+
+/* ── UGC Section: fade-in animation for text panel on video switch ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.45s ease forwards;
+}
+
 

@@ -7,543 +7,508 @@ import { useRouter } from 'next/navigation';
 import SiteHeader from '../components/header/SiteHeader';
 import Container from '../components/Container';
 import { useCart } from '../components/cart/CartContext';
-import { useAuth } from '../components/auth/AuthContext';
-import { StoreApi } from '../store-api';
+import { useCurrency } from '../components/concierge/CurrencyContext';
+
+const INDIAN_STATES = [
+  'Andhra Pradesh', 'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh', 'Delhi', 'Goa',
+  'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu & Kashmir', 'Jharkhand', 'Karnataka',
+  'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Odisha', 'Punjab', 'Rajasthan',
+  'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+];
+
+const GCC_COUNTRIES = [
+  'India', 'United Arab Emirates', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Oman', 'Bahrain'
+];
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
-  const { user } = useAuth();
+  const { formatPrice } = useCurrency();
 
-  // Accordion Steps State (1 = Contact, 2 = Shipping, 3 = Delivery Method, 4 = Payment)
-  const [activeStep, setActiveStep] = useState(1);
+  // Contact State
+  const [emailOrPhone, setEmailOrPhone] = useState('');
+  const [newsOffers, setNewsOffers] = useState(true);
 
-  // Form State
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
+  // Shipping Address State
+  const [country, setCountry] = useState('India');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address, setAddress] = useState('');
+  const [apartment, setApartment] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('Delhi');
+  const [pinCode, setPinCode] = useState('');
   const [phone, setPhone] = useState('');
 
-  const [addressLine, setAddressLine] = useState('');
-  const [city, setCity] = useState('');
-  const [country, setCountry] = useState('United Arab Emirates');
+  // Payment method
+  const [paymentMethod, setPaymentMethod] = useState<'prepaid' | 'cod'>('prepaid');
+  const [upiOption, setUpiOption] = useState<'gpay' | 'phonepe' | 'paytm' | 'card'>('gpay');
 
-  const [shippingMethod, setShippingMethod] = useState<'dhl' | 'fedex'>('dhl');
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'gcc' | 'cod'>('card');
+  // Coupon state
+  const [couponCode, setCouponCode] = useState('');
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponApplied, setCouponApplied] = useState(false);
 
-  // Credit Card Form
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardExpiry, setCardExpiry] = useState('');
-  const [cardCvc, setCardCvc] = useState('');
-
+  // Submission state
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  // Auto-fill logged-in collector details
-  useEffect(() => {
-    if (user) {
-      if (user.email) setEmail(user.email);
-      if (user.name) setName(user.name);
-      if (user.phone) setPhone(user.phone);
+  // Auto prepaid discount like Oud Arabia ("Extra ₹200 Off on Prepaid Orders")
+  const prepaidDiscount = paymentMethod === 'prepaid' ? 200 : 0;
+  const totalDiscount = couponDiscount + prepaidDiscount;
+  const shippingFee = 0; // Free express shipping
+  const finalTotal = Math.max(0, subtotal - totalDiscount + shippingFee);
+
+  const handleApplyCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+    const code = couponCode.trim().toUpperCase();
+    if (code === 'PREPAID200' || code === 'GOLD10' || code === 'NOMAD') {
+      setCouponDiscount(200);
+      setCouponApplied(true);
+    } else {
+      alert('Invalid coupon code. Try PREPAID200');
     }
-  }, [user]);
+  };
 
-  const freeShippingThreshold = 250;
-  const shippingFee = shippingMethod === 'dhl' && subtotal >= freeShippingThreshold ? 0 : 25;
-  const estimatedTax = subtotal * 0.05;
-  const grandTotal = subtotal + shippingFee + estimatedTax;
-
-  const ALLOWED_GCC_COUNTRIES = [
-    'United Arab Emirates',
-    'Saudi Arabia',
-    'Qatar',
-    'Kuwait',
-    'Oman',
-    'Bahrain',
-  ];
-
-  const handleCompleteOrder = async (e: React.FormEvent) => {
+  const handleCompleteOrder = (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) {
-      alert('Your cart is empty. Please add flacons before checking out.');
+      alert('Your cart is empty.');
       router.push('/collections');
       return;
     }
 
-    if (!ALLOWED_GCC_COUNTRIES.includes(country)) {
-      setError('Purchases & shipping are currently restricted to GCC countries only (UAE, KSA, Qatar, Kuwait, Oman, Bahrain). International & UK shipping will open in the future.');
-      return;
-    }
-
     setSubmitting(true);
-    setError(null);
+    const orderId = `OUD-${Math.floor(100000 + Math.random() * 900000)}`;
 
-    const generatedOrderId = `OUD-${Math.floor(10000 + Math.random() * 90000)}`;
-
-    try {
-      await StoreApi.createOrder({
-        items: items.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
-        shippingAddress: { name, line1: addressLine, city, country, email, phone },
-        paymentMethod,
-        total: grandTotal,
-      });
-    } catch (_) {
-      /* Fallback simulation for offline mode */
-    } finally {
+    setTimeout(() => {
       clearCart();
       setSubmitting(false);
-      router.push(`/checkout/success?orderId=${generatedOrderId}&total=${grandTotal.toFixed(2)}`);
-    }
+      router.push(`/checkout/success?orderId=${orderId}&total=${finalTotal}`);
+    }, 1200);
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-serif">
+    <div className="min-h-screen bg-[#070707] text-[#f2efe9] flex flex-col font-sans selection:bg-[#ffb91d] selection:text-black">
       <SiteHeader />
 
-      <main className="flex-1 w-full py-6 sm:py-2">
-        <Container className="space-y-10">
-          {/* Breadcrumbs */}
-          <nav className="text-[10px] sm:text-[11px] font-sans uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted flex flex-wrap items-center gap-1.5 sm:gap-2 leading-relaxed py-1">
-            <Link href="/" className="hover:text-espresso transition-colors shrink-0">Home</Link>
-            <span className="opacity-50">/</span>
-            <Link href="/cart" className="hover:text-espresso transition-colors shrink-0">Cart</Link>
-            <span className="opacity-50">/</span>
-            <span className="text-antique-gold font-medium shrink-0">Checkout Dossier</span>
-          </nav>
-
-          <div className="border-b border-border pb-6 space-y-2">
-            <span className="text-[10px] font-sans tracking-[0.28em] uppercase text-antique-gold font-medium">
-              Acquisition Finalization
-            </span>
-            <h1 className="font-display text-3xl sm:text-4xl text-espresso tracking-tight">
-              Single-Page Express Checkout
-            </h1>
+      <main className="flex-1 w-full pt-28 pb-20">
+        <Container className="space-y-8">
+          {/* Breadcrumb / Status */}
+          <div className="flex items-center justify-between border-b border-white/10 pb-4 text-xs font-mono">
+            <div className="flex items-center gap-2 text-white/50 uppercase tracking-wider text-[11px]">
+              <Link href="/cart" className="hover:text-[#ffb91d]">Bag</Link>
+              <span>›</span>
+              <span className="text-[#ffb91d]">Information & Shipping</span>
+              <span>›</span>
+              <span className="text-white/40">Payment</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-[#53ff73] text-[11px]">
+              <span>🔒</span>
+              <span>256-Bit SSL Encrypted Checkout</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start font-sans">
-            {/* Left Column — Accordion Checkout Steps */}
-            <div className="lg:col-span-7 space-y-6">
-              {error && (
-                <div className="p-4 bg-red-500/10 border border-red-500/30 text-red-700 text-xs font-sans">
-                  {error}
-                </div>
-              )}
-
-              {/* STEP 1: Contact Information */}
-              <div className="border border-border bg-surface-muted/40 transition-all">
-                <button
-                  type="button"
-                  onClick={() => setActiveStep(1)}
-                  className="w-full p-5 flex items-center justify-between text-left border-b border-border/80"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-aged-gold text-accent-on-fill text-xs font-mono font-bold flex items-center justify-center">
-                      1
-                    </span>
-                    <h3 className="font-display text-lg text-espresso">Collector Contact Information</h3>
+          {items.length === 0 ? (
+            <div className="py-24 text-center border border-white/10 bg-[#0e0e0e] p-12 max-w-xl mx-auto space-y-6">
+              <h2 className="text-2xl font-serif text-white">Your Cart is Empty</h2>
+              <p className="text-xs text-white/60">Please add flacons to your cart before proceeding to checkout.</p>
+              <Link
+                href="/collections"
+                className="inline-block px-8 py-3 bg-[#d89528] hover:bg-[#ffb91d] text-black text-xs uppercase tracking-widest font-semibold"
+              >
+                Browse Collections
+              </Link>
+            </div>
+          ) : (
+            <form onSubmit={handleCompleteOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+              {/* ── LEFT COLUMN: Checkout Form Steps ── */}
+              <div className="lg:col-span-7 space-y-8">
+                {/* Express Checkout Bar */}
+                <div className="border border-white/10 bg-[#0e0e0e] p-5 space-y-3">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-mono block text-center">
+                    Express Instant Checkout
+                  </span>
+                  <div className="grid grid-cols-3 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPaymentMethod('prepaid');
+                        setUpiOption('gpay');
+                      }}
+                      className="py-2.5 bg-[#181818] hover:bg-[#222] border border-white/10 flex items-center justify-center font-bold text-xs text-white transition-all"
+                    >
+                      Google Pay
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPaymentMethod('prepaid');
+                        setUpiOption('phonepe');
+                      }}
+                      className="py-2.5 bg-[#181818] hover:bg-[#222] border border-white/10 flex items-center justify-center font-bold text-xs text-white transition-all"
+                    >
+                      PhonePe
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPaymentMethod('prepaid');
+                        setUpiOption('paytm');
+                      }}
+                      className="py-2.5 bg-[#181818] hover:bg-[#222] border border-white/10 flex items-center justify-center font-bold text-xs text-white transition-all"
+                    >
+                      Paytm / UPI
+                    </button>
                   </div>
-                  {activeStep > 1 && <span className="text-xs text-deep-emerald font-semibold">✓ Saved</span>}
-                </button>
+                  <div className="relative text-center my-3">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white/10" />
+                    </div>
+                    <span className="relative bg-[#0e0e0e] px-4 text-[10px] text-white/40 uppercase tracking-widest">
+                      OR ENTER SHIPPING DETAILS
+                    </span>
+                  </div>
+                </div>
 
-                {activeStep === 1 && (
-                  <div className="p-6 space-y-4 text-xs">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold">
-                          Full Name *
-                        </label>
+                {/* Step 1: Contact Information */}
+                <div className="border border-white/10 bg-[#0e0e0e] p-6 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-base font-serif text-white uppercase tracking-wider">
+                      1. Contact Information
+                    </h3>
+                    <span className="text-[11px] text-white/50">Already have an account? Log in</span>
+                  </div>
+
+                  <div>
+                    <input
+                      type="text"
+                      required
+                      value={emailOrPhone}
+                      onChange={(e) => setEmailOrPhone(e.target.value)}
+                      placeholder="Email or Mobile phone number"
+                      className="w-full bg-[#141414] border border-white/15 p-3 text-xs text-white outline-none focus:border-[#ffb91d]"
+                    />
+                  </div>
+
+                  <label className="flex items-center gap-2 text-xs text-white/70 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={newsOffers}
+                      onChange={(e) => setNewsOffers(e.target.checked)}
+                      className="accent-[#ffb91d]"
+                    />
+                    <span>Email me with exclusive news and private vault allocations</span>
+                  </label>
+                </div>
+
+                {/* Step 2: Delivery Address */}
+                <div className="border border-white/10 bg-[#0e0e0e] p-6 space-y-4">
+                  <h3 className="text-base font-serif text-white uppercase tracking-wider">
+                    2. Shipping Address
+                  </h3>
+
+                  <div className="space-y-3 text-xs">
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wider text-white/50 mb-1 font-mono">
+                        Country / Region
+                      </label>
+                      <select
+                        value={country}
+                        onChange={(e) => setCountry(e.target.value)}
+                        className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d] cursor-pointer"
+                      >
+                        {GCC_COUNTRIES.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
                         <input
                           type="text"
                           required
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          placeholder="Tariq Al-Mansoor"
-                          className="w-full bg-ivory border border-border px-3.5 py-2 text-espresso outline-none focus:border-antique-gold"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          placeholder="First name"
+                          className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
                         />
                       </div>
-
-                      <div className="space-y-1">
-                        <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold">
-                          Email Address *
-                        </label>
+                      <div>
                         <input
-                          type="email"
+                          type="text"
                           required
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="collector@example.com"
-                          className="w-full bg-ivory border border-border px-3.5 py-2 text-espresso outline-none focus:border-antique-gold"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          placeholder="Last name"
+                          className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
                         />
                       </div>
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold">
-                        Phone Number (for Courier SMS Tracking) *
-                      </label>
+                    <div>
+                      <input
+                        type="text"
+                        required
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="Street Address, House/Flat No, Landmark"
+                        className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
+                      />
+                    </div>
+
+                    <div>
+                      <input
+                        type="text"
+                        value={apartment}
+                        onChange={(e) => setApartment(e.target.value)}
+                        placeholder="Apartment, suite, unit (optional)"
+                        className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <input
+                          type="text"
+                          required
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="City"
+                          className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
+                        />
+                      </div>
+
+                      <div>
+                        <select
+                          value={state}
+                          onChange={(e) => setState(e.target.value)}
+                          className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d] cursor-pointer"
+                        >
+                          {INDIAN_STATES.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <input
+                          type="text"
+                          required
+                          value={pinCode}
+                          onChange={(e) => setPinCode(e.target.value)}
+                          placeholder="PIN code"
+                          className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
                       <input
                         type="tel"
                         required
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+971 50 123 4567"
-                        className="w-full bg-ivory border border-border px-3.5 py-2 text-espresso outline-none focus:border-antique-gold"
+                        placeholder="Phone number for courier updates"
+                        className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
                       />
                     </div>
+                  </div>
+                </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setActiveStep(2)}
-                      className="mt-2 px-6 py-2.5 bg-aged-gold text-accent-on-fill text-xs uppercase tracking-wider font-medium"
+                {/* Step 3: Shipping Method */}
+                <div className="border border-white/10 bg-[#0e0e0e] p-6 space-y-3">
+                  <h3 className="text-base font-serif text-white uppercase tracking-wider">
+                    3. Shipping Method
+                  </h3>
+
+                  <div className="border border-[#ffb91d]/50 bg-[#161616] p-4 flex items-center justify-between text-xs">
+                    <div className="space-y-0.5">
+                      <span className="font-semibold text-white">Complimentary Express Courier</span>
+                      <p className="text-[11px] text-white/60">Dispatched within 24h • 2 to 4 business days transit</p>
+                    </div>
+                    <span className="font-mono text-[#53ff73] font-bold">FREE</span>
+                  </div>
+                </div>
+
+                {/* Step 4: Payment Method */}
+                <div className="border border-white/10 bg-[#0e0e0e] p-6 space-y-4">
+                  <h3 className="text-base font-serif text-white uppercase tracking-wider">
+                    4. Payment Method
+                  </h3>
+
+                  <div className="space-y-3">
+                    {/* Prepaid Option (with ₹200 off badge) */}
+                    <div
+                      onClick={() => setPaymentMethod('prepaid')}
+                      className={`border p-4 cursor-pointer transition-all ${
+                        paymentMethod === 'prepaid'
+                          ? 'border-[#ffb91d] bg-[#161616]'
+                          : 'border-white/10 bg-[#101010] hover:border-white/30'
+                      }`}
                     >
-                      Continue to Delivery Address →
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* STEP 2: Shipping Address */}
-              <div className="border border-border bg-surface-muted/40 transition-all">
-                <button
-                  type="button"
-                  onClick={() => setActiveStep(2)}
-                  className="w-full p-5 flex items-center justify-between text-left border-b border-border/80"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-aged-gold text-accent-on-fill text-xs font-mono font-bold flex items-center justify-center">
-                      2
-                    </span>
-                    <h3 className="font-display text-lg text-espresso">Delivery Destination</h3>
-                  </div>
-                  {activeStep > 2 && <span className="text-xs text-deep-emerald font-semibold">✓ Saved</span>}
-                </button>
-
-                {activeStep === 2 && (
-                  <div className="p-6 space-y-4 text-xs">
-                    <div className="space-y-1">
-                      <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold">
-                        Country / Region *
-                      </label>
-                      <select
-                        value={country}
-                        onChange={(e) => setCountry(e.target.value)}
-                        className="w-full bg-ivory border border-border px-3 py-2 text-espresso outline-none focus:border-antique-gold"
-                      >
-                        <option value="United Arab Emirates">United Arab Emirates (UAE)</option>
-                        <option value="Saudi Arabia">Saudi Arabia (KSA)</option>
-                        <option value="Qatar">Qatar</option>
-                        <option value="Kuwait">Kuwait</option>
-                        <option value="Oman">Oman</option>
-                        <option value="Bahrain">Bahrain</option>
-                      </select>
-                      <p className="text-[10px] text-antique-gold pt-1">
-                        * Deliveries currently limited to GCC region only. UK &amp; International opening in future phase.
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="flex items-center gap-2 cursor-pointer font-medium text-xs text-white">
+                          <input
+                            type="radio"
+                            name="payment"
+                            checked={paymentMethod === 'prepaid'}
+                            onChange={() => setPaymentMethod('prepaid')}
+                            className="accent-[#ffb91d]"
+                          />
+                          <span>Prepaid Online Payment (UPI / Cards / NetBanking)</span>
+                        </label>
+                        <span className="bg-[#53ff73] text-black text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 shadow">
+                          Extra ₹200 Off
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-white/60 ml-5">
+                        Instant payment via Google Pay, PhonePe, Paytm, Debit/Credit Card or NetBanking.
                       </p>
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold">
-                        Street Address & Villa / Apartment # *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={addressLine}
-                        onChange={(e) => setAddressLine(e.target.value)}
-                        placeholder="Villa 14, Jumeirah Beach Road, Al Safa 2"
-                        className="w-full bg-ivory border border-border px-3.5 py-2 text-espresso outline-none focus:border-antique-gold"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold">
-                        City / Emirate *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        placeholder="Dubai"
-                        className="w-full bg-ivory border border-border px-3.5 py-2 text-espresso outline-none focus:border-antique-gold"
-                      />
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setActiveStep(3)}
-                      className="mt-2 px-6 py-2.5 bg-aged-gold text-accent-on-fill text-xs uppercase tracking-wider font-medium"
+                    {/* Cash on Delivery Option */}
+                    <div
+                      onClick={() => setPaymentMethod('cod')}
+                      className={`border p-4 cursor-pointer transition-all ${
+                        paymentMethod === 'cod'
+                          ? 'border-[#ffb91d] bg-[#161616]'
+                          : 'border-white/10 bg-[#101010] hover:border-white/30'
+                      }`}
                     >
-                      Continue to Express Shipping →
-                    </button>
+                      <label className="flex items-center gap-2 cursor-pointer font-medium text-xs text-white">
+                        <input
+                          type="radio"
+                          name="payment"
+                          checked={paymentMethod === 'cod'}
+                          onChange={() => setPaymentMethod('cod')}
+                          className="accent-[#ffb91d]"
+                        />
+                        <span>Cash on Delivery (COD)</span>
+                      </label>
+                      <p className="text-[11px] text-white/60 ml-5 mt-1">
+                        Pay with cash upon physical handover by the courier at your doorstep.
+                      </p>
+                    </div>
                   </div>
-                )}
-              </div>
+                </div>
 
-              {/* STEP 3: Express Courier Method */}
-              <div className="border border-border bg-surface-muted/40 transition-all">
+                {/* Complete Order Button */}
                 <button
-                  type="button"
-                  onClick={() => setActiveStep(3)}
-                  className="w-full p-5 flex items-center justify-between text-left border-b border-border/80"
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full py-4 bg-[#d89528] hover:bg-[#ffb91d] text-black font-semibold text-sm uppercase tracking-[0.2em] transition-all shadow-2xl flex items-center justify-center gap-2 active:scale-98"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-aged-gold text-accent-on-fill text-xs font-mono font-bold flex items-center justify-center">
-                      3
-                    </span>
-                    <h3 className="font-display text-lg text-espresso">Express Courier Shipping</h3>
-                  </div>
-                  {activeStep > 3 && <span className="text-xs text-deep-emerald font-semibold">✓ Saved</span>}
+                  <span>{submitting ? 'Confirming Acquisition...' : `Complete Order • ${formatPrice(finalTotal)}`}</span>
                 </button>
-
-                {activeStep === 3 && (
-                  <div className="p-6 space-y-4 text-xs">
-                    <div className="space-y-3">
-                      <label
-                        className={`p-4 border block cursor-pointer transition-all ${shippingMethod === 'dhl' ? 'border-antique-gold bg-ivory' : 'border-border bg-surface-muted/30'
-                          }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="radio"
-                              name="shipping"
-                              checked={shippingMethod === 'dhl'}
-                              onChange={() => setShippingMethod('dhl')}
-                              className="accent-aged-gold"
-                            />
-                            <div>
-                              <span className="font-serif text-sm font-medium text-espresso block">
-                                DHL Express GCC Regional Courier
-                              </span>
-                              <span className="text-[11px] text-muted">Direct insulated GCC delivery (1-3 business days)</span>
-                            </div>
-                          </div>
-                          <span className="font-mono text-antique-gold font-medium">
-                            {subtotal >= freeShippingThreshold ? 'FREE' : '$25 USD'}
-                          </span>
-                        </div>
-                      </label>
-
-                      <label
-                        className={`p-4 border block cursor-pointer transition-all ${shippingMethod === 'fedex' ? 'border-antique-gold bg-ivory' : 'border-border bg-surface-muted/30'
-                          }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="radio"
-                              name="shipping"
-                              checked={shippingMethod === 'fedex'}
-                              onChange={() => setShippingMethod('fedex')}
-                              className="accent-aged-gold"
-                            />
-                            <div>
-                              <span className="font-serif text-sm font-medium text-espresso block">
-                                Aramex / FedEx GCC Priority Express
-                              </span>
-                              <span className="text-[11px] text-muted">Priority regional courier handling (1-2 business days)</span>
-                            </div>
-                          </div>
-                          <span className="font-mono text-antique-gold font-medium">$25 USD</span>
-                        </div>
-                      </label>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setActiveStep(4)}
-                      className="mt-2 px-6 py-2.5 bg-aged-gold text-accent-on-fill text-xs uppercase tracking-wider font-medium"
-                    >
-                      Continue to Payment Options →
-                    </button>
-                  </div>
-                )}
               </div>
 
-              {/* STEP 4: Payment Options & Submission */}
-              <div className="border border-border bg-surface-muted/40 transition-all">
-                <button
-                  type="button"
-                  onClick={() => setActiveStep(4)}
-                  className="w-full p-5 flex items-center justify-between text-left border-b border-border/80"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-aged-gold text-accent-on-fill text-xs font-mono font-bold flex items-center justify-center">
-                      4
-                    </span>
-                    <h3 className="font-display text-lg text-espresso">Payment Method</h3>
-                  </div>
-                </button>
-
-                {activeStep === 4 && (
-                  <form onSubmit={handleCompleteOrder} className="p-6 space-y-6 text-xs">
-                    <div className="space-y-3">
-                      <label
-                        className={`p-4 border block cursor-pointer transition-all ${paymentMethod === 'card' ? 'border-antique-gold bg-ivory' : 'border-border bg-surface-muted/30'
-                          }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="radio"
-                            name="payment"
-                            checked={paymentMethod === 'card'}
-                            onChange={() => setPaymentMethod('card')}
-                            className="accent-aged-gold"
-                          />
-                          <div>
-                            <span className="font-serif text-sm font-medium text-espresso block">
-                              Credit / Debit Card (Stripe Secured)
-                            </span>
-                            <span className="text-[11px] text-muted">Visa, Mastercard, American Express</span>
-                          </div>
-                        </div>
-                      </label>
-
-                      {paymentMethod === 'card' && (
-                        <div className="p-4 bg-surface-muted border border-border space-y-3 ml-7">
-                          <div className="space-y-1">
-                            <label className="block text-[10px] uppercase text-muted font-semibold">Card Number</label>
-                            <input
-                              type="text"
-                              required={paymentMethod === 'card'}
-                              value={cardNumber}
-                              onChange={(e) => setCardNumber(e.target.value)}
-                              placeholder="4242 •••• •••• 4242"
-                              className="w-full bg-ivory border border-border px-3 py-2 text-espresso outline-none"
-                            />
-                          </div>
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="space-y-1">
-                              <label className="block text-[10px] uppercase text-muted font-semibold">Expiry (MM/YY)</label>
-                              <input
-                                type="text"
-                                required={paymentMethod === 'card'}
-                                value={cardExpiry}
-                                onChange={(e) => setCardExpiry(e.target.value)}
-                                placeholder="12/28"
-                                className="w-full bg-ivory border border-border px-3 py-2 text-espresso outline-none"
-                              />
-                            </div>
-                            <div className="space-y-1">
-                              <label className="block text-[10px] uppercase text-muted font-semibold">CVC</label>
-                              <input
-                                type="password"
-                                required={paymentMethod === 'card'}
-                                value={cardCvc}
-                                onChange={(e) => setCardCvc(e.target.value)}
-                                placeholder="123"
-                                className="w-full bg-ivory border border-border px-3 py-2 text-espresso outline-none"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      <label
-                        className={`p-4 border block cursor-pointer transition-all ${paymentMethod === 'gcc' ? 'border-antique-gold bg-ivory' : 'border-border bg-surface-muted/30'
-                          }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="radio"
-                            name="payment"
-                            checked={paymentMethod === 'gcc'}
-                            onChange={() => setPaymentMethod('gcc')}
-                            className="accent-aged-gold"
-                          />
-                          <div>
-                            <span className="font-serif text-sm font-medium text-espresso block">
-                              UAE / GCC Regional Gateway (Telr / PayTabs)
-                            </span>
-                            <span className="text-[11px] text-muted">Supports AED, SAR, QAR, KWD</span>
-                          </div>
-                        </div>
-                      </label>
-
-                      <label
-                        className={`p-4 border block cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-antique-gold bg-ivory' : 'border-border bg-surface-muted/30'
-                          }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="radio"
-                            name="payment"
-                            checked={paymentMethod === 'cod'}
-                            onChange={() => setPaymentMethod('cod')}
-                            className="accent-aged-gold"
-                          />
-                          <div>
-                            <span className="font-serif text-sm font-medium text-espresso block">
-                              Cash on Delivery (COD - UAE & GCC)
-                            </span>
-                            <span className="text-[11px] text-muted">Pay courier upon inspection</span>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full py-4 bg-aged-gold hover:bg-antique-gold text-accent-on-fill text-xs uppercase tracking-[0.24em] font-medium transition-all shadow-md text-center"
-                    >
-                      {submitting ? 'Processing Acquisition...' : `Complete Acquisition & Pay ($${grandTotal.toFixed(2)} USD)`}
-                    </button>
-                  </form>
-                )}
-              </div>
-            </div>
-
-            {/* Right Column — Dynamic Order Summary */}
-            <div className="lg:col-span-5 space-y-6">
-              <div className="p-6 border border-border bg-surface-muted/50 space-y-6">
-                <h3 className="font-display text-xl text-espresso border-b border-border pb-4">
-                  Vault Summary ({items.length} items)
+              {/* ── RIGHT COLUMN: Order Summary ── */}
+              <div className="lg:col-span-5 border border-white/10 bg-[#0e0e0e] p-6 space-y-6 sticky top-28">
+                <h3 className="font-serif text-lg text-white border-b border-white/10 pb-3">
+                  Summary ({items.length} Flacons)
                 </h3>
 
-                <div className="space-y-4 max-h-80 overflow-y-auto pr-1 divide-y divide-border/60">
+                {/* Items List */}
+                <div className="divide-y divide-white/10 max-h-80 overflow-y-auto pr-1">
                   {items.map((item) => (
-                    <div key={item.variantId} className="pt-4 first:pt-0 flex items-center justify-between gap-4 text-xs font-sans">
+                    <div key={item.variantId} className="py-3 flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="relative w-12 aspect-[4/5] bg-surface-muted border border-border flex-shrink-0">
-                          <Image src={item.image} alt={item.name} fill className="object-cover" />
+                        <div className="relative w-14 aspect-[3/4] bg-[#141414] border border-white/10 flex-shrink-0">
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            fill
+                            className="object-cover object-center"
+                          />
+                          <span className="absolute -top-1.5 -right-1.5 bg-[#ffb91d] text-black font-bold text-[9px] w-4 h-4 rounded-full flex items-center justify-center">
+                            {item.quantity}
+                          </span>
                         </div>
-                        <div>
-                          <p className="font-serif text-sm text-espresso line-clamp-1">{item.name}</p>
-                          <p className="text-[10px] text-muted">{item.size} × {item.quantity}</p>
+                        <div className="space-y-0.5 text-xs">
+                          <h4 className="font-serif text-white line-clamp-1">{item.name}</h4>
+                          <p className="text-[10px] text-white/50 font-mono">{item.size || '100ml'}</p>
                         </div>
                       </div>
-                      <span className="font-mono text-antique-gold font-medium">${item.price * item.quantity} USD</span>
+
+                      <span className="font-mono text-xs text-[#ffb91d] font-medium shrink-0">
+                        {formatPrice(item.price * item.quantity)}
+                      </span>
                     </div>
                   ))}
                 </div>
 
-                <div className="pt-4 border-t border-border space-y-2.5 text-xs font-sans">
-                  <div className="flex justify-between text-muted">
-                    <span>Flacon Subtotal</span>
-                    <span className="font-mono text-espresso">${subtotal} USD</span>
+                {/* Coupon Code Input */}
+                <div className="border-t border-white/10 pt-4 space-y-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      placeholder="Discount code (e.g. PREPAID200)"
+                      className="flex-1 bg-[#141414] border border-white/15 px-3 py-2 text-xs text-white uppercase outline-none focus:border-[#ffb91d]"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-wider font-semibold transition-all"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {couponApplied && (
+                    <p className="text-[11px] text-[#53ff73] font-mono">
+                      ✓ Code applied: -₹{couponDiscount}
+                    </p>
+                  )}
+                </div>
+
+                {/* Breakdown */}
+                <div className="border-t border-white/10 pt-4 space-y-2 text-xs font-mono">
+                  <div className="flex justify-between text-white/70">
+                    <span>Subtotal</span>
+                    <span>{formatPrice(subtotal)}</span>
                   </div>
 
-                  <div className="flex justify-between text-muted">
-                    <span>Express Courier Shipping</span>
-                    <span className="font-mono text-espresso">
-                      {shippingFee === 0 ? <strong className="text-deep-emerald font-normal">FREE</strong> : `$${shippingFee} USD`}
+                  {prepaidDiscount > 0 && (
+                    <div className="flex justify-between text-[#53ff73]">
+                      <span>Prepaid Offer Discount</span>
+                      <span>-{formatPrice(prepaidDiscount)}</span>
+                    </div>
+                  )}
+
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between text-[#53ff73]">
+                      <span>Coupon Discount</span>
+                      <span>-{formatPrice(couponDiscount)}</span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between text-white/70">
+                    <span>Shipping</span>
+                    <span className="text-[#53ff73]">FREE (Express)</span>
+                  </div>
+                </div>
+
+                {/* Grand Total */}
+                <div className="border-t border-white/10 pt-4 flex justify-between items-baseline text-white">
+                  <span className="font-serif text-lg">Total</span>
+                  <div className="text-right">
+                    <span className="font-mono text-2xl text-[#ffb91d] font-bold">
+                      {formatPrice(finalTotal)}
                     </span>
-                  </div>
-
-                  <div className="flex justify-between text-muted">
-                    <span>Estimated Regional VAT (5%)</span>
-                    <span className="font-mono text-espresso">${estimatedTax.toFixed(2)} USD</span>
-                  </div>
-
-                  <div className="pt-3 border-t border-border flex justify-between items-baseline">
-                    <span className="font-serif text-base text-espresso font-medium">Grand Total</span>
-                    <span className="font-serif text-2xl text-antique-gold font-normal">${grandTotal.toFixed(2)} USD</span>
+                    <span className="block text-[10px] text-white/50 font-sans mt-0.5">
+                      Including ₹{Math.round(finalTotal * 0.18)} in taxes
+                    </span>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </form>
+          )}
         </Container>
       </main>
     </div>

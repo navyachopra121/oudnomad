@@ -92,7 +92,7 @@ export default function EmailSignupPopup() {
         className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       >
         <div
-          className="relative w-full max-w-[360px] bg-[#0a0a0a] border border-[#d89527]/30 shadow-[0_0_60px_rgba(216,149,39,0.15)] overflow-hidden"
+          className="relative w-full max-w-[360px] bg-[#0a0a0a] border border-[#ffb91d]/30 shadow-[0_0_60px_rgba(255,185,29,0.15)] overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close Button */}
@@ -100,7 +100,7 @@ export default function EmailSignupPopup() {
             type="button"
             onClick={dismiss}
             aria-label="Close popup"
-            className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center text-white/80 hover:text-[#d89527] transition-colors"
+            className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center text-white/80 hover:text-[#ffb91d] transition-colors"
           >
             <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-2">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -112,7 +112,7 @@ export default function EmailSignupPopup() {
           <div className="px-6 pt-7 pb-4 text-center">
             <p className="font-sans text-sm sm:text-base leading-snug text-white font-light tracking-wide">
               Get access to{' '}
-              <span className="text-[#d89527] font-semibold">member only offers</span>{' '}
+              <span className="text-[#ffb91d] font-semibold">member only offers</span>{' '}
               and new launches from{' '}
               <span className="font-semibold">Oud Nomad Dubai</span>
             </p>
@@ -136,15 +136,15 @@ export default function EmailSignupPopup() {
           <div className="px-5 pb-6 pt-4">
             {status === 'success' ? (
               <div className="text-center py-4">
-                <svg className="w-10 h-10 mx-auto mb-3 text-[#d89527]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-10 h-10 mx-auto mb-3 text-[#ffb91d]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
-                <p className="text-[#d89527] font-semibold text-sm tracking-wider uppercase">Welcome to the Inner Circle</p>
+                <p className="text-[#ffb91d] font-semibold text-sm tracking-wider uppercase">Welcome to the Inner Circle</p>
                 <p className="text-white/60 text-xs mt-1">You&apos;ll hear from us soon.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} noValidate>
-                <div className="flex border border-white/20 focus-within:border-[#d89527] transition-colors mb-3">
+                <div className="flex border border-white/20 focus-within:border-[#ffb91d] transition-colors mb-3">
                   {/* Email icon */}
                   <span className="flex items-center pl-3 pr-2 text-white/50">
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -175,7 +175,7 @@ export default function EmailSignupPopup() {
                   type="submit"
                   disabled={status === 'loading'}
                   id="popup-signup-btn"
-                  className="w-full py-3.5 bg-[#d89527] hover:bg-[#c58b2b] active:bg-[#b07825] text-black font-bold text-[12px] tracking-[0.28em] uppercase transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full py-3.5 bg-[#ffb91d] hover:bg-[#e5a61a] active:bg-[#cc9214] text-black font-bold text-[12px] tracking-[0.28em] uppercase transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {status === 'loading' ? (
                     <span className="flex items-center justify-center gap-2">

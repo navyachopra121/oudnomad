@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Container from '../Container';
 import Reveal from './Reveal';
+import UGCSection from './UGCSection';
 
 const TOP_SELLERS_PRODUCTS = [
   {
@@ -52,69 +53,78 @@ const TOP_SELLERS_PRODUCTS = [
 
 export default function MinimalHomepage() {
   return (
-    <div className="w-full bg-[#000000] text-white font-sans selection:bg-[#d89527]/30 selection:text-white">
-      {/* ── SECTION 1: HERO SLIDER / BANNER ── */}
-      <section className="relative min-h-[80vh] sm:min-h-[88vh] flex items-center justify-center overflow-hidden bg-black text-white">
+    <div className="w-full bg-[#000000] text-white font-sans selection:bg-[#ffb91d]/30 selection:text-white">
+
+      {/* ── SECTION 1: HERO VIDEO BANNER ── */}
+      <section className="relative min-h-screen overflow-hidden bg-black text-white">
+        {/* Full-bleed background video */}
         <div className="absolute inset-0 z-0">
-          <Image
-            src="/banners.jpg"
-            alt="Oud Nomad Dubai Luxury Fragrance"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center opacity-75"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            aria-hidden="true"
+          >
+            <source src="/banner.mp4" type="video/mp4" />
+          </video>
+          {/* Gradient: strong at bottom for text, barely-there at top so header is transparent */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         </div>
 
-        <Container className="relative z-10 text-center py-16 px-4 flex flex-col items-center justify-center max-w-3xl mx-auto">
+        {/* Content pinned to bottom-center of the hero */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 pb-12 sm:pb-16 text-center">
           <Reveal>
-            <div className="space-y-6">
-              <p className="font-sans text-xs sm:text-sm md:text-base leading-relaxed text-[#d89527] font-normal tracking-[0.12em] max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto px-4 space-y-4">
+              <p className="font-sans text-[13px] sm:text-[14px] leading-[1.7] text-white font-normal tracking-[0.06em] drop-shadow-lg">
                 &ldquo;We believe that a perfumer is a poet or a storyteller who use intangible ingredients to create emotions. The main idea behind Oud Nomad is to Abstract memories that evoke our cores. We paint pictures without using paint. We are storytellers who do not need words.&rdquo;
               </p>
-              <div className="pt-3">
+              <div className="pt-2">
                 <Link
                   href="/collections"
-                  className="inline-block text-[10px] sm:text-xs uppercase tracking-[0.28em] text-[#d89527] border-b border-[#d89527] pb-1 hover:text-white hover:border-white transition-colors font-medium"
+                  className="inline-block text-[11px] uppercase tracking-[0.22em] text-[#ffb91d] border-b border-[#ffb91d] pb-0.5 hover:text-white hover:border-white transition-colors font-normal"
                 >
                   LEARN MORE
                 </Link>
               </div>
             </div>
           </Reveal>
-        </Container>
+        </div>
       </section>
 
-      {/* ── SECTION 2: TOP SELLERS (NO HOVER EFFECTS) ── */}
-      <section id="top-sellers" className="py-14 sm:py-20 bg-[#000000] border-t border-[#d89527]/15">
+      {/* ── SECTION 2: TOP SELLERS ── */}
+      <section id="top-sellers" className="py-14 sm:py-20 bg-[#000000] border-t border-[#ffb91d]/15">
         <Container>
           <Reveal>
             <div className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
-              <h2 className="font-sans text-xs sm:text-base md:text-lg text-[#d89527] font-semibold uppercase tracking-[0.28em]">
+              {/* Reference site section h2: 14px, font-weight 400, letter-spacing 0.3em, uppercase */}
+              <h2 className="font-sans text-[13px] sm:text-[14px] text-[#ffb91d] font-normal uppercase tracking-[0.3em]">
                 TOP SELLERS
               </h2>
             </div>
           </Reveal>
 
-          {/* 3-Column Product Grid on Desktop, 2-Column on Mobile - Pure Static Display */}
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 lg:gap-10">
             {TOP_SELLERS_PRODUCTS.map((product, idx) => (
               <Reveal key={product.id} delayMs={idx * 80}>
-                <Link href={`/products/${product.slug}`} className="block text-center cursor-pointer">
-                  <div className="relative aspect-square w-full overflow-hidden bg-[#070707] border border-[#d89527]/15 mb-3">
+                <Link href={`/products/${product.slug}`} className="block text-center cursor-pointer group">
+                  <div className="relative aspect-square w-full overflow-hidden bg-[#070707] border border-[#ffb91d]/15 mb-3 group-hover:border-[#ffb91d]/40 transition-colors">
                     <Image
                       src={product.image}
                       alt={product.name}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 33vw"
-                      className="object-cover object-center"
+                      className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
-                  <h3 className="font-sans text-[11px] sm:text-xs font-semibold tracking-[0.16em] uppercase text-[#d89527] mb-1">
+                  {/* Product name: 11px, font-weight 400, letter-spacing 0.16em */}
+                  <h3 className="font-sans text-[11px] font-normal tracking-[0.16em] uppercase text-[#ffb91d] mb-1">
                     {product.name}
                   </h3>
-                  <p className="text-[10px] sm:text-xs font-normal text-white/80">
+                  {/* Product price: 11px, font-weight 400 */}
+                  <p className="text-[11px] font-normal text-white tracking-[0.05em]">
                     {product.price}
                   </p>
                 </Link>
@@ -125,11 +135,11 @@ export default function MinimalHomepage() {
       </section>
 
       {/* ── SECTION 3: SHOP BY CATEGORY ── */}
-      <section className="py-14 sm:py-20 bg-[#000000] border-t border-[#d89527]/15">
+      <section className="py-14 sm:py-20 bg-[#000000] border-t border-[#ffb91d]/15">
         <Container>
           <Reveal>
             <div className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
-              <h2 className="font-sans text-xs sm:text-base md:text-lg text-[#d89527] font-semibold uppercase tracking-[0.28em]">
+              <h2 className="font-sans text-[13px] sm:text-[14px] text-[#ffb91d] font-normal uppercase tracking-[0.3em]">
                 SHOP BY CATEGORY
               </h2>
             </div>
@@ -140,18 +150,19 @@ export default function MinimalHomepage() {
             <Reveal delayMs={100}>
               <Link
                 href="/collections/perfumes"
-                className="group relative aspect-[4/3] overflow-hidden block border border-[#d89527]/25 shadow-2xl"
+                className="group relative aspect-[4/3] overflow-hidden block border border-[#ffb91d]/25 shadow-2xl"
               >
                 <Image
                   src="/perfume-banner.jpg"
                   alt="Perfumes Collection"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover object-center"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-black/25" />
+                <div className="absolute inset-0 bg-black/30" />
                 <div className="absolute inset-x-0 bottom-6 flex justify-center">
-                  <span className="px-6 py-2 bg-black/80 backdrop-blur-xs border border-[#d89527]/60 text-[#d89527] font-semibold text-[11px] sm:text-xs uppercase tracking-[0.25em]">
+                  {/* Category label: 11px, font-weight 400, letter-spacing 0.25em */}
+                  <span className="px-6 py-2 bg-black/85 backdrop-blur-xs border border-[#ffb91d]/60 text-[#ffb91d] font-normal text-[11px] uppercase tracking-[0.25em]">
                     PERFUMES
                   </span>
                 </div>
@@ -162,18 +173,18 @@ export default function MinimalHomepage() {
             <Reveal delayMs={200}>
               <Link
                 href="/collections/attars"
-                className="group relative aspect-[4/3] overflow-hidden block border border-[#d89527]/25 shadow-2xl"
+                className="group relative aspect-[4/3] overflow-hidden block border border-[#ffb91d]/25 shadow-2xl"
               >
                 <Image
                   src="/attar-banner.jpg"
                   alt="Attars & Oils Collection"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover object-center"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-black/25" />
+                <div className="absolute inset-0 bg-black/30" />
                 <div className="absolute inset-x-0 bottom-6 flex justify-center">
-                  <span className="px-6 py-2 bg-black/80 backdrop-blur-xs border border-[#d89527]/60 text-[#d89527] font-semibold text-[11px] sm:text-xs uppercase tracking-[0.25em]">
+                  <span className="px-6 py-2 bg-black/85 backdrop-blur-xs border border-[#ffb91d]/60 text-[#ffb91d] font-normal text-[11px] uppercase tracking-[0.25em]">
                     ATTARS
                   </span>
                 </div>
@@ -183,12 +194,12 @@ export default function MinimalHomepage() {
         </Container>
       </section>
 
-      {/* ── SECTION 4: BAKHOOR SET (NO HOVER EFFECTS) ── */}
-      <section className="py-14 sm:py-20 bg-[#000000] border-t border-[#d89527]/15">
+      {/* ── SECTION 4: BAKHOOR SET ── */}
+      <section className="py-14 sm:py-20 bg-[#000000] border-t border-[#ffb91d]/15">
         <Container>
           <Reveal>
             <div className="text-center max-w-xl mx-auto mb-10 sm:mb-12">
-              <h2 className="font-sans text-xs sm:text-base md:text-lg text-[#d89527] font-semibold uppercase tracking-[0.28em]">
+              <h2 className="font-sans text-[13px] sm:text-[14px] text-[#ffb91d] font-normal uppercase tracking-[0.3em]">
                 BAKHOOR SET
               </h2>
             </div>
@@ -196,20 +207,20 @@ export default function MinimalHomepage() {
 
           <Reveal delayMs={150}>
             <div className="max-w-md mx-auto text-center">
-              <Link href="/collections/bakhoor" className="block cursor-pointer">
-                <div className="relative aspect-square w-full overflow-hidden bg-[#070707] border border-[#d89527]/20 mb-4">
+              <Link href="/collections/bakhoor" className="block cursor-pointer group">
+                <div className="relative aspect-square w-full overflow-hidden bg-[#070707] border border-[#ffb91d]/20 mb-4 group-hover:border-[#ffb91d]/40 transition-colors">
                   <Image
                     src="/banners.jpg"
                     alt="Royal Bakhoor Burner Set"
                     fill
                     sizes="(max-width: 768px) 100vw, 400px"
-                    className="object-cover object-center"
+                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
-                <h3 className="font-sans text-[11px] sm:text-xs font-semibold tracking-[0.16em] uppercase text-[#d89527] mb-1">
+                <h3 className="font-sans text-[11px] font-normal tracking-[0.16em] uppercase text-[#ffb91d] mb-1">
                   ROYAL BAKHOOR BURNER SET [ 100G ]
                 </h3>
-                <p className="text-[10px] sm:text-xs font-normal text-white/80">
+                <p className="text-[11px] font-normal text-white tracking-[0.05em]">
                   Rs. 6,990.00
                 </p>
               </Link>
@@ -219,34 +230,34 @@ export default function MinimalHomepage() {
       </section>
 
       {/* ── SECTION 5: FEATURED ── */}
-      <section className="py-14 sm:py-20 bg-[#000000] border-t border-[#d89527]/15">
+      <section className="py-14 sm:py-20 bg-[#000000] border-t border-[#ffb91d]/15">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            {/* 2 Side-by-side Images Left */}
             <Reveal>
               <div className="grid grid-cols-2 gap-4">
-                <div className="relative aspect-[4/5] border border-[#d89527]/20 overflow-hidden">
-                  <Image src="/woody.avif" alt="Featured 1" fill className="object-cover" />
+                <div className="relative aspect-[4/5] border border-[#ffb91d]/20 overflow-hidden">
+                  <Image src="/woody.avif" alt="Featured Oud Accord 1" fill className="object-cover" />
                 </div>
-                <div className="relative aspect-[4/5] border border-[#d89527]/20 overflow-hidden">
-                  <Image src="/tobacoo.avif" alt="Featured 2" fill className="object-cover" />
+                <div className="relative aspect-[4/5] border border-[#ffb91d]/20 overflow-hidden">
+                  <Image src="/tobacoo.avif" alt="Featured Oud Accord 2" fill className="object-cover" />
                 </div>
               </div>
             </Reveal>
 
-            {/* Text and Button Right */}
             <Reveal delayMs={200}>
-              <div className="space-y-5 text-center lg:text-left">
-                <h2 className="font-sans text-xs sm:text-base md:text-lg text-[#d89527] font-semibold uppercase tracking-[0.28em]">
+              <div className="space-y-4 text-center lg:text-left">
+                <h2 className="font-sans text-[13px] sm:text-[14px] text-[#ffb91d] font-normal uppercase tracking-[0.3em]">
                   FEATURED
                 </h2>
-                <p className="text-xs sm:text-sm leading-relaxed text-white/80 font-normal max-w-lg mx-auto lg:mx-0">
+                {/* Body text: 13-14px, font-weight 400, leading 1.7 */}
+                <p className="text-[13px] sm:text-[14px] leading-[1.7] text-white font-normal max-w-lg mx-auto lg:mx-0">
                   Immerse yourself in a universe where scents become memories, and luxury becomes your second skin.
                 </p>
                 <div className="pt-2">
+                  {/* Button: 11px, font-weight 400, letter-spacing 0.22em */}
                   <Link
                     href="/collections"
-                    className="inline-block px-8 py-3 text-[11px] sm:text-xs uppercase tracking-[0.22em] font-semibold bg-[#d89527] text-black hover:bg-[#c58b2b] transition-all"
+                    className="inline-block px-8 py-3 text-[11px] uppercase tracking-[0.22em] font-normal bg-[#ffb91d] text-black hover:bg-[#e5a61a] transition-all"
                   >
                     VISIT GALLERY
                   </Link>
@@ -257,8 +268,11 @@ export default function MinimalHomepage() {
         </Container>
       </section>
 
-      {/* ── SECTION 6: GCC & WORLDWIDE EXPRESS SHIPPING (REPLACED LOCATIONS/STORES) ── */}
-      <section className="relative py-24 sm:py-32 bg-black overflow-hidden border-t border-[#d89527]/15">
+      {/* ── SECTION 5b: AS SEEN ON REELS (UGC / Instagram) ── */}
+      <UGCSection />
+
+      {/* ── SECTION 6: GCC EXPRESS SHIPPING ── */}
+      <section className="relative py-24 sm:py-32 bg-black overflow-hidden border-t border-[#ffb91d]/15">
         <div className="absolute inset-0 z-0">
           <Image
             src="/boutique-store.jpg"
@@ -272,19 +286,20 @@ export default function MinimalHomepage() {
 
         <Container className="relative z-20">
           <Reveal>
-            <div className="max-w-xl bg-black/85 backdrop-blur-md border border-[#d89527]/40 p-8 sm:p-12 text-left">
-              <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[#d89527] font-semibold block mb-2">
+            <div className="max-w-xl bg-black/85 backdrop-blur-md border border-[#ffb91d]/40 p-8 sm:p-12 text-left">
+              {/* Eyebrow: 10px, font-weight 400, letter-spacing 0.25em */}
+              <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#ffb91d] font-normal block mb-2">
                 EXPRESS SHIPPING
               </span>
-              <h2 className="font-sans text-sm sm:text-base md:text-lg text-white font-semibold uppercase tracking-[0.2em] mb-3 leading-snug">
+              <h2 className="font-sans text-[13px] sm:text-[14px] text-[#ffb91d] font-normal uppercase tracking-[0.2em] mb-3 leading-snug">
                 DELIVERING ACROSS ALL GCC COUNTRIES
               </h2>
-              <p className="text-[11px] sm:text-xs text-white/80 font-normal leading-relaxed mb-6">
+              <p className="text-[13px] text-white font-normal leading-[1.7] mb-6">
                 Fast & insured courier shipping to UAE, Saudi Arabia, Qatar, Kuwait, Oman & Bahrain. UK shipping coming soon.
               </p>
               <Link
                 href="/collections"
-                className="inline-block px-8 py-3 text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold bg-[#d89527] text-black hover:bg-[#c58b2b] transition-all"
+                className="inline-block px-8 py-3 text-[11px] uppercase tracking-[0.22em] font-normal bg-[#ffb91d] text-black hover:bg-[#e5a61a] transition-all"
               >
                 EXPLORE COLLECTIONS
               </Link>
@@ -293,21 +308,21 @@ export default function MinimalHomepage() {
         </Container>
       </section>
 
-      {/* ── SECTION 7: A FRAGRANCE STORY (LIGHT CONTRAST STRIP) ── */}
-      <section className="py-14 sm:py-20 bg-[#FFFFFF] text-[#000000]">
+      {/* ── SECTION 7: A FRAGRANCE STORY ── */}
+      <section className="py-14 sm:py-20 bg-[#000000] text-white border-t border-[#ffb91d]/15">
         <Container className="max-w-4xl mx-auto text-center px-4">
           <Reveal>
-            <h2 className="font-sans text-xs sm:text-sm font-semibold uppercase tracking-[0.28em] text-[#000000] mb-4">
+            <h2 className="font-sans text-[13px] sm:text-[14px] font-normal uppercase tracking-[0.3em] text-[#ffb91d] mb-5">
               A FRAGRANCE STORY
             </h2>
-            <p className="text-[10px] sm:text-xs leading-relaxed text-[#333333] font-normal tracking-[0.12em] uppercase max-w-3xl mx-auto">
+            <p className="text-[13px] sm:text-[14px] leading-[1.7] text-white font-normal tracking-[0.04em] max-w-3xl mx-auto">
               Oud Nomad Dubai was born from a desire to elevate Oriental perfumery to its highest expression. Combining centuries-old Arabian distillation traditions with modern Parisian elegance, each flacon contains liquid gold born of patient aging and uncompromising passion.
             </p>
           </Reveal>
         </Container>
       </section>
 
-      {/* ── FLOATING ACTION BUTTONS (WHATSAPP & CALL) ── */}
+      {/* ── FLOATING ACTION BUTTONS ── */}
       <div className="fixed bottom-5 left-5 z-40">
         <a
           href="https://wa.me/971500000000"
@@ -325,7 +340,7 @@ export default function MinimalHomepage() {
       <div className="fixed bottom-5 right-5 z-40">
         <a
           href="tel:+971500000000"
-          className="w-11 h-11 bg-[#d89527] text-black rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-transform"
+          className="w-11 h-11 bg-[#ffb91d] text-black rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-transform"
           aria-label="Call Customer Concierge"
         >
           <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">

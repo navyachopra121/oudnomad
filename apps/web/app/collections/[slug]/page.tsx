@@ -13,57 +13,75 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default function CategoryPlpPage({ params }: PageProps) {
+const COLLECTION_METAS: Record<string, { title: string; subtitle: string; banner: string }> = {
+  all: {
+    title: 'All Fragrances',
+    subtitle: 'Explore the complete universe of Oud Arabia Dubai luxury perfumes, concentrated attars, and sacred bakhoors.',
+    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618',
+  },
+  'top-sellers': {
+    title: 'Top Sellers',
+    subtitle: 'Our most celebrated creations coveted across Dubai, India, and worldwide for their intoxicating sillage.',
+    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Voice_of_the_soul_1.jpg?v=1692390886',
+  },
+  perfumes: {
+    title: 'Luxury Perfumes',
+    subtitle: 'Handcrafted Eau de Parfum and Extraits de Parfum made with Grasse flower oils and rare agarwood extracts.',
+    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Nadeem_1.jpg?v=1692390847',
+  },
+  attars: {
+    title: 'Concentrated Attars',
+    subtitle: 'Pure non-alcoholic botanical distillates infused over Mysore sandalwood oil in handcrafted copper stills.',
+    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Artboard_1_copy_3_3adc834e-2708-444e-a224-0d3149cc0981.png?v=1764672655',
+  },
+  'bakhoor-set': {
+    title: 'Bakhoor Set & Incense',
+    subtitle: 'Handcrafted gold brass burners and traditional fragrant agarwood chips for sacred home sanctuary.',
+    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Bakhoor_Burner_Set.jpg?v=1692391200',
+  },
+  'emerald-collection': {
+    title: 'Emerald Collection',
+    subtitle: 'Prestige limited edition flacons housed in hand-polished crystal and plush velvet presentation boxes.',
+    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Oud_Arabia_No_1.jpg?v=1692390950',
+  },
+};
+
+const CATEGORY_TABS = [
+  { slug: 'all', label: 'All Fragrances' },
+  { slug: 'top-sellers', label: 'Top Sellers' },
+  { slug: 'perfumes', label: 'Perfumes' },
+  { slug: 'attars', label: 'Attars & Oils' },
+  { slug: 'bakhoor-set', label: 'Bakhoor Set' },
+  { slug: 'emerald-collection', label: 'Emerald Collection' },
+];
+
+export default function CollectionPlpPage({ params }: PageProps) {
   const resolvedParams = use(params);
-  const slug = resolvedParams.slug;
+  const rawSlug = resolvedParams.slug;
+  const slug = rawSlug.toLowerCase();
+
   const { addItem, openDrawer } = useCart();
-  const { formatPrice, currency } = useCurrency();
+  const { formatPrice } = useCurrency();
 
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sort, setSort] = useState<string>('default');
-  const [maxPriceFilter, setMaxPriceFilter] = useState<number>(1000);
+  const [sort, setSort] = useState<string>('featured');
+  const [activeCategory, setActiveCategory] = useState<string>(slug);
+  const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
 
   // Quick View State
   const [quickViewProduct, setQuickViewProduct] = useState<ProductItem | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<string>('');
   const [addedSuccess, setAddedSuccess] = useState(false);
-
-  useEffect(() => {
-    if (quickViewProduct?.variants && quickViewProduct.variants.length > 0) {
-      setSelectedVariant(quickViewProduct.variants[0].id);
-    } else {
-      setSelectedVariant('');
-    }
-  }, [quickViewProduct]);
-
-  const handleQuickAddToCart = () => {
-    if (!quickViewProduct) return;
-    const variantId = selectedVariant || quickViewProduct.variants?.[0]?.id || quickViewProduct.id;
-    const variantObj = quickViewProduct.variants?.find((v) => v.id === variantId);
-    addItem({
-      productId: quickViewProduct.id,
-      variantId,
-      name: quickViewProduct.name,
-      slug: quickViewProduct.slug,
-      image: quickViewProduct.images?.[0] || '',
-      price: variantObj?.price || quickViewProduct.price,
-      size: variantObj?.size || 'Standard Flacon',
-      quantity: 1,
-    });
-    setAddedSuccess(true);
-    setTimeout(() => {
-      setAddedSuccess(false);
-      setQuickViewProduct(null);
-      openDrawer();
-    }, 800);
-  };
 
   useEffect(() => {
     async function load() {
       setLoading(true);
       try {
-        const res = await StoreApi.getProducts({ category: slug, sort: sort !== 'default' ? sort : undefined });
+        const queryCategory = activeCategory === 'all' ? undefined : activeCategory;
+        const res = await StoreApi.getProducts({
+          category: queryCategory,
+          sort: sort !== 'featured' ? sort : undefined,
+        });
         setProducts(res.items || []);
       } catch (err) {
         console.error('Failed to load products:', err);
@@ -72,289 +90,331 @@ export default function CategoryPlpPage({ params }: PageProps) {
       }
     }
     load();
-  }, [slug, sort]);
+  }, [activeCategory, sort]);
 
-  const filteredProducts = products.filter((p) => (p.price || 0) <= maxPriceFilter);
-
-  const categoryTitles: Record<string, { title: string; subtitle: string }> = {
-    oud: {
-      title: 'Royal Oud & Extrait Archives',
-      subtitle: 'Single-origin wild agarwood oils and aged extraits de parfum, steeped in centuries of heritage.',
-    },
-    attars: {
-      title: 'Pure Concentrated Attars',
-      subtitle: 'Alcohol-free botanical distillates infused over pure sandalwood oil in handcrafted copper stills.',
-    },
-    bakhoor: {
-      title: 'Incense & Raw Bakhoor Chips',
-      subtitle: 'Rare resin tears, medical-grade green hojari frankincense, and scented agarwood chips.',
-    },
-    mukhallat: {
-      title: 'Bespoke Mukhallat Compositions',
-      subtitle: 'Layered olfactory harmonies weaving ambergris, Taif rose, saffron, and aged woods.',
-    },
+  const handleQuickAddToCart = (prod: ProductItem) => {
+    addItem({
+      productId: prod.id,
+      variantId: `${prod.id}-std`,
+      name: prod.name,
+      slug: prod.slug,
+      image: prod.images?.[0] || '',
+      price: prod.price,
+      size: prod.features?.quantity || '100ml',
+      quantity: 1,
+    });
+    setAddedSuccess(true);
+    setTimeout(() => {
+      setAddedSuccess(false);
+      openDrawer();
+    }, 600);
   };
 
-  const info = categoryTitles[slug] || {
-    title: `${slug.toUpperCase()} Collection`,
-    subtitle: 'Explore our curated olfactory creations.',
+  const meta = COLLECTION_METAS[activeCategory] || {
+    title: `${activeCategory.replace('-', ' ').toUpperCase()} Collection`,
+    subtitle: 'Explore our curated olfactory creations handcrafted in Dubai.',
+    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618',
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-serif">
+    <div className="min-h-screen bg-[#070707] text-[#f2efe9] flex flex-col font-sans selection:bg-[#ffb91d] selection:text-black">
       <SiteHeader />
 
-      <main className="flex-1 w-full py-6 sm:py-2">
-        <Container className="space-y-10 sm:space-y-14">
+      <main className="flex-1 w-full pt-28 pb-20">
+        <Container className="space-y-8">
           {/* Breadcrumbs */}
-          <nav className="text-[10px] sm:text-[11px] font-sans uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted flex flex-wrap items-center gap-1.5 sm:gap-2 leading-relaxed py-1">
-            <Link href="/" className="hover:text-espresso transition-colors shrink-0">Home</Link>
-            <span className="opacity-50">/</span>
-            <Link href="/collections" className="hover:text-espresso transition-colors shrink-0">Collections</Link>
-            <span className="opacity-50">/</span>
-            <span className="text-antique-gold font-medium shrink-0">{slug}</span>
+          <nav className="text-[11px] font-sans tracking-[0.2em] uppercase text-white/50 flex flex-wrap items-center gap-2">
+            <Link href="/" className="hover:text-[#ffb91d] transition-colors">
+              Home
+            </Link>
+            <span>/</span>
+            <Link href="/collections/all" className="hover:text-[#ffb91d] transition-colors">
+              Collections
+            </Link>
+            <span>/</span>
+            <span className="text-[#ffb91d] font-medium">{meta.title}</span>
           </nav>
 
-          {/* Category Banner Header */}
-          <div className="border-b border-border pb-8 space-y-3">
-            <p className="text-[11px] font-sans tracking-[0.28em] uppercase text-antique-gold font-medium">
-              Curated Vault Selection
-            </p>
-            <h1 className="font-display text-3xl sm:text-5xl font-normal text-espresso tracking-tight">
-              {info.title}
-            </h1>
-            <p className="text-xs sm:text-sm text-muted max-w-2xl font-sans leading-relaxed">
-              {info.subtitle}
-            </p>
+          {/* Collection Header Banner */}
+          <div className="relative border border-[#ffb91d]/20 bg-gradient-to-b from-[#141414] via-[#0d0d0d] to-[#070707] p-8 sm:p-14 text-center rounded-none overflow-hidden shadow-2xl">
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffb91d_1px,transparent_1px)] [background-size:16px_16px]" />
+            <div className="relative z-10 max-w-2xl mx-auto space-y-4">
+              <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.35em] uppercase text-[#ffb91d] block">
+                OUD ARABIA DUBAI • ARCHIVES
+              </span>
+              <h1 className="text-3xl sm:text-5xl font-light tracking-[0.18em] uppercase text-white font-serif">
+                {meta.title}
+              </h1>
+              <p className="text-xs sm:text-sm text-white/70 leading-relaxed font-sans max-w-xl mx-auto">
+                {meta.subtitle}
+              </p>
+            </div>
           </div>
 
-          {/* Filter & Sort Controls Bar — Sticky under header */}
-          <div className="sticky top-[64px] lg:top-[64px] z-40 bg-ivory/95 backdrop-blur-md shadow-sm border border-border p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 font-sans text-xs transition-all duration-300">
-            <div className="flex items-center gap-4 w-full sm:w-auto">
-              <span className="text-muted uppercase tracking-widest text-[10px] font-medium">Max Price ($):</span>
-              <input
-                type="range"
-                min="100"
-                max="1000"
-                step="50"
-                value={maxPriceFilter}
-                onChange={(e) => setMaxPriceFilter(Number(e.target.value))}
-                className="accent-aged-gold cursor-pointer"
-              />
-              <span className="text-antique-gold font-mono font-medium">${maxPriceFilter}</span>
+          {/* Category Filter Pills & Sort Bar */}
+          <div className="border border-white/10 bg-[#0e0e0e] p-4 flex flex-col md:flex-row items-center justify-between gap-4 sticky top-20 z-30 backdrop-blur-md">
+            {/* Category tabs */}
+            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto scrollbar-none pb-2 md:pb-0">
+              {CATEGORY_TABS.map((tab) => {
+                const isActive = activeCategory === tab.slug;
+                return (
+                  <button
+                    key={tab.slug}
+                    onClick={() => setActiveCategory(tab.slug)}
+                    className={`shrink-0 px-4 py-2 text-[11px] uppercase tracking-[0.2em] transition-all font-medium border ${
+                      isActive
+                        ? 'bg-[#ffb91d] text-black border-[#ffb91d] shadow-md'
+                        : 'bg-transparent text-white/75 border-white/10 hover:border-[#ffb91d]/50 hover:text-white'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
             </div>
 
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-              <span className="text-muted uppercase tracking-widest text-[10px] font-medium">Sort By:</span>
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-                className="bg-ivory text-espresso border border-border rounded-none px-3 py-1.5 outline-none focus:border-antique-gold text-xs"
-              >
-                <option value="default">Featured</option>
-                <option value="price_asc">Price: Low to High</option>
-                <option value="price_desc">Price: High to Low</option>
-                <option value="rating">Customer Rating</option>
-              </select>
+            {/* Sort & Count */}
+            <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto border-t md:border-t-0 border-white/10 pt-3 md:pt-0">
+              <span className="text-[11px] uppercase tracking-wider text-white/50 font-mono">
+                {products.length} Products
+              </span>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] uppercase tracking-widest text-white/40 hidden sm:inline">
+                  Sort:
+                </span>
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                  className="bg-[#141414] text-white border border-white/15 px-3 py-1.5 text-[11px] uppercase tracking-wider outline-none focus:border-[#ffb91d] cursor-pointer"
+                >
+                  <option value="featured">Featured</option>
+                  <option value="price-low-high">Price: Low to High</option>
+                  <option value="price-high-low">Price: High to Low</option>
+                  <option value="title-asc">Alphabetically: A-Z</option>
+                  <option value="title-desc">Alphabetically: Z-A</option>
+                </select>
+              </div>
             </div>
           </div>
 
           {/* Product Grid */}
           {loading ? (
-            <div className="py-24 text-center text-xs font-sans uppercase tracking-[0.25em] text-muted">
-              Sourcing flacons from vault...
+            <div className="py-24 text-center">
+              <div className="inline-block w-8 h-8 border-2 border-[#ffb91d] border-t-transparent rounded-full animate-spin mb-4" />
+              <p className="text-xs uppercase tracking-[0.25em] text-white/50">
+                Unveiling Flacon Catalog...
+              </p>
             </div>
-          ) : filteredProducts.length === 0 ? (
-            <div className="py-16 text-center space-y-4 border border-border bg-surface-muted/30 p-12">
-              <p className="text-sm font-sans text-muted">No flacons match your price filter.</p>
+          ) : products.length === 0 ? (
+            <div className="py-20 text-center border border-white/10 bg-[#0e0e0e] p-8 space-y-4">
+              <p className="text-sm text-white/60">No fragrances found in this collection.</p>
               <button
-                onClick={() => setMaxPriceFilter(1000)}
-                className="text-xs uppercase tracking-widest text-antique-gold hover:underline font-sans"
+                onClick={() => setActiveCategory('all')}
+                className="px-6 py-2 bg-[#ffb91d] text-black text-xs uppercase tracking-widest font-semibold hover:brightness-110 transition-all"
               >
-                Reset Filters
+                View All Fragrances
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-              {filteredProducts.map((product) => {
-                const imageSrc = product.images?.[0] || 'https://picsum.photos/seed/bottle-default/800/1000';
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+              {products.map((prod) => {
+                const img1 = prod.images?.[0] || 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618';
+                const img2 = prod.images?.[1] || img1;
+                const isHovered = hoveredProduct === prod.id;
+
                 return (
-                  <article
-                    key={product.id}
-                    className="group flex flex-col justify-between h-full"
+                  <div
+                    key={prod.id}
+                    onMouseEnter={() => setHoveredProduct(prod.id)}
+                    onMouseLeave={() => setHoveredProduct(null)}
+                    className="group border border-white/10 bg-[#0d0d0d] hover:border-[#ffb91d]/50 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-2xl"
                   >
-                    <div>
-                      <div className="relative aspect-[4/5] w-full overflow-hidden bg-surface-muted/30 mb-4 group/img">
-                        <Link href={`/products/${product.slug}`} className="block relative w-full h-full">
+                    {/* Image Area */}
+                    <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#141414]">
+                      <Link href={`/products/${prod.slug}`} className="block w-full h-full">
+                        {/* Primary Image */}
+                        <Image
+                          src={img1}
+                          alt={prod.name}
+                          fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          className={`object-cover object-center transition-all duration-700 ${
+                            isHovered && prod.images?.length > 1
+                              ? 'opacity-0 scale-105'
+                              : 'opacity-100 scale-100 group-hover:scale-105'
+                          }`}
+                        />
+                        {/* Secondary Image on Hover */}
+                        {prod.images?.length > 1 && (
                           <Image
-                            src={imageSrc}
-                            alt={product.name}
+                            src={img2}
+                            alt={`${prod.name} view 2`}
                             fill
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                            className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            className={`object-cover object-center transition-all duration-700 absolute inset-0 ${
+                              isHovered ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
+                            }`}
                           />
-                          {product.concentration && (
-                            <span className="absolute top-2.5 left-2.5 bg-ivory/90 backdrop-blur-sm text-espresso text-[9px] font-sans uppercase tracking-[0.18em] px-2 py-0.5">
-                              {product.concentration}
-                            </span>
-                          )}
-                        </Link>
+                        )}
+                      </Link>
+
+                      {/* Best seller / category badge */}
+                      <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10 pointer-events-none">
+                        {prod.categories?.includes('top-sellers') && (
+                          <span className="bg-[#ffb91d] text-black text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 shadow">
+                            Top Seller
+                          </span>
+                        )}
+                        <span className="bg-black/80 backdrop-blur-sm text-white/90 text-[8px] sm:text-[9px] font-mono tracking-wider px-2 py-0.5 border border-white/10">
+                          {prod.features?.quantity || (prod.category === 'attars' ? '12ml' : '100ml')}
+                        </span>
+                      </div>
+
+                      {/* Quick Action Overlay (Desktop) */}
+                      <div className="absolute inset-x-3 bottom-3 hidden lg:flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
                         <button
                           type="button"
-                          onClick={() => setQuickViewProduct(product)}
-                          className="absolute bottom-2.5 inset-x-3 py-2 bg-ivory/95 hover:bg-aged-gold hover:text-accent-on-fill text-espresso text-[10px] font-sans uppercase tracking-[0.2em] font-medium transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md text-center"
+                          onClick={() => setQuickViewProduct(prod)}
+                          className="flex-1 py-2.5 bg-black/90 hover:bg-black text-white text-[10px] uppercase tracking-[0.2em] font-medium border border-white/20 hover:border-[#ffb91d] transition-all text-center"
                         >
                           Quick View
                         </button>
+                        <button
+                          type="button"
+                          onClick={() => handleQuickAddToCart(prod)}
+                          className="px-3.5 py-2.5 bg-[#d89528] hover:bg-[#ffb91d] text-black transition-all font-bold text-xs"
+                          title="Quick Add to Bag"
+                        >
+                          +
+                        </button>
                       </div>
-
-                      <div className="flex items-center justify-between text-[11px] text-muted font-sans mb-1">
-                        <span className="uppercase tracking-widest text-[10px]">{product.category}</span>
-                        {product.rating && (
-                          <span className="text-antique-gold font-mono">★ {product.rating.toFixed(1)}</span>
-                        )}
-                      </div>
-
-                      <Link href={`/products/${product.slug}`}>
-                        <h3 className="font-display text-lg text-espresso group-hover:text-antique-gold transition-colors duration-300 mb-1">
-                          {product.name}
-                        </h3>
-                      </Link>
-
-                      <p className="text-xs text-muted line-clamp-2 font-sans leading-relaxed mb-4">
-                        {product.description}
-                      </p>
                     </div>
 
-                    <div className="pt-2 flex items-center justify-between">
-                      <span className="text-sm font-sans font-medium text-antique-gold">
-                        {formatPrice(product.price)}
-                      </span>
+                    {/* Meta Info */}
+                    <div className="p-4 sm:p-5 flex flex-col flex-1 justify-between space-y-3">
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-[#ffb91d]">
+                          <span>{prod.category === 'attars' ? 'Pure Attar' : 'Extrait De Parfum'}</span>
+                          <span className="text-white/40">★ 4.9</span>
+                        </div>
 
-                      <Link
-                        href={`/products/${product.slug}`}
-                        className="inline-flex items-center justify-center px-4 py-2 text-[10px] uppercase tracking-[0.22em] font-medium bg-aged-gold/10 text-antique-gold hover:bg-aged-gold hover:text-accent-on-fill transition-all duration-300"
-                      >
-                        Acquire Flacon
-                      </Link>
+                        <Link
+                          href={`/products/${prod.slug}`}
+                          className="font-serif text-sm sm:text-base text-white hover:text-[#ffb91d] transition-colors block line-clamp-1"
+                        >
+                          {prod.name}
+                        </Link>
+
+                        <p className="text-[11px] text-white/50 line-clamp-1 font-sans">
+                          {prod.features?.topNotes ? `Notes: ${prod.features.topNotes}` : prod.description}
+                        </p>
+                      </div>
+
+                      <div className="pt-2 border-t border-white/5 flex items-center justify-between">
+                        <span className="text-sm sm:text-base font-medium text-[#ffb91d] tracking-wide">
+                          {formatPrice(prod.price)}
+                        </span>
+
+                        {/* Mobile quick add button */}
+                        <button
+                          type="button"
+                          onClick={() => handleQuickAddToCart(prod)}
+                          className="lg:hidden text-[10px] uppercase tracking-wider font-semibold px-2.5 py-1 bg-[#ffb91d] text-black rounded-none active:scale-95 transition-all"
+                        >
+                          + Add
+                        </button>
+                      </div>
                     </div>
-                  </article>
+                  </div>
                 );
               })}
             </div>
           )}
+        </Container>
+      </main>
 
-          {/* Quick View Modal */}
-          {quickViewProduct && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-espresso/60 backdrop-blur-sm font-sans">
-              <div className="bg-ivory border border-border p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
-                <div className="flex items-center justify-between border-b border-border pb-4">
-                  <div>
-                    <span className="text-[10px] uppercase tracking-widest text-antique-gold font-medium block">
-                      Atelier Quick Inspection
-                    </span>
-                    <h3 className="font-display text-2xl text-espresso">{quickViewProduct.name}</h3>
-                  </div>
-                  <button
-                    onClick={() => setQuickViewProduct(null)}
-                    className="text-muted hover:text-espresso text-lg"
-                  >
-                    ✕
-                  </button>
+      {/* Quick View Modal */}
+      {quickViewProduct && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn"
+          onClick={() => setQuickViewProduct(null)}
+        >
+          <div
+            className="relative w-full max-w-2xl bg-[#111111] border border-[#ffb91d]/40 p-6 sm:p-8 shadow-2xl text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setQuickViewProduct(null)}
+              className="absolute top-4 right-4 text-white/60 hover:text-white text-xl p-2"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 items-center">
+              <div className="relative aspect-[3/4] w-full bg-[#161616] border border-white/10 overflow-hidden">
+                <Image
+                  src={quickViewProduct.images?.[0] || ''}
+                  alt={quickViewProduct.name}
+                  fill
+                  className="object-cover object-center"
+                />
+              </div>
+
+              <div className="space-y-4">
+                <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#ffb91d]">
+                  OUD ARABIA DUBAI
+                </span>
+                <h3 className="text-2xl font-serif text-white tracking-wide">
+                  {quickViewProduct.name}
+                </h3>
+                <p className="text-xl text-[#ffb91d] font-medium font-mono">
+                  {formatPrice(quickViewProduct.price)}
+                </p>
+
+                <p className="text-xs text-white/70 leading-relaxed line-clamp-3">
+                  {quickViewProduct.description}
+                </p>
+
+                <div className="space-y-1.5 text-xs text-white/60 pt-2 border-t border-white/10">
+                  <p>
+                    <strong className="text-white/90">Top Notes:</strong>{' '}
+                    {quickViewProduct.features?.topNotes}
+                  </p>
+                  <p>
+                    <strong className="text-white/90">Longevity:</strong>{' '}
+                    {quickViewProduct.features?.longevity || '48 Hours'}
+                  </p>
+                  <p>
+                    <strong className="text-white/90">Volume:</strong>{' '}
+                    {quickViewProduct.features?.quantity || '100ml'}
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
-                  {/* Flacon Image */}
-                  <div className="relative aspect-[4/5] bg-surface-muted border border-border overflow-hidden">
-                    <Image
-                      src={quickViewProduct.images?.[0] || 'https://picsum.photos/seed/bottle-default/800/1000'}
-                      alt={quickViewProduct.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-
-                  {/* Details & Selection */}
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] uppercase tracking-widest text-muted">{quickViewProduct.category}</span>
-                        {quickViewProduct.rating && (
-                          <span className="text-antique-gold text-xs font-mono">★ {quickViewProduct.rating.toFixed(1)}</span>
-                        )}
-                      </div>
-                      <p className="font-serif text-2xl text-antique-gold font-medium">
-                        {formatPrice(quickViewProduct.variants?.find((v) => v.id === selectedVariant)?.price || quickViewProduct.price)}
-                      </p>
-                    </div>
-
-                    <p className="text-xs text-muted leading-relaxed font-sans">
-                      {quickViewProduct.description}
-                    </p>
-
-                    {/* Scent Notes Preview */}
-                    {quickViewProduct.notes && (
-                      <div className="p-3 bg-surface-muted/60 border border-border text-[11px] space-y-1">
-                        <span className="text-[10px] uppercase tracking-wider text-antique-gold font-semibold block">Olfactory Notes</span>
-                        <p className="text-espresso">
-                          <strong className="text-muted font-normal">Top:</strong> {quickViewProduct.notes.top.join(', ')}
-                        </p>
-                        <p className="text-espresso">
-                          <strong className="text-muted font-normal">Heart:</strong> {quickViewProduct.notes.heart.join(', ')}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Variant Selector */}
-                    {quickViewProduct.variants && quickViewProduct.variants.length > 0 && (
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase tracking-wider text-muted font-semibold block">
-                          Select Concentration & Flacon Size
-                        </label>
-                        <div className="space-y-1.5">
-                          {quickViewProduct.variants.map((v) => (
-                            <button
-                              key={v.id}
-                              type="button"
-                              onClick={() => setSelectedVariant(v.id)}
-                              className={`w-full p-2.5 text-xs text-left flex justify-between items-center border transition-colors ${
-                                selectedVariant === v.id
-                                  ? 'border-antique-gold bg-aged-gold/10 text-espresso font-medium'
-                                  : 'border-border bg-ivory text-muted hover:border-antique-gold/50'
-                              }`}
-                            >
-                              <span>{v.size}</span>
-                              <span className="font-mono text-antique-gold">{formatPrice(v.price)}</span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Action */}
-                    <div className="pt-2 space-y-2">
-                      <button
-                        type="button"
-                        onClick={handleQuickAddToCart}
-                        disabled={addedSuccess}
-                        className="w-full py-3 bg-aged-gold hover:bg-antique-gold text-accent-on-fill text-xs uppercase tracking-[0.22em] font-medium transition-colors shadow-sm"
-                      >
-                        {addedSuccess ? '✓ Flacon Sealed in Cart' : 'Acquire Flacon Now'}
-                      </button>
-                      <Link
-                        href={`/products/${quickViewProduct.slug}`}
-                        className="block w-full py-2.5 border border-border text-center text-espresso hover:border-antique-gold text-[10px] uppercase tracking-wider transition-colors"
-                      >
-                        View Complete Flacon Dossier →
-                      </Link>
-                    </div>
-                  </div>
+                <div className="pt-4 flex flex-col gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleQuickAddToCart(quickViewProduct);
+                      setQuickViewProduct(null);
+                    }}
+                    className="w-full py-3 bg-[#d89528] hover:bg-[#ffb91d] text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all shadow-md active:scale-98"
+                  >
+                    Add to Bag • {formatPrice(quickViewProduct.price)}
+                  </button>
+                  <Link
+                    href={`/products/${quickViewProduct.slug}`}
+                    className="w-full py-2.5 text-center text-xs uppercase tracking-[0.18em] text-white/70 hover:text-white underline underline-offset-4"
+                  >
+                    View Full Product Details →
+                  </Link>
                 </div>
               </div>
             </div>
-          )}
-        </Container>
-      </main>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

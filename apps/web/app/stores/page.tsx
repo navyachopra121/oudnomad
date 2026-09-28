@@ -10,307 +10,318 @@ interface Boutique {
   id: string;
   name: string;
   city: string;
+  region: 'Dubai' | 'Delhi NCR' | 'Chandigarh' | 'Mumbai' | 'Bangalore';
   country: string;
   address: string;
-  district: string;
+  landmark: string;
   phone: string;
-  email: string;
   hours: string;
   image: string;
-  type: 'Flagship Atelier' | 'Private Salon' | 'Partner Vault';
-  amenities: string[];
 }
 
 const BOUTIQUES: Boutique[] = [
   {
     id: 'dubai-flagship',
-    name: 'The Dubai Flagship Atelier & Private Vault',
+    name: 'Oud Arabia Dubai Flagship Boutique',
     city: 'Dubai',
+    region: 'Dubai',
     country: 'United Arab Emirates',
-    address: 'Sheikh Mohammed bin Rashid Blvd, Opera District',
-    district: 'Downtown Dubai',
-    phone: '+971 4 398 2100',
-    email: 'dubai@oudnomad.com',
-    hours: 'Daily: 10:00 AM – 11:00 PM (Private salons by appointment)',
-    image: 'https://picsum.photos/seed/dubai-atelier/900/600',
-    type: 'Flagship Atelier',
-    amenities: ['VIP Private Scent Chamber', 'Bespoke Flacon Engraving', 'Master Distiller Masterclasses', 'Complimentary Valet'],
+    address: 'Shop 7, Alfaidi Street, Al Fahidi Historical District',
+    landmark: 'Near Dubai Museum',
+    phone: '+91-9888881908',
+    hours: 'Daily: 10:00 AM – 11:00 PM GST',
+    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618',
   },
   {
-    id: 'london-mayfair',
-    name: 'Mayfair Fragrance Salon',
-    city: 'London',
-    country: 'United Kingdom',
-    address: '42 Mount Street, Mayfair',
-    district: 'West End',
-    phone: '+44 20 7946 0850',
-    email: 'mayfair@oudnomad.com',
-    hours: 'Monday – Saturday: 10:00 AM – 7:00 PM | Sunday: 12:00 PM – 6:00 PM',
-    image: 'https://picsum.photos/seed/london-salon/900/600',
-    type: 'Private Salon',
-    amenities: ['Private Olfactory Consultations', 'Same-Day Courier in London', 'Rare Vintage Vault Tasting'],
+    id: 'chandigarh-elante',
+    name: 'Oud Arabia Chandigarh Boutique',
+    city: 'Chandigarh',
+    region: 'Chandigarh',
+    country: 'India',
+    address: 'Ground Floor, Elante Mall, Industrial Area Phase I',
+    landmark: 'Next to Luxury Atrium',
+    phone: '+91-9888881908',
+    hours: 'Daily: 11:00 AM – 9:30 PM IST',
+    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Voice_of_the_soul_1.jpg?v=1692390886',
   },
   {
-    id: 'paris-vendome',
-    name: 'Place Vendôme Partner Vault',
-    city: 'Paris',
-    country: 'France',
-    address: '18 Place Vendôme',
-    district: '1er Arrondissement',
-    phone: '+33 1 42 68 55 90',
-    email: 'paris@oudnomad.com',
-    hours: 'Tuesday – Saturday: 11:00 AM – 7:30 PM (Private appointments preferred)',
-    image: 'https://picsum.photos/seed/paris-vault/900/600',
-    type: 'Partner Vault',
-    amenities: ['Diplomatic Delivery Service', 'Champagne Scent Pairing', 'Bespoke Carboy Sampling'],
+    id: 'mohali-headquarters',
+    name: 'Oud Arabia Experience Center & Hub',
+    city: 'Mohali',
+    region: 'Chandigarh',
+    country: 'India',
+    address: '2266 Phase 7, SAS Nagar, Mohali',
+    landmark: 'Punjab 160062',
+    phone: '+91-9888881908',
+    hours: 'Monday – Saturday: 10:00 AM – 7:30 PM IST',
+    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Nadeem_1.jpg?v=1692390847',
+  },
+  {
+    id: 'delhi-dlf',
+    name: 'Oud Arabia Delhi NCR Boutique',
+    city: 'Noida / Delhi NCR',
+    region: 'Delhi NCR',
+    country: 'India',
+    address: 'DLF Mall of India, Sector 18',
+    landmark: 'First Floor Luxury Fragrance Wing',
+    phone: '+91-9888881908',
+    hours: 'Daily: 11:00 AM – 10:00 PM IST',
+    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Oud_Arabia_No_1.jpg?v=1692390950',
+  },
+  {
+    id: 'mumbai-palladium',
+    name: 'Oud Arabia Mumbai Boutique',
+    city: 'Mumbai',
+    region: 'Mumbai',
+    country: 'India',
+    address: 'Phoenix Palladium, Senapati Bapat Marg, Lower Parel',
+    landmark: 'Grand Galleria Floor',
+    phone: '+91-9888881908',
+    hours: 'Daily: 11:00 AM – 10:00 PM IST',
+    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Artboard_1_copy_3_3adc834e-2708-444e-a224-0d3149cc0981.png?v=1764672655',
+  },
+  {
+    id: 'bangalore-marketcity',
+    name: 'Oud Arabia Bangalore Boutique',
+    city: 'Bangalore',
+    region: 'Bangalore',
+    country: 'India',
+    address: 'Phoenix Marketcity, Whitefield Main Road',
+    landmark: 'Upper Ground Floor, Central Atrium',
+    phone: '+91-9888881908',
+    hours: 'Daily: 10:30 AM – 9:30 PM IST',
+    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Bakhoor_Burner_Set.jpg?v=1692391200',
   },
 ];
 
 export default function StoresPage() {
-  const [selectedBoutique, setSelectedBoutique] = useState<Boutique | null>(null);
-  const [appointmentDate, setAppointmentDate] = useState('');
-  const [appointmentTime, setAppointmentTime] = useState('14:00');
-  const [collectorName, setCollectorName] = useState('');
-  const [collectorEmail, setCollectorEmail] = useState('');
-  const [scentInterest, setScentInterest] = useState('Wild Assam & Cambodian Oud');
-  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [selectedRegion, setSelectedRegion] = useState<string>('all');
+  const [consultationModal, setConsultationModal] = useState<Boutique | null>(null);
+  const [consultName, setConsultName] = useState('');
+  const [consultPhone, setConsultPhone] = useState('');
+  const [consultDate, setConsultDate] = useState('');
+  const [bookedSuccess, setBookedSuccess] = useState(false);
 
-  const handleBookingSubmit = (e: React.FormEvent) => {
+  const filteredBoutiques =
+    selectedRegion === 'all'
+      ? BOUTIQUES
+      : BOUTIQUES.filter((b) => b.region.toLowerCase() === selectedRegion.toLowerCase());
+
+  const handleBook = (e: React.FormEvent) => {
     e.preventDefault();
-    setBookingSuccess(true);
+    setBookedSuccess(true);
     setTimeout(() => {
-      setBookingSuccess(false);
-      setSelectedBoutique(null);
-      setCollectorName('');
-      setCollectorEmail('');
-      setAppointmentDate('');
-    }, 2800);
+      setBookedSuccess(false);
+      setConsultationModal(null);
+      setConsultName('');
+      setConsultPhone('');
+      setConsultDate('');
+    }, 2000);
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-serif">
+    <div className="min-h-screen bg-[#070707] text-[#f2efe9] flex flex-col font-sans selection:bg-[#ffb91d] selection:text-black">
       <SiteHeader />
 
-      <main className="flex-1 w-full py-8 sm:py-16">
-        <Container className="space-y-12 sm:space-y-16">
+      <main className="flex-1 w-full pt-28 pb-20">
+        <Container className="space-y-12">
           {/* Breadcrumbs */}
-          <nav className="text-[10px] sm:text-[11px] font-sans uppercase tracking-[0.16em] text-muted flex flex-wrap items-center gap-1.5 sm:gap-2 leading-relaxed py-1">
-            <Link href="/" className="hover:text-espresso transition-colors shrink-0">Home</Link>
-            <span className="opacity-50">/</span>
-            <span className="text-antique-gold font-medium shrink-0">Atelier Boutiques</span>
+          <nav className="text-[11px] font-sans uppercase tracking-[0.2em] text-white/50 flex items-center gap-2">
+            <Link href="/" className="hover:text-[#ffb91d] transition-colors">
+              Home
+            </Link>
+            <span>/</span>
+            <span className="text-[#ffb91d] font-medium">Store Locator</span>
           </nav>
 
-          {/* Hero Header */}
-          <div className="text-center max-w-2xl mx-auto space-y-4 font-sans">
-            <span className="text-[10px] tracking-[0.3em] uppercase text-antique-gold font-semibold block">
-              Physical Sanctuaries & Salons
+          {/* Page Header */}
+          <div className="text-center max-w-2xl mx-auto space-y-4">
+            <span className="text-[10px] font-mono tracking-[0.35em] uppercase text-[#ffb91d] block">
+              EXPERIENCE THE SCENTS IN PERSON
             </span>
-            <h1 className="font-display text-3xl sm:text-5xl text-espresso tracking-tight">
-              Atelier Flagships & Salons
+            <h1 className="text-3xl sm:text-5xl font-serif text-white uppercase tracking-wider">
+              Store Locator
             </h1>
-            <p className="text-xs sm:text-sm text-muted leading-relaxed">
-              Step into an intimate olfactory sanctuary. Experience vintage agarwood tears, uncut botanical attars, and private nose consultations.
+            <p className="text-xs sm:text-sm text-white/70 leading-relaxed font-sans max-w-xl mx-auto">
+              Visit our luxury boutique style retail outlets for the most luxurious hands-on sensory experience of our pure attars, extraits, and sacred bakhoors.
             </p>
           </div>
 
-          {/* Boutiques List */}
-          <div className="space-y-10 font-sans">
-            {BOUTIQUES.map((boutique) => (
-              <div
-                key={boutique.id}
-                className="bg-surface-muted/30 border border-border hover:border-antique-gold/50 transition-all p-6 sm:p-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8"
+          {/* Region Tabs */}
+          <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            {[
+              { id: 'all', label: 'All Locations' },
+              { id: 'Dubai', label: 'Dubai (UAE)' },
+              { id: 'Chandigarh', label: 'Chandigarh & Mohali' },
+              { id: 'Delhi NCR', label: 'Delhi NCR' },
+              { id: 'Mumbai', label: 'Mumbai' },
+              { id: 'Bangalore', label: 'Bangalore' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setSelectedRegion(tab.id)}
+                className={`px-4 py-2 text-xs uppercase tracking-widest transition-all font-medium border ${
+                  selectedRegion.toLowerCase() === tab.id.toLowerCase()
+                    ? 'bg-[#ffb91d] text-black border-[#ffb91d] shadow-md'
+                    : 'bg-transparent text-white/70 border-white/10 hover:border-white/30 hover:text-white'
+                }`}
               >
-                {/* Image Gallery Thumbnail */}
-                <div className="w-full lg:w-96 aspect-[16/10] bg-espresso/5 border border-border relative overflow-hidden shrink-0">
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Stores Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {filteredBoutiques.map((b) => (
+              <div
+                key={b.id}
+                className="border border-white/10 bg-[#0e0e0e] hover:border-[#ffb91d]/50 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-xl"
+              >
+                {/* Store Thumbnail */}
+                <div className="relative aspect-[16/10] w-full bg-[#141414] overflow-hidden">
                   <Image
-                    src={boutique.image}
-                    alt={boutique.name}
+                    src={b.image}
+                    alt={b.name}
                     fill
-                    className="object-cover object-center hover:scale-105 transition-transform duration-700"
+                    className="object-cover object-center transition-transform duration-700 hover:scale-105"
                   />
-                  <div className="absolute top-3 left-3 px-3 py-1 bg-espresso/80 backdrop-blur-sm border border-antique-gold/40 text-[9px] uppercase tracking-widest text-antique-gold font-medium">
-                    {boutique.type}
+                  <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-sm text-[#ffb91d] text-[10px] font-mono tracking-widest px-2.5 py-1 border border-white/10">
+                    {b.city} • {b.country}
                   </div>
                 </div>
 
                 {/* Details */}
-                <div className="flex-1 space-y-4">
-                  <div>
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-muted font-semibold block">
-                      {boutique.city}, {boutique.country}
-                    </span>
-                    <h2 className="font-display text-2xl text-espresso mt-1">{boutique.name}</h2>
-                    <p className="text-xs text-muted font-sans mt-0.5">{boutique.address}, {boutique.district}</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-2 border-t border-border/70">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-muted block mb-1">Hours</span>
-                      <p className="text-espresso">{boutique.hours}</p>
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-muted block mb-1">Atelier Contact</span>
-                      <p className="font-mono text-espresso">{boutique.phone}</p>
-                      <p className="text-muted">{boutique.email}</p>
+                <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <h3 className="font-serif text-lg text-white leading-snug">{b.name}</h3>
+                    <p className="text-xs text-white/70 font-sans leading-relaxed">
+                      {b.address}, {b.landmark}
+                    </p>
+                    <div className="pt-2 text-[11px] font-mono text-white/50 space-y-1">
+                      <p>
+                        <strong className="text-white/80 font-sans">Hours:</strong> {b.hours}
+                      </p>
+                      <p>
+                        <strong className="text-white/80 font-sans">Phone:</strong>{' '}
+                        <a href={`tel:${b.phone}`} className="text-[#ffb91d] hover:underline">
+                          {b.phone}
+                        </a>
+                      </p>
                     </div>
                   </div>
 
-                  {/* Amenities */}
-                  <div className="pt-2">
-                    <span className="text-[10px] uppercase tracking-wider text-muted block mb-1.5">Sanctuary Amenities</span>
-                    <div className="flex flex-wrap gap-2">
-                      {boutique.amenities.map((amenity, idx) => (
-                        <span key={idx} className="px-2.5 py-1 bg-ivory border border-border text-[10px] text-muted">
-                          ✦ {amenity}
-                        </span>
-                      ))}
-                    </div>
+                  {/* Actions */}
+                  <div className="pt-4 border-t border-white/10 flex gap-2">
+                    <a
+                      href={`https://maps.google.com/?q=${encodeURIComponent(b.name + ' ' + b.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 py-2.5 text-center text-xs uppercase tracking-wider font-semibold border border-white/20 hover:border-[#ffb91d] text-white hover:text-[#ffb91d] transition-all"
+                    >
+                      Get Directions
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setConsultationModal(b)}
+                      className="px-4 py-2.5 bg-[#d89528] hover:bg-[#ffb91d] text-black text-xs uppercase tracking-wider font-semibold transition-all shadow"
+                    >
+                      Book Visit
+                    </button>
                   </div>
-                </div>
-
-                {/* Actions */}
-                <div className="w-full lg:w-auto shrink-0 flex flex-col gap-3 pt-4 lg:pt-0 border-t lg:border-t-0 border-border">
-                  <button
-                    onClick={() => setSelectedBoutique(boutique)}
-                    className="w-full sm:w-auto px-6 py-3.5 bg-aged-gold hover:bg-antique-gold text-accent-on-fill text-xs uppercase tracking-[0.2em] font-medium transition-colors shadow-sm text-center"
-                  >
-                    Reserve Consultation
-                  </button>
-                  <a
-                    href={`https://maps.google.com/?q=${encodeURIComponent(boutique.name + ' ' + boutique.address)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto px-6 py-3 border border-border hover:border-antique-gold text-espresso text-xs uppercase tracking-[0.2em] font-medium transition-colors text-center"
-                  >
-                    Atelier Directions ↗
-                  </a>
                 </div>
               </div>
             ))}
           </div>
-
-          {/* Consultation Modal */}
-          {selectedBoutique && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-espresso/60 backdrop-blur-sm font-sans">
-              <div className="bg-ivory border border-border p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
-                <div className="flex items-center justify-between border-b border-border pb-4">
-                  <div>
-                    <span className="text-[10px] uppercase tracking-widest text-antique-gold font-medium block">
-                      Private Olfactory Consultation
-                    </span>
-                    <h3 className="font-display text-xl text-espresso">{selectedBoutique.city} Atelier</h3>
-                  </div>
-                  <button onClick={() => setSelectedBoutique(null)} className="text-muted hover:text-espresso text-lg">
-                    ✕
-                  </button>
-                </div>
-
-                {bookingSuccess ? (
-                  <div className="p-6 bg-deep-emerald/10 border border-deep-emerald/30 text-center space-y-2">
-                    <div className="text-2xl text-deep-emerald">✓</div>
-                    <p className="font-serif text-base text-espresso">Your Private Consultation is Reserved</p>
-                    <p className="text-xs text-muted">
-                      An invitation dossier and calendar confirmation have been dispatched to your email.
-                    </p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleBookingSubmit} className="space-y-4 text-xs">
-                    <div>
-                      <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold mb-1">
-                        Collector Name
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={collectorName}
-                        onChange={(e) => setCollectorName(e.target.value)}
-                        placeholder="Sheikh / Madame / Your Name"
-                        className="w-full bg-background border border-border p-2.5 text-xs text-espresso focus:outline-none focus:border-antique-gold"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold mb-1">
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={collectorEmail}
-                        onChange={(e) => setCollectorEmail(e.target.value)}
-                        placeholder="collector@domain.com"
-                        className="w-full bg-background border border-border p-2.5 text-xs text-espresso focus:outline-none focus:border-antique-gold"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold mb-1">
-                          Preferred Date
-                        </label>
-                        <input
-                          type="date"
-                          required
-                          value={appointmentDate}
-                          onChange={(e) => setAppointmentDate(e.target.value)}
-                          className="w-full bg-background border border-border p-2 text-xs text-espresso focus:outline-none focus:border-antique-gold"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold mb-1">
-                          Time Slot
-                        </label>
-                        <select
-                          value={appointmentTime}
-                          onChange={(e) => setAppointmentTime(e.target.value)}
-                          className="w-full bg-background border border-border p-2 text-xs text-espresso focus:outline-none focus:border-antique-gold"
-                        >
-                          <option value="11:00">11:00 AM (Morning Air)</option>
-                          <option value="14:00">02:00 PM (Afternoon Salon)</option>
-                          <option value="16:30">04:30 PM (Twilight Tasting)</option>
-                          <option value="19:00">07:00 PM (Evening Vault Session)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold mb-1">
-                        Olfactory Focus & Interests
-                      </label>
-                      <select
-                        value={scentInterest}
-                        onChange={(e) => setScentInterest(e.target.value)}
-                        className="w-full bg-background border border-border p-2 text-xs text-espresso focus:outline-none focus:border-antique-gold"
-                      >
-                        <option value="Wild Assam & Cambodian Oud">Wild Assam & Cambodian Oud (Single-Tree Extracts)</option>
-                        <option value="Artisanal Pure Attars">Artisanal Pure Attars (Hydro-Distilled Over Sandalwood)</option>
-                        <option value="Layered Mukhallats">Layered Mukhallat Compositions (Taif Rose & Ambergris)</option>
-                        <option value="Bespoke Vault Discovery">Bespoke Full Atelier Discovery</option>
-                      </select>
-                    </div>
-
-                    <div className="pt-4 border-t border-border flex items-center justify-end gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedBoutique(null)}
-                        className="px-4 py-2 border border-border text-xs uppercase tracking-wider text-muted hover:text-espresso"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        className="px-6 py-2.5 bg-aged-gold hover:bg-antique-gold text-accent-on-fill text-xs uppercase tracking-wider font-medium transition-colors shadow-sm"
-                      >
-                        Confirm Reservation
-                      </button>
-                    </div>
-                  </form>
-                )}
-              </div>
-            </div>
-          )}
         </Container>
       </main>
+
+      {/* Book Consultation Modal */}
+      {consultationModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn"
+          onClick={() => setConsultationModal(null)}
+        >
+          <div
+            className="relative w-full max-w-md bg-[#111111] border border-[#ffb91d]/40 p-6 sm:p-8 shadow-2xl text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setConsultationModal(null)}
+              className="absolute top-4 right-4 text-white/60 hover:text-white text-xl p-2"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+
+            <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#ffb91d] block mb-1">
+              VIP FRAGRANCE CONSULTATION
+            </span>
+            <h3 className="text-xl font-serif text-white tracking-wide mb-1">
+              {consultationModal.name}
+            </h3>
+            <p className="text-xs text-white/60 font-sans mb-5">
+              Book a complimentary private scent profiling with our master fragrance advisors.
+            </p>
+
+            {bookedSuccess ? (
+              <div className="p-4 bg-[#53ff73]/10 border border-[#53ff73]/30 text-[#53ff73] text-xs text-center font-mono">
+                ✓ Consultation request received. Our boutique manager will confirm via WhatsApp shortly.
+              </div>
+            ) : (
+              <form onSubmit={handleBook} className="space-y-4 text-xs font-sans">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest text-white/70 mb-1 font-mono">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={consultName}
+                    onChange={(e) => setConsultName(e.target.value)}
+                    placeholder="e.g. Ananya Sharma"
+                    className="w-full bg-[#181818] border border-white/15 px-3 py-2 text-white outline-none focus:border-[#ffb91d]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest text-white/70 mb-1 font-mono">
+                    Phone / WhatsApp Number
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={consultPhone}
+                    onChange={(e) => setConsultPhone(e.target.value)}
+                    placeholder="+91-9888881908"
+                    className="w-full bg-[#181818] border border-white/15 px-3 py-2 text-white outline-none focus:border-[#ffb91d]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest text-white/70 mb-1 font-mono">
+                    Preferred Visit Date
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={consultDate}
+                    onChange={(e) => setConsultDate(e.target.value)}
+                    className="w-full bg-[#181818] border border-white/15 px-3 py-2 text-white outline-none focus:border-[#ffb91d]"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-[#d89528] hover:bg-[#ffb91d] text-black font-semibold uppercase tracking-[0.2em] transition-all shadow-md active:scale-98"
+                >
+                  Confirm Appointment
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

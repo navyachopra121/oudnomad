@@ -2,30 +2,31 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type CurrencyCode = 'AED' | 'SAR' | 'QAR' | 'KWD' | 'OMR' | 'BHD' | 'USD';
+export type CurrencyCode = 'INR' | 'AED' | 'SAR' | 'QAR' | 'KWD' | 'OMR' | 'BHD' | 'USD';
 
 export interface CurrencyConfig {
   code: CurrencyCode;
   symbol: string;
   name: string;
-  rate: number; // multiplier relative to USD
+  rate: number; // multiplier relative to base (INR)
   flag: string;
 }
 
 export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
-  AED: { code: 'AED', symbol: 'AED ', name: 'UAE Dirham', rate: 3.67, flag: '🇦🇪' },
-  SAR: { code: 'SAR', symbol: 'SAR ', name: 'Saudi Riyal', rate: 3.75, flag: '🇸🇦' },
-  QAR: { code: 'QAR', symbol: 'QAR ', name: 'Qatari Riyal', rate: 3.64, flag: '🇶🇦' },
-  KWD: { code: 'KWD', symbol: 'KWD ', name: 'Kuwaiti Dinar', rate: 0.31, flag: '🇰🇼' },
-  OMR: { code: 'OMR', symbol: 'OMR ', name: 'Omani Rial', rate: 0.38, flag: '🇴🇲' },
-  BHD: { code: 'BHD', symbol: 'BHD ', name: 'Bahraini Dinar', rate: 0.38, flag: '🇧🇭' },
-  USD: { code: 'USD', symbol: '$', name: 'US Dollar (GCC Base)', rate: 1.0, flag: '🇺🇸' },
+  INR: { code: 'INR', symbol: '₹ ', name: 'Indian Rupee', rate: 1.0, flag: '🇮🇳' },
+  AED: { code: 'AED', symbol: 'AED ', name: 'UAE Dirham', rate: 0.044, flag: '🇦🇪' },
+  USD: { code: 'USD', symbol: '$', name: 'US Dollar', rate: 0.012, flag: '🇺🇸' },
+  SAR: { code: 'SAR', symbol: 'SAR ', name: 'Saudi Riyal', rate: 0.045, flag: '🇸🇦' },
+  QAR: { code: 'QAR', symbol: 'QAR ', name: 'Qatari Riyal', rate: 0.044, flag: '🇶🇦' },
+  KWD: { code: 'KWD', symbol: 'KWD ', name: 'Kuwaiti Dinar', rate: 0.0037, flag: '🇰🇼' },
+  OMR: { code: 'OMR', symbol: 'OMR ', name: 'Omani Rial', rate: 0.0046, flag: '🇴🇲' },
+  BHD: { code: 'BHD', symbol: 'BHD ', name: 'Bahraini Dinar', rate: 0.0045, flag: '🇧🇭' },
 };
 
 interface CurrencyContextType {
   currency: CurrencyConfig;
   setCurrency: (code: CurrencyCode) => void;
-  formatPrice: (amountInUSD: number) => string;
+  formatPrice: (amountInBase: number) => string;
   isModalOpen: boolean;
   setIsModalOpen: (open: boolean) => void;
 }
@@ -33,7 +34,7 @@ interface CurrencyContextType {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [currency, setCurrencyState] = useState<CurrencyConfig>(CURRENCIES.AED);
+  const [currency, setCurrencyState] = useState<CurrencyConfig>(CURRENCIES.INR);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -50,18 +51,18 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const formatPrice = (amountInUSD: number): string => {
-    const converted = amountInUSD * currency.rate;
+  const formatPrice = (amountInBase: number): string => {
+    const converted = amountInBase * currency.rate;
+    if (currency.code === 'INR') {
+      return `₹ ${Math.round(converted).toLocaleString('en-IN')}.00`;
+    }
     if (['AED', 'SAR', 'QAR'].includes(currency.code)) {
       return `${currency.symbol}${Math.round(converted).toLocaleString()}`;
     }
     if (['KWD', 'OMR', 'BHD'].includes(currency.code)) {
       return `${currency.symbol}${converted.toFixed(2)}`;
     }
-    return `${currency.symbol}${converted.toLocaleString('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })}`;
+    return `${currency.symbol}${converted.toFixed(2)}`;
   };
 
   return (

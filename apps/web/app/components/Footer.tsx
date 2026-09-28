@@ -6,9 +6,13 @@ import { FormEvent, useState } from 'react';
 import Container from './Container';
 import { useCurrency } from './concierge/CurrencyContext';
 
+// { label: 'STORES & BOUTIQUES', href: '/stores' },
+
+
 const QUICK_LINKS = [
   { label: 'CATALOGUE', href: '/collections' },
   { label: 'GCC SHIPPING', href: '/collections' },
+  { label: 'CONTACT US', href: '/contact' },
   { label: 'MY ACCOUNT', href: '/account' },
   { label: 'ABOUT US', href: '/about' },
   { label: 'PRIVACY POLICY', href: '/legal/privacy' },
@@ -30,52 +34,52 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#000000] text-white border-t border-[#d89527]/30 mt-auto font-sans">
+    <footer className="bg-[#000000] text-white border-t border-[#ffb91d]/20 mt-auto font-sans">
       <Container className="py-14 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12">
           {/* Col 1: Brand Logo & About Oud Nomad */}
           <div>
             <Link href="/" className="inline-block mb-4">
-              <Image
-                src="/logo.png"
-                alt="Oud Nomad Dubai"
-                width={180}
-                height={60}
-                className="object-contain max-h-16 w-auto"
-                style={{ filter: 'brightness(0) saturate(100%) invert(62%) sepia(68%) saturate(450%) hue-rotate(3deg) brightness(95%) contrast(96%)' }}
-              />
+              <div className="flex flex-col">
+                <span className="font-sans text-xl sm:text-2xl font-bold tracking-[0.24em] text-[#ffb91d] uppercase leading-none">
+                  OUD NOMAD
+                </span>
+                <span className="text-[9px] font-medium tracking-[0.38em] text-[#ffb91d] uppercase mt-1">
+                  DUBAI
+                </span>
+              </div>
             </Link>
-            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#d89527] font-semibold mb-3">
+            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#ffb91d] font-semibold mb-3">
               ABOUT OUD NOMAD
             </h3>
-            <p className="text-xs leading-relaxed text-white/80 font-normal">
+            <p className="text-xs leading-relaxed text-white font-normal">
               Oud Nomad Dubai offers artisanal luxury oriental perfumes, aged pure attars, and bespoke bakhoor incense crafted with rare ingredients for connoisseurs worldwide.
             </p>
           </div>
 
           {/* Col 2: Customer Care & Express Shipping */}
           <div>
-            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#d89527] font-semibold mb-4">
+            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#ffb91d] font-semibold mb-4">
               CUSTOMER CARE
             </h3>
-            <div className="text-xs leading-relaxed text-white/80 space-y-2">
-              <p>Email: <a href="mailto:hello.oudnomaddubai@gmail.com" className="hover:text-[#d89527] transition-colors">hello.oudnomaddubai@gmail.com</a></p>
-              <p>Phone: <a href="tel:+97140000000" className="hover:text-[#d89527] transition-colors">+971 4 000 0000</a></p>
-              <p className="pt-1 text-[#d89527]">Express Delivery: UAE, Saudi Arabia, Qatar, Kuwait, Oman & Bahrain</p>
+            <div className="text-xs leading-relaxed text-white space-y-2 font-normal">
+              <p>Email: <a href="mailto:hello.oudnomaddubai@gmail.com" className="hover:text-[#ffb91d] transition-colors underline">hello.oudnomaddubai@gmail.com</a></p>
+              <p>Phone: <a href="tel:+97140000000" className="hover:text-[#ffb91d] transition-colors underline">+971 4 000 0000</a></p>
+              <p className="pt-1 text-[#ffb91d]">Express Delivery: UAE, Saudi Arabia, Qatar, Kuwait, Oman & Bahrain</p>
             </div>
           </div>
 
           {/* Col 3: Quick Links */}
           <div>
-            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#d89527] font-semibold mb-4">
+            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#ffb91d] font-semibold mb-4">
               QUICK LINKS
             </h3>
-            <ul className="space-y-2 text-xs font-medium tracking-[0.14em]">
+            <ul className="space-y-2 text-xs font-normal tracking-[0.14em]">
               {QUICK_LINKS.map((link) => (
                 <li key={link.href + link.label}>
                   <Link
                     href={link.href}
-                    className="text-white/80 hover:text-[#d89527] transition-colors uppercase"
+                    className="text-white hover:text-[#ffb91d] transition-colors uppercase"
                   >
                     {link.label}
                   </Link>
@@ -86,14 +90,14 @@ export default function Footer() {
 
           {/* Col 4: Newsletter & Social */}
           <div>
-            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#d89527] font-semibold mb-4">
+            <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#ffb91d] font-semibold mb-4">
               GET NOTIFIED ABOUT NEW PRODUCTS
             </h3>
             {subscribed ? (
-              <p className="text-xs text-[#d89527] font-medium">Thank you for joining our inner circle.</p>
+              <p className="text-xs text-[#ffb91d] font-medium">Thank you for joining our inner circle.</p>
             ) : (
               <form onSubmit={handleSubscribe} className="space-y-3">
-                <div className="relative border-b border-white/40 focus-within:border-[#d89527] transition-colors">
+                <div className="relative border-b border-white/40 focus-within:border-[#ffb91d] transition-colors">
                   <input
                     type="email"
                     required
@@ -104,7 +108,7 @@ export default function Footer() {
                   />
                   <button
                     type="submit"
-                    className="absolute right-0 top-1/2 -translate-y-1/2 text-[#d89527] hover:text-white transition-colors"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-[#ffb91d] hover:text-white transition-colors font-bold"
                     aria-label="Subscribe"
                   >
                     ➔
@@ -113,7 +117,7 @@ export default function Footer() {
               </form>
             )}
 
-            <div className="mt-8 flex flex-wrap items-center gap-3 text-[11px] tracking-wider text-[#d89527] font-semibold uppercase">
+            <div className="mt-8 flex flex-wrap items-center gap-3 text-[11px] tracking-wider text-[#ffb91d] font-semibold uppercase">
               <a
                 href="https://www.instagram.com/oudnomaddubai?stkn=NWtkMGc4ZmFvc3pv&utm_source=qr"
                 target="_blank"
@@ -155,14 +159,14 @@ export default function Footer() {
       </Container>
 
       {/* Bottom Copyright Bar */}
-      <div className="border-t border-white/10 py-6 text-center text-[11px] text-white/50 tracking-wider">
+      <div className="border-t border-white/10 py-6 text-center text-[11px] text-white/70 tracking-wider">
         <Container className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>&copy; {new Date().getFullYear()} Oud Nomad Private Limited. All Rights Reserved.</p>
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] uppercase tracking-wider text-[#d89527] border border-[#d89527]/30 rounded-xs hover:text-white transition-colors"
+              className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] uppercase tracking-wider text-[#ffb91d] border border-[#ffb91d]/30 rounded-xs hover:text-white transition-colors"
             >
               <span>{currency.flag}</span>
               <span>{currency.code} ({currency.symbol})</span>

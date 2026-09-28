@@ -1,3 +1,5 @@
+import { OUD_PRODUCTS, OUD_COLLECTIONS, OudProduct } from './lib/products-data';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 async function storeFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -46,6 +48,10 @@ export interface ProductItem {
   variants?: { id: string; size: string; price: number; sku: string; inStock: boolean }[];
   rating?: number;
   reviewCount?: number;
+  bodyHtml?: string;
+  features?: any;
+  compareAtPrice?: number | null;
+  categories?: string[];
 }
 
 export interface ReviewItem {
@@ -336,138 +342,34 @@ const FALLBACK_ORDER_DOSSIERS: Record<string, OrderDetail> = {
   },
 };
 
-const FALLBACK_PRODUCTS: ProductItem[] = [
-  {
-    id: 'malaki-extrait',
-    name: 'Malaki Extrait No. 1',
-    slug: 'malaki-extrait-no-1',
-    description: 'A regal blend of wild-harvested Indian Royal Oud, rare Black Ambergris, and Taif Rose.',
-    price: 450,
-    currency: 'USD',
-    category: 'oud',
-    concentration: 'Extrait de Parfum',
-    origin: 'Assam, India & Taif, Saudi Arabia',
-    images: [
-      'https://picsum.photos/seed/malaki-bottle-1/900/1100',
-      'https://picsum.photos/seed/malaki-bottle-2/900/1100',
-      'https://picsum.photos/seed/malaki-box/900/1100',
-    ],
-    notes: {
-      top: ['Taif Rose', 'Cardamom', 'Wild Saffron'],
-      heart: ['Assam Royal Oud', 'Spiced Ambergris', 'Nutmeg'],
-      base: ['Vintage Cambodian Oud', 'Bourbon Vanilla', 'Sandalwood'],
-    },
-    variants: [
-      { id: 'm1-50ml', size: '50ml Spray Flacon', price: 450, sku: 'MAL-50', inStock: true },
-      { id: 'm1-100ml', size: '100ml Spray Flacon', price: 780, sku: 'MAL-100', inStock: true },
-      { id: 'm1-3ml', size: '3ml Pure Oil Concentrated Tola', price: 290, sku: 'MAL-3T', inStock: true },
-    ],
-    rating: 4.9,
-    reviewCount: 38,
+export const MAPPED_OUD_PRODUCTS: ProductItem[] = OUD_PRODUCTS.map((p) => ({
+  id: p.id,
+  name: p.title,
+  slug: p.handle,
+  description: p.description,
+  price: p.price,
+  currency: 'INR',
+  category: p.category,
+  concentration: p.features?.type || (p.category === 'attars' ? 'Pure Oil (Attar)' : 'Eau de Parfum / Extrait'),
+  origin: 'Dubai, UAE',
+  images: p.images && p.images.length > 0 ? p.images : ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618'],
+  notes: {
+    top: p.features?.topNotes ? p.features.topNotes.split(/[,&]+/).map((s: string) => s.trim()).filter(Boolean) : ['Jasmine', 'Taif Rose'],
+    heart: p.features?.middleNotes ? p.features.middleNotes.split(/[,&]+/).map((s: string) => s.trim()).filter(Boolean) : ['Rose de Mai', 'Lily'],
+    base: p.features?.baseNotes ? p.features.baseNotes.split(/[,&]+/).map((s: string) => s.trim()).filter(Boolean) : ['Aged Wild Oud', 'White Musk'],
   },
-  {
-    id: 'noor-attar',
-    name: 'Noor Pure Attar',
-    slug: 'noor-pure-attar',
-    description: 'Artisanal non-alcoholic attar distilled over Mysore Sandalwood oil with saffron and Kashmiri Jasmine.',
-    price: 280,
-    currency: 'USD',
-    category: 'attars',
-    concentration: 'Pure Concentrated Attar Oil',
-    origin: 'Kannauj, India & Mysore',
-    images: [
-      'https://picsum.photos/seed/noor-bottle-1/900/1100',
-      'https://picsum.photos/seed/noor-bottle-2/900/1100',
-    ],
-    notes: {
-      top: ['Kashmiri Jasmine', 'White Musk'],
-      heart: ['Fresh Saffron Threads', 'Night Blooming Rose'],
-      base: ['Mysore Sandalwood Oil', 'Golden Amber'],
-    },
-    variants: [
-      { id: 'noor-3ml', size: '3ml Crystal Dipstick Tola', price: 280, sku: 'NOR-3T', inStock: true },
-      { id: 'noor-12ml', size: '12ml Full Tola Vessel', price: 890, sku: 'NOR-12T', inStock: true },
-    ],
-    rating: 4.8,
-    reviewCount: 24,
-  },
-  {
-    id: 'dusk-mukhallat',
-    name: 'Dusk Mukhallat Impériale',
-    slug: 'dusk-mukhallat-imperiale',
-    description: 'An evocative evening composition of smoky frankincense, aged patchouli, and dark woods.',
-    price: 320,
-    currency: 'USD',
-    category: 'mukhallat',
-    concentration: 'Mukhallat Oil & Extrait',
-    origin: 'Dhofar, Oman & Trat, Thailand',
-    images: [
-      'https://picsum.photos/seed/dusk-bottle-1/900/1100',
-      'https://picsum.photos/seed/dusk-bottle-2/900/1100',
-    ],
-    notes: {
-      top: ['Royal Green Hojari Frankincense', 'Bergamot Essence'],
-      heart: ['Trat Wood Smoke', 'Dark Leather', 'Labdanum'],
-      base: ['Aged Patchouli', 'Castoreum Accord', 'Civet Synthetic Accord'],
-    },
-    variants: [
-      { id: 'dusk-50ml', size: '50ml Extrait Flacon', price: 320, sku: 'DSK-50', inStock: true },
-      { id: 'dusk-12ml', size: '12ml Concentrated Oil', price: 410, sku: 'DSK-12T', inStock: true },
-    ],
-    rating: 4.95,
-    reviewCount: 42,
-  },
-  {
-    id: 'royal-cambodi',
-    name: 'Royal Cambodi Reserve',
-    slug: 'royal-cambodi-reserve',
-    description: 'Single-origin wild Cambodian Oud oil, aged over 25 years in oak barrels.',
-    price: 620,
-    currency: 'USD',
-    category: 'oud',
-    concentration: 'Pure Wild Oud Oil',
-    origin: 'Koh Kong, Cambodia',
-    images: [
-      'https://picsum.photos/seed/cambodi-bottle-1/900/1100',
-      'https://picsum.photos/seed/cambodi-bottle-2/900/1100',
-    ],
-    notes: {
-      top: ['Sweet Dried Plum', 'Wild Honey'],
-      heart: ['Resinous Barnwood', 'Rich Leather'],
-      base: ['Deep Earthy Woody Oud Resin', 'Smoky Tobacco'],
-    },
-    variants: [
-      { id: 'cambodi-3ml', size: '3ml Collector Crystal Bottle', price: 620, sku: 'CAM-3T', inStock: true },
-    ],
-    rating: 5.0,
-    reviewCount: 19,
-  },
-  {
-    id: 'green-hojari-incense',
-    name: 'Royal Hojari Bakhoor Chips',
-    slug: 'royal-hojari-bakhoor-chips',
-    description: 'Hand-picked medical grade Boswellia sacra frankincense tears infused with natural attar.',
-    price: 160,
-    currency: 'USD',
-    category: 'bakhoor',
-    concentration: 'Raw Incense & Resin Chips',
-    origin: 'Salalah, Dhofar, Oman',
-    images: [
-      'https://picsum.photos/seed/bakhoor-chips-1/900/1100',
-    ],
-    notes: {
-      top: ['Citrusy Pine', 'Eucalyptus'],
-      heart: ['Warm Resinous Smoke', 'Sweet Myrrh'],
-      base: ['Rich Frankincense Ash', 'Benzoin'],
-    },
-    variants: [
-      { id: 'bakhoor-100g', size: '100g Sealed Wooden Box', price: 160, sku: 'BKH-100', inStock: true },
-      { id: 'bakhoor-250g', size: '250g Vault Edition', price: 340, sku: 'BKH-250', inStock: true },
-    ],
-    rating: 4.7,
-    reviewCount: 15,
-  },
-];
+  variants: [
+    { id: `${p.id}-std`, size: p.features?.quantity || '100ml', price: p.price, sku: p.handle, inStock: true }
+  ],
+  rating: p.rating || 4.9,
+  reviewCount: p.reviewCount || 24,
+  bodyHtml: p.bodyHtml,
+  features: p.features,
+  compareAtPrice: p.compareAtPrice,
+  categories: p.categories
+}));
+
+const FALLBACK_PRODUCTS: ProductItem[] = MAPPED_OUD_PRODUCTS;
 
 export const StoreApi = {
   // Search
@@ -486,9 +388,9 @@ export const StoreApi = {
         const qLower = params.q.toLowerCase();
         items = items.filter((p) => p.name.toLowerCase().includes(qLower) || p.description.toLowerCase().includes(qLower));
       }
-      if (params.category) {
+      if (params.category && params.category !== 'all') {
         const catLower = params.category.toLowerCase();
-        items = items.filter((p) => p.category.toLowerCase().includes(catLower));
+        items = items.filter((p) => p.category.toLowerCase() === catLower || p.categories?.includes(catLower));
       }
       return {
         items: items.map((p) => ({
@@ -518,16 +420,20 @@ export const StoreApi = {
       return res;
     } catch (_) {
       let filtered = [...FALLBACK_PRODUCTS];
-      if (params?.category) {
+      if (params?.category && params.category !== 'all' && params.category !== 'catalog') {
         const cat = params.category.toLowerCase();
-        filtered = filtered.filter((p) => p.category.toLowerCase() === cat);
+        filtered = filtered.filter((p) => p.categories?.includes(cat) || p.category.toLowerCase() === cat);
       }
-      if (params?.sort === 'price_asc') {
+      if (params?.sort === 'price_asc' || params?.sort === 'price-low-high') {
         filtered.sort((a, b) => a.price - b.price);
-      } else if (params?.sort === 'price_desc') {
+      } else if (params?.sort === 'price_desc' || params?.sort === 'price-high-low') {
         filtered.sort((a, b) => b.price - a.price);
       } else if (params?.sort === 'rating') {
         filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      } else if (params?.sort === 'title-asc') {
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (params?.sort === 'title-desc') {
+        filtered.sort((a, b) => b.name.localeCompare(a.name));
       }
       return { items: filtered, total: filtered.length };
     }
@@ -537,8 +443,9 @@ export const StoreApi = {
     try {
       return await storeFetch<any>(`/products/${slug}`);
     } catch (_) {
+      const cleanSlug = slug.toLowerCase().trim();
       const match = FALLBACK_PRODUCTS.find(
-        (p) => p.slug === slug || p.id === slug || p.slug.includes(slug) || slug.includes(p.slug)
+        (p) => p.slug.toLowerCase() === cleanSlug || p.id === cleanSlug || cleanSlug.includes(p.slug.toLowerCase()) || p.slug.toLowerCase().includes(cleanSlug)
       );
       if (match) return match;
       return FALLBACK_PRODUCTS[0];
@@ -550,7 +457,7 @@ export const StoreApi = {
     try {
       return await storeFetch<any>(`/products/${productId}/recommendations`);
     } catch (_) {
-      return FALLBACK_PRODUCTS.filter((p) => p.id !== productId).slice(0, 3);
+      return FALLBACK_PRODUCTS.filter((p) => p.id !== productId && p.slug !== productId).slice(0, 4);
     }
   },
 
@@ -569,31 +476,45 @@ export const StoreApi = {
     } catch (_) {
       return [
         {
-          id: 'oud',
-          name: 'Royal Oud & Extrait',
-          slug: 'oud',
-          description: 'Aged wild woods and precious extracts from Assam to Cambodia.',
+          id: 'all',
+          name: 'All Fragrances',
+          slug: 'all',
+          description: 'Explore the complete universe of Oud Arabia luxury perfumes and attars.',
+          children: [],
+        },
+        {
+          id: 'top-sellers',
+          name: 'Top Sellers',
+          slug: 'top-sellers',
+          description: 'Our most celebrated creations coveted across Dubai, India, and worldwide.',
+          children: [],
+        },
+        {
+          id: 'perfumes',
+          name: 'Perfumes',
+          slug: 'perfumes',
+          description: 'Handcrafted luxury Eau de Parfum made with Grasse flower oils.',
           children: [],
         },
         {
           id: 'attars',
-          name: 'Pure Concentrated Attars',
+          name: 'Attars & Oils',
           slug: 'attars',
-          description: 'Artisanal non-alcoholic botanical oil distillates.',
+          description: 'Alcohol-free botanical distillates infused over pure sandalwood oil.',
           children: [],
         },
         {
-          id: 'bakhoor',
-          name: 'Incense & Bakhoor',
-          slug: 'bakhoor',
-          description: 'Sacred resin tears and scented agarwood chips.',
+          id: 'bakhoor-set',
+          name: 'Bakhoor Set',
+          slug: 'bakhoor-set',
+          description: 'Handcrafted gold brass burners and traditional incense.',
           children: [],
         },
         {
-          id: 'mukhallat',
-          name: 'Mukhallat Compositions',
-          slug: 'mukhallat',
-          description: 'Layered bespoke oils combining ambergris, rose, and rare spices.',
+          id: 'emerald-collection',
+          name: 'Emerald Collection',
+          slug: 'emerald-collection',
+          description: 'Prestige flacons housed in hand-polished crystal.',
           children: [],
         },
       ];
