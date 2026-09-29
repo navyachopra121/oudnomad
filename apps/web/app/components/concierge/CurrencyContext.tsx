@@ -34,7 +34,7 @@ interface CurrencyContextType {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [currency, setCurrencyState] = useState<CurrencyConfig>(CURRENCIES.INR);
+  const [currency, setCurrencyState] = useState<CurrencyConfig>(CURRENCIES.AED);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {

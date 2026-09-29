@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FormEvent, useState } from 'react';
 import Container from './Container';
 import { useCurrency } from './concierge/CurrencyContext';
+import BrandLogo from './BrandLogo';
 
 // { label: 'STORES & BOUTIQUES', href: '/stores' },
 
@@ -39,16 +40,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12">
           {/* Col 1: Brand Logo & About Oud Nomad */}
           <div>
-            <Link href="/" className="inline-block mb-4">
-              <div className="flex flex-col">
-                <span className="font-sans text-xl sm:text-2xl font-bold tracking-[0.24em] text-[#ffb91d] uppercase leading-none">
-                  OUD NOMAD
-                </span>
-                <span className="text-[9px] font-medium tracking-[0.38em] text-[#ffb91d] uppercase mt-1">
-                  DUBAI
-                </span>
-              </div>
-            </Link>
+            <div className="mb-4">
+              <BrandLogo variant="footer" align="left" />
+            </div>
             <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#ffb91d] font-semibold mb-3">
               ABOUT OUD NOMAD
             </h3>

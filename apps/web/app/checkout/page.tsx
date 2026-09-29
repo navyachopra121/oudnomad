@@ -30,7 +30,7 @@ export default function CheckoutPage() {
   const [newsOffers, setNewsOffers] = useState(true);
 
   // Shipping Address State
-  const [country, setCountry] = useState('India');
+  const [country, setCountry] = useState('United Arab Emirates');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [address, setAddress] = useState('');
@@ -91,7 +91,7 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-[#070707] text-[#f2efe9] flex flex-col font-sans selection:bg-[#ffb91d] selection:text-black">
       <SiteHeader />
 
-      <main className="flex-1 w-full pt-28 pb-20">
+      <main className="flex-1 w-full pt-8 pb-20">
         <Container className="space-y-8">
           {/* Breadcrumb / Status */}
           <div className="flex items-center justify-between border-b border-white/10 pb-4 text-xs font-mono">
@@ -345,11 +345,10 @@ export default function CheckoutPage() {
                     {/* Prepaid Option (with ₹200 off badge) */}
                     <div
                       onClick={() => setPaymentMethod('prepaid')}
-                      className={`border p-4 cursor-pointer transition-all ${
-                        paymentMethod === 'prepaid'
-                          ? 'border-[#ffb91d] bg-[#161616]'
-                          : 'border-white/10 bg-[#101010] hover:border-white/30'
-                      }`}
+                      className={`border p-4 cursor-pointer transition-all ${paymentMethod === 'prepaid'
+                        ? 'border-[#ffb91d] bg-[#161616]'
+                        : 'border-white/10 bg-[#101010] hover:border-white/30'
+                        }`}
                     >
                       <div className="flex items-center justify-between mb-2">
                         <label className="flex items-center gap-2 cursor-pointer font-medium text-xs text-white">
@@ -374,11 +373,10 @@ export default function CheckoutPage() {
                     {/* Cash on Delivery Option */}
                     <div
                       onClick={() => setPaymentMethod('cod')}
-                      className={`border p-4 cursor-pointer transition-all ${
-                        paymentMethod === 'cod'
-                          ? 'border-[#ffb91d] bg-[#161616]'
-                          : 'border-white/10 bg-[#101010] hover:border-white/30'
-                      }`}
+                      className={`border p-4 cursor-pointer transition-all ${paymentMethod === 'cod'
+                        ? 'border-[#ffb91d] bg-[#161616]'
+                        : 'border-white/10 bg-[#101010] hover:border-white/30'
+                        }`}
                     >
                       <label className="flex items-center gap-2 cursor-pointer font-medium text-xs text-white">
                         <input

@@ -41,6 +41,10 @@
   --gold-accent: #ffb91d;
   --color-heading: #ffb91d;
 
+  /* Logo Gold Palette (Reference match: #DA9630 start to #EACD4D end) */
+  --logo-gold-start: #DA9630;
+  --logo-gold-end: #EACD4D;
+
   /* Accent swatches */
   --deep-emerald: #0a4d3c;
   --champagne-sand: #e8d7a7;
@@ -584,6 +588,23 @@ p, span.normal-text, li, label, input, textarea, select {
 }
 .animate-fadeIn {
   animation: fadeIn 0.45s ease forwards;
+}
+
+/* ── Brand Logo Metallic Gradient & Brightup Glow ────────────────────────── */
+.logo-gold-gradient {
+  background: linear-gradient(90deg, #DA9630 0%, #EACD4D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.logo-glow-filter {
+  filter: drop-shadow(0 0 1px rgba(218, 150, 48, 0.45)) drop-shadow(0 1px 8px rgba(234, 205, 77, 0.32));
+}
+
+.logo-glow-filter:hover {
+  filter: drop-shadow(0 0 2px rgba(218, 150, 48, 0.6)) drop-shadow(0 2px 14px rgba(234, 205, 77, 0.5)) brightness(1.12);
 }
 
 

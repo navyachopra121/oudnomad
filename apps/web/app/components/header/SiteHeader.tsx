@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { FormEvent, useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { StoreApi } from '../../store-api';
 import { IconBag, IconChevronDown, IconClose, IconMenu, IconSearch, IconUser } from './icons';
 import MobileNavDrawer from './MobileNavDrawer';
 import { useCart } from '../cart/CartContext';
 import { useCurrency } from '../concierge/CurrencyContext';
+import BrandLogo from '../BrandLogo';
+import SearchModal from './SearchModal';
 
 type CategoryNode = {
   id: string;
@@ -23,16 +24,13 @@ const FALLBACK_CATEGORIES: CategoryNode[] = [
 ];
 
 export default function SiteHeader({ transparentMode = false }: { transparentMode?: boolean }) {
-  const router = useRouter();
   const { openDrawer, totalItems } = useCart();
   const { currency, setIsModalOpen } = useCurrency();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [catalogOpen, setCatalogOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [scrollY, setScrollY] = useState(0);
   const [categories, setCategories] = useState<CategoryNode[]>(FALLBACK_CATEGORIES);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     StoreApi.getCategories()
@@ -51,20 +49,6 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    if (searchOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [searchOpen]);
-
-  const onSearchSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const q = searchQuery.trim();
-    if (q) router.push(`/search?q=${encodeURIComponent(q)}`);
-    else router.push('/search');
-    setSearchOpen(false);
-  };
 
   const headerHeight = 80;
 
@@ -195,22 +179,10 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
               </nav>
             </div>
 
-            {/* ── CENTER COLUMN: Brand Logo (OUD NOMAD® DUBAI) in #ffb91d ── */}
-            <Link
-              href="/"
-              className="justify-self-center text-center shrink-0 flex flex-col items-center justify-center py-1 cursor-pointer select-none group"
-              aria-label="Oud Nomad Dubai Home"
-            >
-              <div className="flex items-start justify-center">
-                <span className="font-sans text-[22px] lg:text-[26px] font-normal tracking-[0.25em] text-[#ffb91d] uppercase leading-none group-hover:brightness-110 transition-all">
-                  OUD NOMAD
-                </span>
-                <span className="text-[8px] lg:text-[9px] text-[#ffb91d] font-normal -mt-1 ml-0.5">®</span>
-              </div>
-              <span className="text-[8px] lg:text-[9px] font-normal tracking-[0.48em] text-[#ffb91d] uppercase mt-1">
-                DUBAI
-              </span>
-            </Link>
+            {/* ── CENTER COLUMN: Brand Logo (OUD NOMAD® DUBAI) in Gold Gradient ── */}
+            <div className="justify-self-center text-center shrink-0 flex items-center justify-center py-1">
+              <BrandLogo variant="header" />
+            </div>
 
             {/* ── RIGHT COLUMN: Desktop Nav (CONTACT, STORES, ABOUT US) + Action Icons ── */}
             <div className="flex items-center gap-4 lg:gap-8 justify-self-end">
@@ -285,56 +257,18 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
               </div>
             </div>
           </div>
-
-          {/* ── SEARCH DROPDOWN PANEL ── */}
-          <div
-            id="header-search-panel"
-            className="overflow-hidden border-t border-[#ffb91d]/20 transition-all duration-300"
-            style={{
-              maxHeight: searchOpen ? 64 : 0,
-              opacity: searchOpen ? 1 : 0,
-              pointerEvents: searchOpen ? 'auto' : 'none',
-            }}
-            hidden={!searchOpen}
-          >
-            <form onSubmit={onSearchSubmit} className="py-2.5 flex items-center gap-2 max-w-3xl mx-auto">
-              <label htmlFor="header-search-input" className="sr-only">
-                Search fragrances
-              </label>
-              <div className="relative flex-1">
-                <input
-                  ref={searchInputRef}
-                  id="header-search-input"
-                  type="search"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="SEARCH PERFUMES, ATTARS, OUD..."
-                  className="w-full bg-[#111111] border border-[#ffb91d]/40 rounded-none px-4 py-2 text-xs text-white placeholder:text-white/40 focus:outline-none focus:border-[#ffb91d] uppercase tracking-wider"
-                  autoComplete="off"
-                />
-              </div>
-              <button
-                type="submit"
-                className="shrink-0 px-6 py-2 text-[11px] uppercase tracking-[0.2em] font-bold bg-[#ffb91d] text-black hover:bg-[#e5a61a] transition-colors"
-              >
-                SEARCH
-              </button>
-              <button
-                type="button"
-                onClick={() => setSearchOpen(false)}
-                className="p-2 text-white/70 hover:text-white transition-colors"
-                aria-label="Close search"
-              >
-                <IconClose className="w-5 h-5" />
-              </button>
-            </form>
-          </div>
         </div>
       </header>
 
+      {/* ── FULL SCREEN SEARCH POPUP MODAL (matches screenshot) ── */}
+      <SearchModal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
+
       {/* Spacer so content is not hidden beneath fixed header — skipped in transparentMode (hero pages) */}
       {!transparentMode && (
-        <div aria-hidden style={{ height: headerHeight + (searchOpen ? 64 : 0) }} />
+        <div aria-hidden style={{ height: headerHeight }} />
       )}
 
       {/* Mobile Drawer Navigation */}

@@ -37,8 +37,8 @@ export default function CartDrawer() {
           {/* Header */}
           <div className="p-5 sm:p-6 border-b border-white/10 flex items-center justify-between">
             <div>
-              <span className="text-[10px] uppercase tracking-[0.25em] text-[#ffb91d] font-mono block">
-                OUD ARABIA DUBAI
+              <span className="text-[10px] uppercase tracking-[0.28em] font-sans font-bold logo-gold-gradient block mb-1">
+                OUD NOMAD DUBAI
               </span>
               <h2 className="text-xl font-serif text-white">
                 Your Shopping Bag <span className="text-xs font-mono text-white/50">({totalItems})</span>

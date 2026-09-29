@@ -120,7 +120,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
     <div className="min-h-screen bg-[#070707] text-[#f2efe9] flex flex-col font-sans selection:bg-[#ffb91d] selection:text-black">
       <SiteHeader />
 
-      <main className="flex-1 w-full pt-28 pb-20">
+      <main className="flex-1 w-full pt-8 pb-20">
         <Container className="space-y-8">
           {/* Breadcrumbs */}
           <nav className="text-[11px] font-sans tracking-[0.2em] uppercase text-white/50 flex flex-wrap items-center gap-2">
@@ -161,11 +161,10 @@ export default function CollectionPlpPage({ params }: PageProps) {
                   <button
                     key={tab.slug}
                     onClick={() => setActiveCategory(tab.slug)}
-                    className={`shrink-0 px-4 py-2 text-[11px] uppercase tracking-[0.2em] transition-all font-medium border ${
-                      isActive
-                        ? 'bg-[#ffb91d] text-black border-[#ffb91d] shadow-md'
-                        : 'bg-transparent text-white/75 border-white/10 hover:border-[#ffb91d]/50 hover:text-white'
-                    }`}
+                    className={`shrink-0 px-4 py-2 text-[11px] uppercase tracking-[0.2em] transition-all font-medium border ${isActive
+                      ? 'bg-[#ffb91d] text-black border-[#ffb91d] shadow-md'
+                      : 'bg-transparent text-white/75 border-white/10 hover:border-[#ffb91d]/50 hover:text-white'
+                      }`}
                   >
                     {tab.label}
                   </button>
@@ -239,11 +238,10 @@ export default function CollectionPlpPage({ params }: PageProps) {
                           alt={prod.name}
                           fill
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          className={`object-cover object-center transition-all duration-700 ${
-                            isHovered && prod.images?.length > 1
-                              ? 'opacity-0 scale-105'
-                              : 'opacity-100 scale-100 group-hover:scale-105'
-                          }`}
+                          className={`object-cover object-center transition-all duration-700 ${isHovered && prod.images?.length > 1
+                            ? 'opacity-0 scale-105'
+                            : 'opacity-100 scale-100 group-hover:scale-105'
+                            }`}
                         />
                         {/* Secondary Image on Hover */}
                         {prod.images?.length > 1 && (
@@ -252,9 +250,8 @@ export default function CollectionPlpPage({ params }: PageProps) {
                             alt={`${prod.name} view 2`}
                             fill
                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                            className={`object-cover object-center transition-all duration-700 absolute inset-0 ${
-                              isHovered ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
-                            }`}
+                            className={`object-cover object-center transition-all duration-700 absolute inset-0 ${isHovered ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
+                              }`}
                           />
                         )}
                       </Link>

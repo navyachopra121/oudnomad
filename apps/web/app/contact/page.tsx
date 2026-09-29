@@ -18,7 +18,7 @@ export default function ContactPage() {
     <div className="min-h-screen bg-[#070707] text-[#f2efe9] font-sans selection:bg-[#ffb91d] selection:text-black">
       <SiteHeader />
 
-      <main className="pt-28 pb-20">
+      <main className="pt-0 pb-20">
         <Container className="space-y-12">
           {/* Breadcrumbs */}
           <nav className="text-[11px] font-sans uppercase tracking-[0.2em] text-white/50 flex items-center gap-2">

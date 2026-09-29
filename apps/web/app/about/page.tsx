@@ -11,7 +11,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-[#070707] text-[#f2efe9] flex flex-col font-sans selection:bg-[#ffb91d] selection:text-black">
       <SiteHeader />
 
-      <main className="flex-1 w-full pt-28 pb-20">
+      <main className="flex-1 w-full pt-8 pb-20">
         <Container className="space-y-16 sm:space-y-24">
           {/* Breadcrumbs */}
           <nav className="text-[11px] font-sans uppercase tracking-[0.2em] text-white/50 flex items-center gap-2">

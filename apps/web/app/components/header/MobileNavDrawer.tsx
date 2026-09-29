@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { IconClose } from './icons';
+import BrandLogo from '../BrandLogo';
 
 type CategoryNode = {
   id: string;
@@ -16,7 +17,7 @@ type Props = {
   onClose: () => void;
   categories: CategoryNode[];
   reduceMotion: boolean;
-};
+};  
 
 export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) {
   const [catalogExpanded, setCatalogExpanded] = useState(false);
@@ -63,14 +64,7 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
       >
         {/* Top bar with close X */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#ffb91d]/20">
-          <div className="flex flex-col">
-            <span className="font-sans text-lg tracking-[0.22em] text-[#ffb91d] uppercase font-bold">
-              OUD NOMAD
-            </span>
-            <span className="text-[9px] tracking-[0.38em] text-[#ffb91d] uppercase font-medium">
-              DUBAI
-            </span>
-          </div>
+          <BrandLogo variant="mobile-drawer" align="left" onClick={onClose} />
           <button
             type="button"
             className="min-w-[40px] min-h-[40px] -mr-2 flex items-center justify-center text-white hover:text-[#ffb91d] transition-colors"

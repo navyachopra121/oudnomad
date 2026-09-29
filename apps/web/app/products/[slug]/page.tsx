@@ -156,7 +156,7 @@ export default function ProductDetailPage({ params }: PageProps) {
         })}
       />
 
-      <main className="flex-1 w-full pt-28 pb-20">
+      <main className="flex-1 w-full pt-8 pb-20">
         <Container className="space-y-12">
           {/* Breadcrumbs */}
           <nav className="text-[11px] font-sans tracking-[0.18em] uppercase text-white/50 flex flex-wrap items-center gap-2">
@@ -213,11 +213,10 @@ export default function ProductDetailPage({ params }: PageProps) {
                     <button
                       key={idx}
                       onClick={() => setSelectedImage(img)}
-                      className={`relative w-20 sm:w-24 aspect-[3/4] overflow-hidden flex-shrink-0 transition-all border ${
-                        selectedImage === img
-                          ? 'border-[#ffb91d] ring-1 ring-[#ffb91d] shadow-lg'
-                          : 'border-white/10 opacity-60 hover:opacity-100 hover:border-white/30'
-                      }`}
+                      className={`relative w-20 sm:w-24 aspect-[3/4] overflow-hidden flex-shrink-0 transition-all border ${selectedImage === img
+                        ? 'border-[#ffb91d] ring-1 ring-[#ffb91d] shadow-lg'
+                        : 'border-white/10 opacity-60 hover:opacity-100 hover:border-white/30'
+                        }`}
                     >
                       <Image
                         src={img}

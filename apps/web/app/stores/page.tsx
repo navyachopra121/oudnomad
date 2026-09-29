@@ -123,7 +123,7 @@ export default function StoresPage() {
     <div className="min-h-screen bg-[#070707] text-[#f2efe9] flex flex-col font-sans selection:bg-[#ffb91d] selection:text-black">
       <SiteHeader />
 
-      <main className="flex-1 w-full pt-28 pb-20">
+      <main className="flex-1 w-full pt-8 pb-20">
         <Container className="space-y-12">
           {/* Breadcrumbs */}
           <nav className="text-[11px] font-sans uppercase tracking-[0.2em] text-white/50 flex items-center gap-2">
@@ -160,11 +160,10 @@ export default function StoresPage() {
               <button
                 key={tab.id}
                 onClick={() => setSelectedRegion(tab.id)}
-                className={`px-4 py-2 text-xs uppercase tracking-widest transition-all font-medium border ${
-                  selectedRegion.toLowerCase() === tab.id.toLowerCase()
-                    ? 'bg-[#ffb91d] text-black border-[#ffb91d] shadow-md'
-                    : 'bg-transparent text-white/70 border-white/10 hover:border-white/30 hover:text-white'
-                }`}
+                className={`px-4 py-2 text-xs uppercase tracking-widest transition-all font-medium border ${selectedRegion.toLowerCase() === tab.id.toLowerCase()
+                  ? 'bg-[#ffb91d] text-black border-[#ffb91d] shadow-md'
+                  : 'bg-transparent text-white/70 border-white/10 hover:border-white/30 hover:text-white'
+                  }`}
               >
                 {tab.label}
               </button>
