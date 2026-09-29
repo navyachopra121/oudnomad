@@ -11,14 +11,14 @@ import BrandLogo from './BrandLogo';
 
 
 const QUICK_LINKS = [
-  { label: 'CATALOGUE', href: '/collections' },
-  { label: 'GCC SHIPPING', href: '/collections' },
-  { label: 'CONTACT US', href: '/contact' },
-  { label: 'MY ACCOUNT', href: '/account' },
-  { label: 'ABOUT US', href: '/about' },
-  { label: 'PRIVACY POLICY', href: '/legal/privacy' },
-  { label: 'SHIPPING & RETURNS', href: '/legal/shipping' },
-  { label: 'TERMS OF SERVICE', href: '/legal/terms' },
+  { label: 'Catalogue', href: '/collections' },
+  { label: 'Gcc shipping', href: '/collections' },
+  { label: 'Contact Us', href: '/contact' },
+  { label: 'My Account', href: '/account' },
+  { label: 'About Us', href: '/about' },
+  { label: 'Privacy Policy', href: '/legal/privacy' },
+  { label: 'Shipping & Returns', href: '/legal/shipping' },
+  { label: 'Terms of Service', href: '/legal/terms' },
 ];
 
 export default function Footer() {
@@ -68,12 +68,12 @@ export default function Footer() {
             <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#ffb91d] font-semibold mb-4">
               QUICK LINKS
             </h3>
-            <ul className="space-y-2 text-xs font-normal tracking-[0.14em]">
+            <ul className="space-y-2 text-xs font-normal tracking-[0.10em]">
               {QUICK_LINKS.map((link) => (
                 <li key={link.href + link.label}>
                   <Link
                     href={link.href}
-                    className="text-white hover:text-[#ffb91d] transition-colors uppercase"
+                    className="text-white hover:text-[#ffb91d] transition-colors capitalize"
                   >
                     {link.label}
                   </Link>

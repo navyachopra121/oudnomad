@@ -96,7 +96,7 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
                 aria-label={searchOpen ? 'Close search' : 'Open search'}
                 onClick={() => setSearchOpen((v) => !v)}
               >
-                <IconSearch className="w-5 h-5" />
+                <IconSearch className="w-6 h-6" />
               </button>
 
               {/* Desktop Left Navigation */}
