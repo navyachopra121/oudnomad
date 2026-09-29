@@ -228,7 +228,7 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
                   aria-label={searchOpen ? 'Close search' : 'Open search'}
                   onClick={() => setSearchOpen((v) => !v)}
                 >
-                  <IconSearch className="w-5 h-5" />
+                  <IconSearch className="w-6 h-6" />
                 </button>
 
                 {/* User Account Icon */}
@@ -237,7 +237,7 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
                   className="hidden sm:flex p-2 items-center justify-center text-white hover:text-[#ffb91d] transition-colors"
                   aria-label="Account"
                 >
-                  <IconUser className="w-5 h-5" />
+                  <IconUser className="w-6 h-6" />
                 </Link>
 
                 {/* Cart Bag Icon */}
@@ -247,7 +247,7 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
                   className="relative p-2 flex items-center justify-center text-white hover:text-[#ffb91d] transition-colors"
                   aria-label="Shopping bag"
                 >
-                  <IconBag className="w-5 h-5" />
+                  <IconBag className="w-6 h-6" />
                   {totalItems > 0 && (
                     <span className="absolute top-0.5 right-0.5 min-w-[16px] h-[16px] bg-[#ffb91d] text-black text-[9px] font-bold rounded-full flex items-center justify-center px-0.5 shadow-md">
                       {totalItems}
