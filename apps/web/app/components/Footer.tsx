@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { FormEvent, useState } from 'react';
 import Container from './Container';
 import { useCurrency } from './concierge/CurrencyContext';
-import BrandLogo from './BrandLogo';
 
 // { label: 'STORES & BOUTIQUES', href: '/stores' },
 
@@ -41,7 +40,16 @@ export default function Footer() {
           {/* Col 1: Brand Logo & About Oud Nomad */}
           <div>
             <div className="mb-4">
-              <BrandLogo variant="footer" align="left" />
+              <Link href="/" className="inline-block group" aria-label="Oud Nomad Dubai Home">
+                <Image
+                  src="/oudnomadfinallogo.png"
+                  alt="Oud Nomad Dubai"
+                  width={140}
+                  height={138}
+                  className="w-24 sm:w-28 h-auto object-contain transition-transform duration-300 group-hover:brightness-110"
+                  priority
+                />
+              </Link>
             </div>
             <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#ffb91d] font-semibold mb-3">
               ABOUT OUD NOMAD
