@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { StoreApi } from '../../store-api';
@@ -7,7 +8,6 @@ import { IconBag, IconChevronDown, IconClose, IconMenu, IconSearch, IconUser } f
 import MobileNavDrawer from './MobileNavDrawer';
 import { useCart } from '../cart/CartContext';
 import { useCurrency } from '../concierge/CurrencyContext';
-import BrandLogo from '../BrandLogo';
 import SearchModal from './SearchModal';
 
 type CategoryNode = {
@@ -179,9 +179,18 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
               </nav>
             </div>
 
-            {/* ── CENTER COLUMN: Brand Logo (OUD NOMAD® DUBAI) in Gold Gradient ── */}
+            {/* ── CENTER COLUMN: Brand Logo ── */}
             <div className="justify-self-center text-center shrink-0 flex items-center justify-center py-1">
-              <BrandLogo variant="header" />
+              <Link href="/" aria-label="Oud Nomad Dubai Home" className="inline-block group">
+                <Image
+                  src="/oudnomadtextlogo.png"
+                  alt="Oud Nomad Dubai"
+                  width={300}
+                  height={40}
+                  className="h-6 sm:h-7 lg:h-8 w-auto object-contain group-hover:brightness-110 transition-all duration-300"
+                  priority
+                />
+              </Link>
             </div>
 
             {/* ── RIGHT COLUMN: Desktop Nav (CONTACT, STORES, ABOUT US) + Action Icons ── */}

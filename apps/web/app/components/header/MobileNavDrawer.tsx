@@ -1,9 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { IconClose } from './icons';
-import BrandLogo from '../BrandLogo';
 
 type CategoryNode = {
   id: string;
@@ -64,7 +64,16 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
       >
         {/* Top bar with close X */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#ffb91d]/20">
-          <BrandLogo variant="mobile-drawer" align="left" onClick={onClose} />
+          <Link href="/" onClick={onClose} aria-label="Oud Nomad Dubai Home" className="inline-block group">
+            <Image
+              src="/oudnomadtextlogo.png"
+              alt="Oud Nomad Dubai"
+              width={200}
+              height={28}
+              className="h-5 w-auto object-contain group-hover:brightness-110 transition-all duration-300"
+              priority
+            />
+          </Link>
           <button
             type="button"
             className="min-w-[40px] min-h-[40px] -mr-2 flex items-center justify-center text-white hover:text-[#ffb91d] transition-colors"
