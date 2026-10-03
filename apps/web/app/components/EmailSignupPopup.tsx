@@ -3,9 +3,7 @@
 import Image from 'next/image';
 import { FormEvent, useEffect, useState } from 'react';
 
-const POPUP_STORAGE_KEY = 'oudnomad_email_popup_dismissed';
-// How many days before showing the popup again after dismiss
-const POPUP_COOLDOWN_DAYS = 7;
+const POPUP_STORAGE_KEY = 'oudnomad_email_popup_session_shown';
 
 export default function EmailSignupPopup() {
   const [visible, setVisible] = useState(false);
@@ -14,29 +12,32 @@ export default function EmailSignupPopup() {
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    // Don't show if already dismissed recently
+    // Don't show if already shown or dismissed in this browser session
     try {
-      const raw = localStorage.getItem(POPUP_STORAGE_KEY);
-      if (raw) {
-        const { until } = JSON.parse(raw) as { until: number };
-        if (Date.now() < until) return;
+      if (sessionStorage.getItem(POPUP_STORAGE_KEY)) {
+        return;
       }
     } catch {
       // storage not available — proceed
     }
 
     // Delay popup so page content loads first
-    const timer = setTimeout(() => setVisible(true), 2200);
+    const timer = setTimeout(() => {
+      setVisible(true);
+      try {
+        sessionStorage.setItem(POPUP_STORAGE_KEY, 'true');
+      } catch {
+        // ignore
+      }
+    }, 2200);
+
     return () => clearTimeout(timer);
   }, []);
 
   const dismiss = () => {
     setVisible(false);
     try {
-      localStorage.setItem(
-        POPUP_STORAGE_KEY,
-        JSON.stringify({ until: Date.now() + POPUP_COOLDOWN_DAYS * 86_400_000 })
-      );
+      sessionStorage.setItem(POPUP_STORAGE_KEY, 'true');
     } catch {
       // ignore
     }
