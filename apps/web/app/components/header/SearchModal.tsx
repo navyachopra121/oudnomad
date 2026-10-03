@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { searchProducts, OUD_PRODUCTS, OudProduct } from '../../lib/products-data';
+import { OUD_PRODUCTS, OudProduct } from '../../lib/products-data';
 import { IconSearch } from './icons';
 
 interface SearchModalProps {
@@ -77,7 +77,13 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     }
 
     // 1. Matching products
-    const prods = searchProducts(trimmed);
+    const prods = OUD_PRODUCTS.filter(
+      (p) =>
+        p.title.toLowerCase().includes(trimmed) ||
+        p.description.toLowerCase().includes(trimmed) ||
+        p.category.toLowerCase().includes(trimmed) ||
+        p.tags.some((t: string) => t.toLowerCase().includes(trimmed))
+    );
     setMatchingProducts(prods.slice(0, 6));
 
     // 2. Suggestions
@@ -92,9 +98,9 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
       // If few keywords match, also extract matching words from product titles
       if (matchedKeywords.length < 2) {
-        prods.forEach((p) => {
+        prods.forEach((p: OudProduct) => {
           const words = p.title.toLowerCase().split(/\s+/);
-          words.forEach((w) => {
+          words.forEach((w: string) => {
             const cleanWord = w.replace(/[^a-z0-9]/g, '');
             if (
               cleanWord.length > 3 &&

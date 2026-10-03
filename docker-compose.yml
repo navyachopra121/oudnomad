@@ -55,13 +55,14 @@ services:
         condition: service_healthy
     environment:
       KAFKA_BROKER: kafka:9092
-      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-resend}
-      RESEND_API_KEY: ${RESEND_API_KEY}
-      RESEND_FROM: ${RESEND_FROM:-noreply@oudnomad.com}
-      AWS_REGION: ${AWS_REGION:-us-east-1}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
-      SES_FROM: ${SES_FROM:-noreply@oudnomad.com}
+      KAFKA_BROKERS: kafka:9092
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-smtp}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-OudNomad <noreply@oudnomaddubai.com>}
       DATABASE_URL: ${DATABASE_URL}
       LOG_LEVEL: ${LOG_LEVEL:-info}
 
@@ -70,6 +71,8 @@ services:
     container_name: oudnomad_redis
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     restart: always
+    ports:
+      - "6379:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -121,7 +124,7 @@ services:
       - "9200:9200"
     environment:
       - discovery.type=single-node
-      - plugins.security.disabled=true
+      - DISABLE_SECURITY_PLUGIN=true
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
       - bootstrap.memory_lock=true
     ulimits:

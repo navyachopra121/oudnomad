@@ -1,32 +1,55 @@
-name: Deploy Production
+name: Deploy Production (Manual)
 
 on:
   workflow_dispatch:
     inputs:
-      image_tag:
-        description: 'Git SHA of the image to deploy (must already exist in ghcr.io)'
-        required: true
+      sha:
+        description: 'Git commit SHA to deploy (defaults to latest main)'
+        required: false
+        default: ''
 
 jobs:
   deploy:
+    name: Deploy to oudnomaddubai.com
     runs-on: ubuntu-latest
-    steps:
-      - name: Confirm image exists in ghcr.io
-        run: |
-          docker manifest inspect ghcr.io/${{ github.repository }}/app:${{ github.event.inputs.image_tag }} \
-            || (echo "Image tag not found in registry — build it via CI first." && exit 1)
+    environment:
+      name: production
+      url: https://oudnomaddubai.com
 
-      - uses: appleboy/ssh-action@v1
+    steps:
+      - name: Deploy to Hostinger VPS via SSH
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            cd /opt/app
-            export IMAGE_TAG=${{ github.event.inputs.image_tag }}
-            export GITHUB_REPOSITORY=${{ github.repository }}
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T app npx prisma migrate deploy
+            set -e
+            cd /var/www/oudnomad
+
+            echo "📦 Pulling latest main..."
+            git fetch origin main
+            git checkout main
+            git pull origin main
+
+            echo "🔧 Installing dependencies..."
+            pnpm install --filter api --filter notification-worker --filter web --frozen-lockfile
+
+            echo "🔨 Building all apps..."
+            pnpm --filter api build
+            pnpm --filter notification-worker build
+            pnpm --filter web build
+
+            echo "🗄️  Running database migrations..."
+            pnpm --filter api exec prisma migrate deploy
+
+            echo "🔄 Restarting services via PM2..."
+            pm2 restart ecosystem.config.cjs --update-env
+            pm2 save
+
+            echo "🏥 Health check..."
             sleep 5
-            curl -f http://localhost:3001/api/health || (echo "Health check failed post-deploy" && exit 1)
+            curl -sf https://oudnomaddubai.com/api/health || \
+              (echo "❌ Health check failed!" && exit 1)
+
+            echo "✅ Manual production deploy complete!"

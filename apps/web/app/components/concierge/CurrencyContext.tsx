@@ -2,25 +2,23 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type CurrencyCode = 'INR' | 'AED' | 'SAR' | 'QAR' | 'KWD' | 'OMR' | 'BHD' | 'USD';
+export type CurrencyCode = 'AED' | 'SAR' | 'QAR' | 'KWD' | 'OMR' | 'BHD';
 
 export interface CurrencyConfig {
   code: CurrencyCode;
   symbol: string;
   name: string;
-  rate: number; // multiplier relative to base (INR)
+  rate: number; // multiplier relative to base (AED)
   flag: string;
 }
 
 export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
-  INR: { code: 'INR', symbol: '₹ ', name: 'Indian Rupee', rate: 1.0, flag: '🇮🇳' },
-  AED: { code: 'AED', symbol: 'AED ', name: 'UAE Dirham', rate: 0.044, flag: '🇦🇪' },
-  USD: { code: 'USD', symbol: '$', name: 'US Dollar', rate: 0.012, flag: '🇺🇸' },
-  SAR: { code: 'SAR', symbol: 'SAR ', name: 'Saudi Riyal', rate: 0.045, flag: '🇸🇦' },
-  QAR: { code: 'QAR', symbol: 'QAR ', name: 'Qatari Riyal', rate: 0.044, flag: '🇶🇦' },
-  KWD: { code: 'KWD', symbol: 'KWD ', name: 'Kuwaiti Dinar', rate: 0.0037, flag: '🇰🇼' },
-  OMR: { code: 'OMR', symbol: 'OMR ', name: 'Omani Rial', rate: 0.0046, flag: '🇴🇲' },
-  BHD: { code: 'BHD', symbol: 'BHD ', name: 'Bahraini Dinar', rate: 0.0045, flag: '🇧🇭' },
+  AED: { code: 'AED', symbol: 'AED ', name: 'UAE Dirham', rate: 1.0, flag: '🇦🇪' },
+  SAR: { code: 'SAR', symbol: 'SAR ', name: 'Saudi Riyal', rate: 1.02, flag: '🇸🇦' },
+  QAR: { code: 'QAR', symbol: 'QAR ', name: 'Qatari Riyal', rate: 0.99, flag: '🇶🇦' },
+  KWD: { code: 'KWD', symbol: 'KWD ', name: 'Kuwaiti Dinar', rate: 0.084, flag: '🇰🇼' },
+  OMR: { code: 'OMR', symbol: 'OMR ', name: 'Omani Rial', rate: 0.105, flag: '🇴🇲' },
+  BHD: { code: 'BHD', symbol: 'BHD ', name: 'Bahraini Dinar', rate: 0.102, flag: '🇧🇭' },
 };
 
 interface CurrencyContextType {
@@ -53,16 +51,10 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 
   const formatPrice = (amountInBase: number): string => {
     const converted = amountInBase * currency.rate;
-    if (currency.code === 'INR') {
-      return `₹ ${Math.round(converted).toLocaleString('en-IN')}.00`;
-    }
-    if (['AED', 'SAR', 'QAR'].includes(currency.code)) {
-      return `${currency.symbol}${Math.round(converted).toLocaleString()}`;
-    }
     if (['KWD', 'OMR', 'BHD'].includes(currency.code)) {
       return `${currency.symbol}${converted.toFixed(2)}`;
     }
-    return `${currency.symbol}${converted.toFixed(2)}`;
+    return `${currency.symbol}${Math.round(converted).toLocaleString()}`;
   };
 
   return (
@@ -85,9 +77,9 @@ export function useCurrency() {
   if (!context) {
     // Return fallback for non-provider contexts or server rendering
     return {
-      currency: CURRENCIES.USD,
+      currency: CURRENCIES.AED,
       setCurrency: () => {},
-      formatPrice: (amount: number) => `$${amount.toLocaleString()}`,
+      formatPrice: (amount: number) => `AED ${amount.toLocaleString()}`,
       isModalOpen: false,
       setIsModalOpen: () => {},
     };

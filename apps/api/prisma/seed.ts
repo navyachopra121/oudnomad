@@ -3,9 +3,53 @@ import { PrismaClient, TaxType } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting database seed for OudNomad Phase 1...');
+  console.log('🌱 Starting comprehensive database seed for OudNomad (GCC & Global)...');
 
   // 1. Currencies
+  const aed = await prisma.currency.upsert({
+    where: { code: 'AED' },
+    update: {},
+    create: {
+      code: 'AED',
+      name: 'UAE Dirham',
+      symbol: 'د.إ',
+      decimalPlaces: 2,
+    },
+  });
+
+  const sar = await prisma.currency.upsert({
+    where: { code: 'SAR' },
+    update: {},
+    create: {
+      code: 'SAR',
+      name: 'Saudi Riyal',
+      symbol: 'ر.س',
+      decimalPlaces: 2,
+    },
+  });
+
+  const kwd = await prisma.currency.upsert({
+    where: { code: 'KWD' },
+    update: {},
+    create: {
+      code: 'KWD',
+      name: 'Kuwaiti Dinar',
+      symbol: 'د.ك',
+      decimalPlaces: 3,
+    },
+  });
+
+  const qar = await prisma.currency.upsert({
+    where: { code: 'QAR' },
+    update: {},
+    create: {
+      code: 'QAR',
+      name: 'Qatari Riyal',
+      symbol: 'ر.ق',
+      decimalPlaces: 2,
+    },
+  });
+
   const usd = await prisma.currency.upsert({
     where: { code: 'USD' },
     update: {},
@@ -28,9 +72,49 @@ async function main() {
     },
   });
 
-  console.log('✅ Currencies seeded (USD, INR)');
+  console.log('✅ Currencies seeded (AED, SAR, KWD, QAR, USD, INR)');
 
   // 2. Regions
+  const regionAE = await prisma.region.upsert({
+    where: { code: 'AE' },
+    update: {},
+    create: {
+      code: 'AE',
+      name: 'United Arab Emirates',
+      currencyCode: aed.code,
+    },
+  });
+
+  const regionSA = await prisma.region.upsert({
+    where: { code: 'SA' },
+    update: {},
+    create: {
+      code: 'SA',
+      name: 'Saudi Arabia',
+      currencyCode: sar.code,
+    },
+  });
+
+  const regionKW = await prisma.region.upsert({
+    where: { code: 'KW' },
+    update: {},
+    create: {
+      code: 'KW',
+      name: 'Kuwait',
+      currencyCode: kwd.code,
+    },
+  });
+
+  const regionQA = await prisma.region.upsert({
+    where: { code: 'QA' },
+    update: {},
+    create: {
+      code: 'QA',
+      name: 'Qatar',
+      currencyCode: qar.code,
+    },
+  });
+
   const regionUS = await prisma.region.upsert({
     where: { code: 'US' },
     update: {},
@@ -51,16 +135,27 @@ async function main() {
     },
   });
 
-  console.log('✅ Regions seeded (US, IN)');
+  console.log('✅ Regions seeded (AE, SA, KW, QA, US, IN)');
 
   // 3. Tax Rules
-  await prisma.taxRule.deleteMany({}); // Reset tax rules for deterministic seeding
-
+  await prisma.taxRule.deleteMany({});
   await prisma.taxRule.createMany({
     data: [
       {
+        regionId: regionAE.id,
+        name: 'UAE Standard VAT',
+        taxType: TaxType.VAT,
+        rateBps: 500, // 5%
+      },
+      {
+        regionId: regionSA.id,
+        name: 'Saudi Arabia Standard VAT',
+        taxType: TaxType.VAT,
+        rateBps: 1500, // 15%
+      },
+      {
         regionId: regionUS.id,
-        name: 'US Standard Sales Tax',
+        name: 'US Sales Tax',
         taxType: TaxType.SALES_TAX,
         rateBps: 825, // 8.25%
       },
@@ -68,46 +163,45 @@ async function main() {
         regionId: regionIN.id,
         name: 'India GST Standard',
         taxType: TaxType.GST,
-        rateBps: 1800, // 18.00%
+        rateBps: 1800, // 18%
       },
     ],
   });
 
-  console.log('✅ Tax Rules seeded (US Sales Tax @ 8.25%, IN GST @ 18.00%)');
+  console.log('✅ Tax Rules seeded');
 
   // 4. Shipping Methods
-  await prisma.shippingMethod.deleteMany({}); // Reset shipping methods for deterministic seeding
-
+  await prisma.shippingMethod.deleteMany({});
   await prisma.shippingMethod.createMany({
     data: [
       {
-        regionId: regionUS.id,
-        name: 'Standard Ground Shipping',
-        description: 'Delivered in 3-5 business days across US mainland',
-        amountMinor: 1000, // $10.00
-        currencyCode: 'USD',
-        minDeliveryDays: 3,
-        maxDeliveryDays: 5,
-        isActive: true,
-      },
-      {
-        regionId: regionUS.id,
-        name: 'Express Air Courier',
-        description: 'Delivered in 1-2 business days',
-        amountMinor: 2500, // $25.00
-        currencyCode: 'USD',
+        regionId: regionAE.id,
+        name: 'UAE Premium Courier',
+        description: 'Next-day delivery across Dubai, Abu Dhabi & Emirates',
+        amountMinor: 2500, // 25.00 AED
+        currencyCode: 'AED',
         minDeliveryDays: 1,
         maxDeliveryDays: 2,
         isActive: true,
       },
       {
-        regionId: regionIN.id,
-        name: 'Standard Surface Shipping',
-        description: 'Delivered in 2-4 business days across India',
-        amountMinor: 15000, // ₹150.00
-        currencyCode: 'INR',
+        regionId: regionSA.id,
+        name: 'Saudi Express Courier',
+        description: 'Fast tracked courier across Riyadh, Jeddah & KSA',
+        amountMinor: 3500, // 35.00 SAR
+        currencyCode: 'SAR',
         minDeliveryDays: 2,
         maxDeliveryDays: 4,
+        isActive: true,
+      },
+      {
+        regionId: regionUS.id,
+        name: 'Standard Ground Shipping',
+        description: 'Delivered in 3-5 business days across US',
+        amountMinor: 1000, // $10.00
+        currencyCode: 'USD',
+        minDeliveryDays: 3,
+        maxDeliveryDays: 5,
         isActive: true,
       },
     ],
@@ -122,7 +216,7 @@ async function main() {
     create: {
       name: 'Extrait de Parfum',
       slug: 'extrait-de-parfum',
-      description: 'Handcrafted luxury spray perfumes with high oil concentration',
+      description: 'Handcrafted luxury spray perfumes with extraordinary 35%+ oil concentration',
     },
   });
 
@@ -130,15 +224,254 @@ async function main() {
     where: { slug: 'attar-oils' },
     update: {},
     create: {
-      name: 'Attar Oils',
+      name: 'Artisanal Attar Oils',
       slug: 'attar-oils',
-      description: 'Pure concentrated artisanal perfume oils',
+      description: 'Pure concentrated artisanal perfume oils aged in traditional copper stills',
     },
   });
 
-  console.log(`✅ Categories seeded: ${categoryParfum.name}, ${categoryAttar.name}`);
+  const categoryDehn = await prisma.category.upsert({
+    where: { slug: 'dehn-al-oud' },
+    update: {},
+    create: {
+      name: 'Vintage Dehn Al Oud',
+      slug: 'dehn-al-oud',
+      description: 'Rare wild-harvested vintage agarwood distillations from Cambodia, Assam & Trat',
+    },
+  });
 
-  console.log('🎉 Phase 1 seed complete!');
+  console.log('✅ Categories seeded');
+
+  // 6. Products & Variants
+  const productsData = [
+    {
+      name: 'Royal Cambodian Oud',
+      slug: 'royal-cambodian-oud',
+      description:
+        'A regal composition capturing vintage wild Cambodian agarwood, sweetened with dark amber, Damascus rose, and warm spiced leather. Deep, meditative, and profoundly long-lasting.',
+      categoryId: categoryParfum.id,
+      variants: [
+        {
+          sku: 'RCO-50ML',
+          name: '50ml Extrait',
+          size: '50ml',
+          price: 550.0,
+          stock: 45,
+          priceMinorAED: 55000,
+          priceMinorSAR: 56000,
+          priceMinorUSD: 15000,
+        },
+        {
+          sku: 'RCO-100ML',
+          name: '100ml Extrait Flacon',
+          size: '100ml',
+          price: 890.0,
+          stock: 25,
+          priceMinorAED: 89000,
+          priceMinorSAR: 91000,
+          priceMinorUSD: 24500,
+        },
+      ],
+      images: [
+        'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80',
+      ],
+    },
+    {
+      name: 'Amber Taif Rose Attar',
+      slug: 'amber-taif-rose-attar',
+      description:
+        'First-distillation Taif roses harmonized with 30-year aged Baltic amber resin and a velvety base of creamy Mysore sandalwood. A majestic and romantic oriental masterpiece.',
+      categoryId: categoryAttar.id,
+      variants: [
+        {
+          sku: 'ATRA-3ML',
+          name: 'Quarter Tola (3ml)',
+          size: '3ml',
+          price: 320.0,
+          stock: 60,
+          priceMinorAED: 32000,
+          priceMinorSAR: 33000,
+          priceMinorUSD: 8800,
+        },
+        {
+          sku: 'ATRA-12ML',
+          name: 'Full Tola (12ml Crystal Flacon)',
+          size: '12ml',
+          price: 950.0,
+          stock: 20,
+          priceMinorAED: 95000,
+          priceMinorSAR: 97000,
+          priceMinorUSD: 26000,
+        },
+      ],
+      images: [
+        'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80',
+      ],
+    },
+    {
+      name: 'Dehn Al Oud Hindi Qadeem',
+      slug: 'dehn-al-oud-hindi-qadeem',
+      description:
+        'Distilled from wild centuries-old Aquilaria agallocha heartwood in Upper Assam. Animalic, leathery, smoky, unfolding into sweet hay and dry honeyed woods.',
+      categoryId: categoryDehn.id,
+      variants: [
+        {
+          sku: 'DOHQ-3ML',
+          name: 'Quarter Tola (3ml)',
+          size: '3ml',
+          price: 750.0,
+          stock: 15,
+          priceMinorAED: 75000,
+          priceMinorSAR: 77000,
+          priceMinorUSD: 20500,
+        },
+      ],
+      images: [
+        'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80',
+      ],
+    },
+    {
+      name: 'Smoked Velvet Santal',
+      slug: 'smoked-velvet-santal',
+      description:
+        'Creamy sandalwood infused with subtle cardamom smoke, violet leaves, iris root, and sensual cashmeran. Silky, opulent, and exceptionally refined.',
+      categoryId: categoryParfum.id,
+      variants: [
+        {
+          sku: 'SVS-50ML',
+          name: '50ml Extrait',
+          size: '50ml',
+          price: 480.0,
+          stock: 50,
+          priceMinorAED: 48000,
+          priceMinorSAR: 49000,
+          priceMinorUSD: 13000,
+        },
+        {
+          sku: 'SVS-100ML',
+          name: '100ml Extrait Flacon',
+          size: '100ml',
+          price: 780.0,
+          stock: 30,
+          priceMinorAED: 78000,
+          priceMinorSAR: 80000,
+          priceMinorUSD: 21500,
+        },
+      ],
+      images: [
+        'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80',
+      ],
+    },
+    {
+      name: 'Imperial Musk & Saffron',
+      slug: 'imperial-musk-saffron',
+      description:
+        'Red Kashmiri saffron threads blended with botanical white musk, sweet cedar, and vanilla bourbon. Radiant, addictive, and unmistakably grand.',
+      categoryId: categoryParfum.id,
+      variants: [
+        {
+          sku: 'IMS-50ML',
+          name: '50ml Extrait',
+          size: '50ml',
+          price: 520.0,
+          stock: 40,
+          priceMinorAED: 52000,
+          priceMinorSAR: 53500,
+          priceMinorUSD: 14200,
+        },
+      ],
+      images: [
+        'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80',
+      ],
+    },
+  ];
+
+  for (const p of productsData) {
+    const product = await prisma.product.upsert({
+      where: { slug: p.slug },
+      update: {
+        name: p.name,
+        description: p.description,
+        categoryId: p.categoryId,
+        status: 'ACTIVE',
+      },
+      create: {
+        name: p.name,
+        slug: p.slug,
+        description: p.description,
+        categoryId: p.categoryId,
+        status: 'ACTIVE',
+      },
+    });
+
+    // Add images
+    for (let i = 0; i < p.images.length; i++) {
+      const imgUrl = p.images[i];
+      const existingImg = await prisma.productImage.findFirst({
+        where: { productId: product.id, position: i },
+      });
+      if (!existingImg) {
+        await prisma.productImage.create({
+          data: {
+            productId: product.id,
+            url: imgUrl,
+            path: imgUrl,
+            position: i,
+            sortOrder: i,
+            altText: `${p.name} luxury flacon`,
+          },
+        });
+      }
+    }
+
+    // Add variants & prices
+    for (const v of p.variants) {
+      const variant = await prisma.productVariant.upsert({
+        where: { sku: v.sku },
+        update: {
+          name: v.name,
+          size: v.size,
+          price: v.price,
+          stock: v.stock,
+        },
+        create: {
+          productId: product.id,
+          sku: v.sku,
+          name: v.name,
+          size: v.size,
+          price: v.price,
+          stock: v.stock,
+        },
+      });
+
+      // Regional prices (AED, SAR, USD)
+      const prices = [
+        { regionId: regionAE.id, currencyCode: 'AED', amountMinor: v.priceMinorAED },
+        { regionId: regionSA.id, currencyCode: 'SAR', amountMinor: v.priceMinorSAR },
+        { regionId: regionUS.id, currencyCode: 'USD', amountMinor: v.priceMinorUSD },
+      ];
+
+      for (const pr of prices) {
+        const existingPrice = await prisma.productPrice.findFirst({
+          where: { variantId: variant.id, regionId: pr.regionId },
+        });
+        if (!existingPrice) {
+          await prisma.productPrice.create({
+            data: {
+              variantId: variant.id,
+              regionId: pr.regionId,
+              currencyCode: pr.currencyCode,
+              amountMinor: pr.amountMinor,
+            },
+          });
+        }
+      }
+    }
+
+    console.log(`✅ Seeded product: ${p.name}`);
+  }
+
+  console.log('🎉 Database seed complete! GCC currencies, regions, tax rules, and luxury products are live.');
 }
 
 main()

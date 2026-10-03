@@ -31,17 +31,39 @@ export default function ProductDetailPage({ params }: PageProps) {
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  // Accordion state (which accordion tab is currently open)
-  const [openAccordion, setOpenAccordion] = useState<string | null>('features');
+  // Lightbox + carousel state
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [carouselIndex, setCarouselIndex] = useState(0);
 
-  // Review Modal Form State
-  const [showReviewModal, setShowReviewModal] = useState(false);
-  const [submittingReview, setSubmittingReview] = useState(false);
-  const [reviewSuccessMsg, setReviewSuccessMsg] = useState<string | null>(null);
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewAuthor, setReviewAuthor] = useState('');
-  const [reviewTitle, setReviewTitle] = useState('');
-  const [reviewBody, setReviewBody] = useState('');
+  const openLightbox = (idx: number) => { setLightboxIndex(idx); setLightboxOpen(true); };
+  const closeLightbox = () => setLightboxOpen(false);
+  const lightboxPrev = (total: number) => setLightboxIndex((i) => (i - 1 + total) % total);
+  const lightboxNext = (total: number) => setLightboxIndex((i) => (i + 1) % total);
+  const carouselPrev = (total: number) => setCarouselIndex((i) => (i - 1 + total) % total);
+  const carouselNext = (total: number) => setCarouselIndex((i) => (i + 1) % total);
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (!lightboxOpen || !product) return;
+    const total = product.images?.length || 0;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') lightboxPrev(total);
+      if (e.key === 'ArrowRight') lightboxNext(total);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [lightboxOpen, product]);
+
+  // Prevent body scroll when lightbox open
+  useEffect(() => {
+    document.body.style.overflow = lightboxOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [lightboxOpen]);
+
+  // Accordion state
+  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadProduct() {
@@ -136,9 +158,9 @@ export default function ProductDetailPage({ params }: PageProps) {
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Hello Oud Arabia Dubai, I would like to order *${product.name}* (Price: ${formatPrice(product.price)}). Please assist me with my order.`
+    `Hello Oud Nomad Dubai, I would like to order *${product.name}* (Price: ${formatPrice(product.price)}). Please assist me with my order.`
   );
-  const whatsappUrl = `https://wa.me/919888881908?text=${whatsappMessage}`;
+  const whatsappUrl = `https://wa.me/971585719731?text=${whatsappMessage}`;
 
   return (
     <div className="min-h-screen bg-[#070707] text-[#f2efe9] flex flex-col font-sans selection:bg-[#ffb91d] selection:text-black">
@@ -181,79 +203,117 @@ export default function ProductDetailPage({ params }: PageProps) {
           </nav>
 
           {/* Product Detail Main Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
-            {/* ── LEFT COLUMN: Gallery with Zoom & Thumbnails ── */}
-            <div className="lg:col-span-7 space-y-4">
-              {/* Main Image */}
-              <div className="relative aspect-[3/4] w-full bg-[#121212] border border-white/10 overflow-hidden shadow-2xl group/zoom">
-                <Image
-                  src={selectedImage || product.images[0]}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 55vw"
-                  className="object-cover object-center transition-transform duration-700 group-hover/zoom:scale-105"
-                />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-0 items-start">
 
-                {/* Badges */}
-                <div className="absolute top-4 left-4 flex flex-col gap-1.5 z-10">
-                  <span className="bg-[#ffb91d] text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1 shadow-md">
-                    DUBAI ORIGIN
-                  </span>
-                  <span className="bg-black/80 backdrop-blur-sm text-white text-[9px] font-mono tracking-wider px-2.5 py-0.5 border border-white/15">
-                    {product.features?.quantity || (product.category === 'attars' ? '12ml' : '100ml')}
-                  </span>
+            {/* ── LEFT COLUMN: Gallery ── */}
+            <div className="lg:col-span-7">
+
+              {/* ── MOBILE: Horizontal Carousel ── */}
+              <div className="relative lg:hidden">
+                {/* Image */}
+                <div
+                  className="relative aspect-[4/5] w-full bg-[#121212] overflow-hidden cursor-zoom-in"
+                  onClick={() => openLightbox(carouselIndex)}
+                >
+                  <Image
+                    src={product.images?.[carouselIndex] || ''}
+                    alt={`${product.name} — view ${carouselIndex + 1}`}
+                    fill
+                    priority
+                    sizes="100vw"
+                    className="object-cover object-center transition-transform duration-500"
+                  />
+                  {/* Tap hint */}
+                  <div className="absolute bottom-3 right-3 bg-black/50 text-white/70 text-[10px] font-mono px-2 py-1 pointer-events-none">
+                    Tap to expand
+                  </div>
                 </div>
+
+                {/* Prev / Next arrows */}
+                {product.images && product.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => carouselPrev(product.images!.length)}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-black/60 hover:bg-black/80 flex items-center justify-center text-white border border-white/20 transition-all"
+                      aria-label="Previous image"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      onClick={() => carouselNext(product.images!.length)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-black/60 hover:bg-black/80 flex items-center justify-center text-white border border-white/20 transition-all"
+                      aria-label="Next image"
+                    >
+                      ›
+                    </button>
+
+                    {/* Dot indicators */}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                      {product.images.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setCarouselIndex(idx)}
+                          className={`w-1.5 h-1.5 rounded-full transition-all ${
+                            idx === carouselIndex
+                              ? 'bg-[#ffb91d] w-4'
+                              : 'bg-white/40 hover:bg-white/70'
+                          }`}
+                          aria-label={`Go to image ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
 
-              {/* Thumbnails Row */}
-              {product.images && product.images.length > 1 && (
-                <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none">
-                  {product.images.map((img, idx) => (
-                    <button
+              {/* ── DESKTOP: Stacked images (bluorng-style) ── */}
+              <div className="hidden lg:flex flex-col">
+                {product.images && product.images.length > 0 ? (
+                  product.images.map((img, idx) => (
+                    <div
                       key={idx}
-                      onClick={() => setSelectedImage(img)}
-                      className={`relative w-20 sm:w-24 aspect-[3/4] overflow-hidden flex-shrink-0 transition-all border ${selectedImage === img
-                        ? 'border-[#ffb91d] ring-1 ring-[#ffb91d] shadow-lg'
-                        : 'border-white/10 opacity-60 hover:opacity-100 hover:border-white/30'
-                        }`}
+                      className="relative aspect-[4/5] w-full bg-[#121212] overflow-hidden group/zoom cursor-zoom-in"
+                      onClick={() => openLightbox(idx)}
                     >
                       <Image
                         src={img}
-                        alt={`${product.name} thumbnail ${idx + 1}`}
+                        alt={`${product.name} — view ${idx + 1}`}
                         fill
-                        className="object-cover object-center"
+                        priority={idx === 0}
+                        sizes="55vw"
+                        className="object-cover object-center transition-transform duration-700 group-hover/zoom:scale-105"
                       />
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* Trust Badges */}
-              <div className="grid grid-cols-3 gap-2 py-4 border-y border-white/10 text-center font-mono text-[10px] uppercase tracking-wider text-white/60">
-                <div className="p-2 border-r border-white/10">
-                  <span className="block text-[#ffb91d] text-base mb-1">🏺</span>
-                  <span>100% Pure Extracts</span>
-                </div>
-                <div className="p-2 border-r border-white/10">
-                  <span className="block text-[#ffb91d] text-base mb-1">✨</span>
-                  <span>48h Longevity</span>
-                </div>
-                <div className="p-2">
-                  <span className="block text-[#ffb91d] text-base mb-1">✈️</span>
-                  <span>Free Express Ship</span>
-                </div>
+                      {/* Hover hint */}
+                      <div className="absolute inset-0 flex items-end justify-end p-3 opacity-0 group-hover/zoom:opacity-100 transition-opacity">
+                        <span className="bg-black/60 text-white/80 text-[10px] font-mono px-2 py-1">
+                          Click to expand
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="relative aspect-[4/5] w-full bg-[#121212] overflow-hidden">
+                    <Image
+                      src={product.images?.[0] || ''}
+                      alt={product.name}
+                      fill priority
+                      sizes="55vw"
+                      className="object-cover object-center"
+                    />
+                  </div>
+                )}
               </div>
+
             </div>
 
-            {/* ── RIGHT COLUMN: Product Info & Actions ── */}
-            <div className="lg:col-span-5 space-y-6">
+            {/* ── RIGHT COLUMN: Product Info — Sticky ── */}
+            <div className="lg:col-span-5 lg:sticky lg:top-24 lg:pl-10 space-y-6">
               {/* Header Info */}
               <div className="space-y-2 border-b border-white/10 pb-6">
-                <span className="text-[10px] font-mono tracking-[0.35em] uppercase text-[#ffb91d] block">
+                {/* <span className="text-[10px] font-mono tracking-[0.35em] uppercase text-[#ffb91d] block">
                   AYAL PERFUMES LLC • DUBAI (UAE)
-                </span>
-                <h1 className="text-2xl sm:text-4xl font-serif font-normal text-white tracking-wide leading-tight">
+                </span> */}
+                <h1 className="text-xl sm:text-3xl font-normal text-white tracking-wide leading-tight">
                   {product.name}
                 </h1>
 
@@ -276,7 +336,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                     </span>
                   )}
                   <span className="text-[11px] text-white/60 font-sans block w-full mt-1">
-                    Tax included. <strong className="text-white/80">Free express delivery</strong> across India & GCC.
+                    Tax included. <strong className="text-white/80">Free express delivery</strong> across all GCC countries.
                   </span>
                 </div>
 
@@ -287,10 +347,34 @@ export default function ProductDetailPage({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* Storytelling Intro */}
-              <p className="text-xs sm:text-sm text-white/80 leading-relaxed font-sans">
-                {product.description}
-              </p>
+
+              {/* ── FRAGRANCE NOTES ── */}
+              <div className="pt-2 space-y-3">
+                <h3 className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#ffb91d]">
+                  Fragrance Notes
+                </h3>
+                <div className="space-y-2.5">
+                  {[
+                    { label: 'Top', value: product.features?.topNotes || 'Jasmine, Taif Rose, Ruh al Ward' },
+                    { label: 'Heart', value: product.features?.middleNotes || 'Jasmine Oud, Rose, Lavender' },
+                    { label: 'Base', value: product.features?.baseNotes || 'Amber, White Musk, Bulgarian Rose' },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="flex items-start gap-3 text-xs">
+                      <span className="shrink-0 w-12 text-[10px] font-mono uppercase tracking-widest text-[#ffb91d] pt-0.5">{label}</span>
+                      <span className="text-white/75 leading-relaxed">{value}</span>
+                    </div>
+                  ))}
+                  <div className="flex items-center gap-3 text-xs pt-1 border-t border-white/5">
+                    <span className="shrink-0 w-12 text-[10px] font-mono uppercase tracking-widest text-white/40">Vol</span>
+                    <span className="text-white/60 font-mono">{product.features?.quantity || (product.category === 'attars' ? '12ml' : '100ml')}</span>
+                    <span className="text-white/20 mx-1">·</span>
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-white/40">Longevity</span>
+                    <span className="text-white/60 font-mono">{product.features?.longevity || '48 Hours'}</span>
+                  </div>
+                </div>
+              </div>
+
+
 
               {/* Quantity & CTA Buttons */}
               <div className="space-y-3 pt-2">
@@ -344,79 +428,32 @@ export default function ProductDetailPage({ params }: PageProps) {
                   rel="noopener noreferrer"
                   className="w-full h-11 bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/40 font-medium text-xs uppercase tracking-[0.16em] transition-all flex items-center justify-center gap-2"
                 >
-                  <span>💬 Order via WhatsApp: +91-9888881908</span>
+                  <span>💬 Order via WhatsApp: +971 58 571 9731</span>
                 </a>
               </div>
 
-              {/* ── PRODUCT FEATURES TABLE (Word-to-Word from Oud Arabia) ── */}
-              <div className="pt-4 border-t border-white/10 space-y-3">
-                <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-[#ffb91d]">
-                  Product Features & Composition
-                </h3>
 
-                <div className="overflow-x-auto border border-white/10 bg-[#0e0e0e]">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="border-b border-white/10 bg-[#161616]">
-                        <th className="py-2.5 px-4 font-semibold text-[#ffb91d] uppercase tracking-wider w-1/3">
-                          Features
-                        </th>
-                        <th className="py-2.5 px-4 font-semibold text-[#ffb91d] uppercase tracking-wider">
-                          Description
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5 font-sans">
-                      <tr>
-                        <td className="py-2.5 px-4 text-white/50 font-mono text-[11px]">Top Notes</td>
-                        <td className="py-2.5 px-4 text-white/90">
-                          {product.features?.topNotes || 'Jasmine, Taif Rose, and Ruh al Ward'}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="py-2.5 px-4 text-white/50 font-mono text-[11px]">Middle Notes</td>
-                        <td className="py-2.5 px-4 text-white/90">
-                          {product.features?.middleNotes || 'Jasmine Oud, Lily of the Valley, Rose, and Lavender'}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="py-2.5 px-4 text-white/50 font-mono text-[11px]">Base Notes</td>
-                        <td className="py-2.5 px-4 text-white/90">
-                          {product.features?.baseNotes || 'Amber, Fruity Notes, White Musk, and Bulgarian Rose'}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="py-2.5 px-4 text-white/50 font-mono text-[11px]">Longevity</td>
-                        <td className="py-2.5 px-4 text-white/90">
-                          {product.features?.longevity || '48 Hours'}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="py-2.5 px-4 text-white/50 font-mono text-[11px]">Gender</td>
-                        <td className="py-2.5 px-4 text-white/90">
-                          {product.features?.gender || 'Unisex'}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="py-2.5 px-4 text-white/50 font-mono text-[11px]">Type</td>
-                        <td className="py-2.5 px-4 text-white/90">
-                          {product.features?.type || 'Oil Based'}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="py-2.5 px-4 text-white/50 font-mono text-[11px]">Quantity</td>
-                        <td className="py-2.5 px-4 text-white/90 font-mono">
-                          {product.features?.quantity || (product.category === 'attars' ? '12ml' : '100ml')}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* ── INTERACTIVE ACCORDIONS (Word-to-Word from Oud Arabia) ── */}
+              {/* ── ACCORDIONS ── */}
               <div className="pt-2 border-t border-white/10 divide-y divide-white/10 font-sans text-xs">
-                {/* 1. Have Questions? */}
+
+                {/* 1. About This Fragrance */}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => toggleAccordion('description')}
+                    className="w-full py-4 flex items-center justify-between text-left text-white/90 hover:text-[#ffb91d] transition-colors font-medium uppercase tracking-wider text-xs"
+                  >
+                    <span>About This Fragrance</span>
+                    <span className="font-mono text-base">{openAccordion === 'description' ? '−' : '+'}</span>
+                  </button>
+                  {openAccordion === 'description' && (
+                    <div className="pb-4 text-white/70 leading-relaxed bg-[#121212] p-4 border border-white/5 animate-fadeIn text-xs sm:text-sm font-sans">
+                      {product.description}
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. Have Questions? */}
                 <div>
                   <button
                     type="button"
@@ -430,112 +467,77 @@ export default function ProductDetailPage({ params }: PageProps) {
                     <div className="pb-4 text-white/70 space-y-2 leading-relaxed bg-[#121212] p-4 border border-white/5 animate-fadeIn">
                       <p>
                         <strong className="text-white">WhatsApp:</strong>{' '}
-                        <a href="https://wa.me/919888881908" className="text-[#ffb91d] hover:underline">
-                          +91-9888881908
+                        <a href="https://wa.me/971585719731" target="_blank" rel="noopener noreferrer" className="text-[#ffb91d] hover:underline">
+                          +971 58 571 9731
                         </a>
                       </p>
                       <p>
                         <strong className="text-white">Call us:</strong>{' '}
-                        <a href="tel:+919888881908" className="text-[#ffb91d] hover:underline">
-                          +91-9888881908
+                        <a href="tel:+971585719731" className="text-[#ffb91d] hover:underline">
+                          +971 58 571 9731
                         </a>
                       </p>
                       <p>
                         <strong className="text-white">Instagram DM:</strong>{' '}
                         <a
-                          href="https://instagram.com/oudarabiaofficial"
+                          href="https://www.instagram.com/oudnomaddubai?stkn=NWtkMGc4ZmFvc3pv&utm_source=qr"
                           target="_blank"
                           rel="noreferrer"
                           className="text-[#ffb91d] hover:underline"
                         >
-                          @oudarabiaofficial
+                          @oudnomaddubai
                         </a>
                       </p>
                       <p>
                         <strong className="text-white">Email:</strong>{' '}
-                        <a href="mailto:info@oudarabiadubai.com" className="text-[#ffb91d] hover:underline">
-                          info@oudarabiadubai.com
+                        <a href="mailto:hello.oudnomaddubai@gmail.com" className="text-[#ffb91d] hover:underline">
+                          hello.oudnomaddubai@gmail.com
                         </a>
                       </p>
                     </div>
                   )}
                 </div>
 
-                {/* 2. Manufacturer Details */}
+
+                {/* 3. Registered Address & Contact */}
                 <div>
                   <button
                     type="button"
                     onClick={() => toggleAccordion('manufacturer')}
                     className="w-full py-4 flex items-center justify-between text-left text-white/90 hover:text-[#ffb91d] transition-colors font-medium uppercase tracking-wider text-xs"
                   >
-                    <span>Manufacturer Details</span>
+                    <span>Registered Address & Contact</span>
                     <span className="font-mono text-base">{openAccordion === 'manufacturer' ? '−' : '+'}</span>
                   </button>
                   {openAccordion === 'manufacturer' && (
                     <div className="pb-4 text-white/70 space-y-2 leading-relaxed bg-[#121212] p-4 border border-white/5 animate-fadeIn font-mono text-[11px]">
-                      <p>
-                        <strong className="text-white font-sans">Brand & Atelier:</strong> AYAL PERFUMES LLC
-                      </p>
-                      <p>
-                        <strong className="text-white font-sans">Atelier Address:</strong> Shop 7, Alfaidi Street,
-                        Dubai, 465000, UAE
-                      </p>
-                      <p>
-                        <strong className="text-white font-sans">Country of Origin:</strong> DUBAI (UAE)
-                      </p>
-                      <p>
-                        <strong className="text-white font-sans">Bottling & Packaging:</strong> Handcrafted crystal flacon with gold-plated metal cap, velvet & leather box.
-                      </p>
+                      <p><strong className="text-white font-sans">Brand:</strong> OUD NOMAD DUBAI</p>
+                      <p><strong className="text-white font-sans">Registered Address:</strong> VUET1829, COMPASS BUILDING — AL HULAILA INDUSTRIAL ZONE-FZ, RAS AL KHAIMAH, UAE</p>
+                      <p><strong className="text-white font-sans">Contact:</strong> +971 58 571 9731</p>
+                      <p><strong className="text-white font-sans">Country of Origin:</strong> United Arab Emirates</p>
                     </div>
                   )}
                 </div>
 
-                {/* 3. About Oud Arabia */}
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => toggleAccordion('about')}
-                    className="w-full py-4 flex items-center justify-between text-left text-white/90 hover:text-[#ffb91d] transition-colors font-medium uppercase tracking-wider text-xs"
-                  >
-                    <span>About Oud Arabia Dubai</span>
-                    <span className="font-mono text-base">{openAccordion === 'about' ? '−' : '+'}</span>
-                  </button>
-                  {openAccordion === 'about' && (
-                    <div className="pb-4 text-white/70 space-y-2 leading-relaxed bg-[#121212] p-4 border border-white/5 animate-fadeIn">
-                      <p>
-                        “We believe that a perfumer is a poet or a storyteller who use intangible ingredients to create emotions. The main idea behind Oud Arabia is to abstract memories that evoke our cores. We paint pictures without using paint. We are storytellers who do not need words.”
-                      </p>
-                      <p className="text-[11px] text-[#ffb91d]">
-                        Each scent is made in Dubai and handcrafted by our master perfumers with over 20 years of royal heritage.
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* 4. Customer Care & Shipping */}
+                {/* 3. Shipping & Delivery */}
                 <div>
                   <button
                     type="button"
                     onClick={() => toggleAccordion('shipping')}
                     className="w-full py-4 flex items-center justify-between text-left text-white/90 hover:text-[#ffb91d] transition-colors font-medium uppercase tracking-wider text-xs"
                   >
-                    <span>Shipping & Delivery Policy</span>
+                    <span>Shipping & Delivery</span>
                     <span className="font-mono text-base">{openAccordion === 'shipping' ? '−' : '+'}</span>
                   </button>
                   {openAccordion === 'shipping' && (
                     <div className="pb-4 text-white/70 space-y-2 leading-relaxed bg-[#121212] p-4 border border-white/5 animate-fadeIn">
-                      <p>
-                        • <strong>Complimentary Express Shipping:</strong> Available on all orders pan-India and across GCC countries.
-                      </p>
-                      <p>
-                        • <strong>Dispatch Timeline:</strong> Orders are dispatched within 24 hours in discreet, temperature-controlled luxury protective packaging.
-                      </p>
-                      <p>
-                        • <strong>Transit Time:</strong> 2 to 4 business days to major metros in India and UAE.
-                      </p>
+                      <p>• <strong className="text-white/90">Complimentary Express Shipping</strong> across all GCC countries (UAE, KSA, Qatar, Kuwait, Oman & Bahrain).</p>
+                      <p>• <strong className="text-white/90">Dispatch within 24 hours</strong> in discreet, temperature-controlled packaging.</p>
+                      <p>• <strong className="text-white/90">2–4 business days</strong> to major cities across the GCC.</p>
                     </div>
                   )}
                 </div>
+
               </div>
             </div>
           </div>
@@ -556,9 +558,9 @@ export default function ProductDetailPage({ params }: PageProps) {
                 <Link
                   key={rec.id}
                   href={`/products/${rec.slug}`}
-                  className="group border border-white/10 bg-[#0e0e0e] hover:border-[#ffb91d]/50 transition-all p-3 sm:p-4 flex flex-col justify-between"
+                  className="group border border-white/10 bg-[#0e0e0e] hover:border-[#ffb91d]/50 transition-all overflow-hidden"
                 >
-                  <div className="relative aspect-[3/4] w-full bg-[#141414] overflow-hidden mb-3">
+                  <div className="relative aspect-[4/5] w-full bg-[#141414] overflow-hidden">
                     <Image
                       src={rec.images?.[0] || ''}
                       alt={rec.name}
@@ -567,14 +569,11 @@ export default function ProductDetailPage({ params }: PageProps) {
                       className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
                     />
                   </div>
-                  <div className="space-y-1">
-                    <span className="text-[9px] uppercase font-mono tracking-widest text-[#ffb91d] block">
-                      {rec.category}
-                    </span>
-                    <h4 className="text-xs sm:text-sm font-serif text-white group-hover:text-[#ffb91d] transition-colors line-clamp-1">
+                  <div className="px-3 py-3">
+                    <h4 className="text-xs sm:text-sm font-serif text-white group-hover:text-[#ffb91d] transition-colors line-clamp-1 mb-1">
                       {rec.name}
                     </h4>
-                    <p className="text-xs font-mono text-[#ffb91d] font-medium pt-1">
+                    <p className="text-xs font-mono text-[#ffb91d] font-medium">
                       {formatPrice(rec.price)}
                     </p>
                   </div>
@@ -583,78 +582,43 @@ export default function ProductDetailPage({ params }: PageProps) {
             </div>
           </section>
 
-          {/* ── CUSTOMER REVIEWS & APPRAISALS ── */}
+          {/* ── CUSTOMER REVIEWS ── */}
           <section id="reviews" className="pt-16 border-t border-white/10 space-y-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/10">
-              <div className="space-y-2">
-                <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#ffb91d]">
-                  AUTHENTIC APPRAISALS
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-serif text-white">
-                  Customer Impressions
-                </h2>
-                <div className="flex items-center gap-2 text-sm font-mono text-[#ffb91d]">
-                  <span>★★★★★</span>
-                  <span>4.9 out of 5 based on 28 reviews</span>
-                </div>
+            <div className="space-y-1">
+              <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#ffb91d]">CUSTOMER REVIEWS</span>
+              <h2 className="text-2xl font-serif text-white">What Our Clients Say</h2>
+              <div className="flex items-center gap-2 text-xs font-mono text-[#ffb91d]">
+                <span>★★★★★</span>
+                <span className="text-white/50">4.9 / 5 &nbsp;·&nbsp; 28 reviews</span>
               </div>
-
-              <button
-                type="button"
-                onClick={() => setShowReviewModal(true)}
-                className="px-6 py-3 bg-[#d89528] hover:bg-[#ffb91d] text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all shadow-md self-start md:self-auto"
-              >
-                Write an Appraisal
-              </button>
             </div>
 
-            {/* Review Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {[
                 {
                   author: 'Tariq Al-Mansoor',
                   location: 'Dubai, UAE',
-                  date: 'September 18, 2026',
-                  rating: 5,
-                  title: 'Unbelievable 48-hour sillage and regal elegance',
-                  body: 'An unforgettable signature scent. The Grasse Taif Rose and aged Cambodian agarwood harmonize with breathtaking nobility. Everywhere I walk in Dubai Mall or airport lounges, people stop to inquire what fragrance I am wearing.',
+                  date: 'Sep 18, 2026',
+                  title: 'Unbelievable 48-hour sillage',
+                  body: 'An unforgettable signature scent. The Taif Rose and aged Cambodian agarwood harmonize with breathtaking nobility. People stop to ask what I’m wearing.',
                 },
                 {
-                  author: 'Ananya Sharma',
-                  location: 'Mumbai, India',
-                  date: 'September 12, 2026',
-                  rating: 5,
-                  title: 'Pure olfactory poetry — worth every rupee',
-                  body: 'Received in Mohali warehouse dispatch within 3 days. The crystal flacon and handcrafted metal cap feel like a museum art piece. Scent stays on silk fabrics for days.',
-                },
-                {
-                  author: 'Fahad Al-Kuwari',
-                  location: 'Doha, Qatar',
-                  date: 'August 29, 2026',
-                  rating: 5,
-                  title: 'True master perfumery at its finest',
-                  body: 'Oud Arabia Dubai has mastered the delicate art of middle notes where Bulgarian rose and white musk blend into vintage agarwood. 10/10.',
-                },
-                {
-                  author: 'Dr. Julian Sterling',
-                  location: 'London, UK',
-                  date: 'August 14, 2026',
-                  rating: 5,
-                  title: 'Highest quality natural ingredients',
-                  body: 'Non-synthetic, richly layered, and projects a dignified presence without being cloying. A permanent staple in my collection.',
+                  author: 'Fatima Al-Rashidi',
+                  location: 'Riyadh, KSA',
+                  date: 'Sep 12, 2026',
+                  title: 'Pure olfactory poetry',
+                  body: 'Received within 3 days. The crystal flacon feels like a museum art piece. Scent stays on silk fabrics for days. Absolutely worth every dirham.',
                 },
               ].map((rev, i) => (
-                <div key={i} className="border border-white/10 bg-[#0e0e0e] p-6 space-y-3">
+                <div key={i} className="border border-white/10 bg-[#0d0d0d] p-5 space-y-3">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#ffb91d]">★★★★★</span>
-                    <span className="text-white/40 font-mono text-[10px]">{rev.date}</span>
+                    <span className="text-[#ffb91d] tracking-wide">★★★★★</span>
+                    <span className="text-white/35 font-mono text-[10px]">{rev.date}</span>
                   </div>
-                  <h4 className="font-serif text-base text-white">{rev.title}</h4>
-                  <p className="text-xs text-white/70 leading-relaxed font-sans">{rev.body}</p>
-                  <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[11px] font-mono text-white/50">
-                    <span>
-                      {rev.author} • <span className="text-[#53ff73]">Verified Buyer</span>
-                    </span>
+                  <h4 className="font-serif text-sm text-white">{rev.title}</h4>
+                  <p className="text-xs text-white/65 leading-relaxed font-sans">{rev.body}</p>
+                  <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-white/40">
+                    <span>{rev.author} · <span className="text-[#53ff73]">Verified</span></span>
                     <span>{rev.location}</span>
                   </div>
                 </div>
@@ -664,119 +628,92 @@ export default function ProductDetailPage({ params }: PageProps) {
         </Container>
       </main>
 
-      {/* Review Modal */}
-      {showReviewModal && (
+      {/* ── LIGHTBOX MODAL ── */}
+      {lightboxOpen && product?.images && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn"
-          onClick={() => setShowReviewModal(false)}
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
+          onClick={closeLightbox}
         >
+          {/* Inner — stop propagation so clicks on controls don't close */}
           <div
-            className="relative w-full max-w-lg bg-[#111111] border border-[#ffb91d]/40 p-6 sm:p-8 shadow-2xl text-left"
+            className="relative w-full h-full flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Main Image */}
+            <div className="relative w-full max-w-2xl mx-auto aspect-[4/5] px-4">
+              <Image
+                src={product.images[lightboxIndex]}
+                alt={`${product.name} — view ${lightboxIndex + 1}`}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-contain"
+                priority
+              />
+            </div>
+
+            {/* Close button */}
             <button
-              onClick={() => setShowReviewModal(false)}
-              className="absolute top-4 right-4 text-white/60 hover:text-white text-xl p-2"
+              onClick={closeLightbox}
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/70 hover:bg-black border border-white/20 hover:border-[#ffb91d] flex items-center justify-center text-white text-xl transition-all"
               aria-label="Close"
             >
               ✕
             </button>
 
-            <h3 className="text-xl font-serif text-white tracking-wide mb-1">
-              Submit Your Appraisal
-            </h3>
-            <p className="text-xs text-white/60 font-sans mb-6">
-              Share your personal experience with {product.name}.
-            </p>
+            {/* Image counter */}
+            <div className="absolute top-4 left-4 text-[11px] font-mono text-white/50 bg-black/60 px-3 py-1.5 border border-white/10">
+              {lightboxIndex + 1} / {product.images.length}
+            </div>
 
-            {reviewSuccessMsg ? (
-              <div className="p-4 bg-[#53ff73]/10 border border-[#53ff73]/30 text-[#53ff73] text-xs text-center">
-                {reviewSuccessMsg}
-              </div>
-            ) : (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setSubmittingReview(true);
-                  setTimeout(() => {
-                    setReviewSuccessMsg('Thank you. Your appraisal has been submitted for verification.');
-                    setSubmittingReview(false);
-                    setTimeout(() => setShowReviewModal(false), 2000);
-                  }, 800);
-                }}
-                className="space-y-4 text-xs font-sans"
-              >
-                <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-[#ffb91d] mb-1 font-mono">
-                    Rating
-                  </label>
-                  <div className="flex gap-2 text-xl text-[#ffb91d] cursor-pointer">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <span
-                        key={s}
-                        onClick={() => setReviewRating(s)}
-                        className={s <= reviewRating ? 'opacity-100' : 'opacity-30'}
-                      >
-                        ★
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-white/70 mb-1">
-                    Your Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={reviewAuthor}
-                    onChange={(e) => setReviewAuthor(e.target.value)}
-                    placeholder="e.g. Sheikh Tariq / Ananya S."
-                    className="w-full bg-[#181818] border border-white/15 px-3 py-2 text-white outline-none focus:border-[#ffb91d]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-white/70 mb-1">
-                    Review Headline
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={reviewTitle}
-                    onChange={(e) => setReviewTitle(e.target.value)}
-                    placeholder="e.g. Unbelievable longevity and sillage"
-                    className="w-full bg-[#181818] border border-white/15 px-3 py-2 text-white outline-none focus:border-[#ffb91d]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-white/70 mb-1">
-                    Detailed Impression
-                  </label>
-                  <textarea
-                    rows={4}
-                    required
-                    value={reviewBody}
-                    onChange={(e) => setReviewBody(e.target.value)}
-                    placeholder="Describe how the fragrance unfolds across top, heart, and base notes..."
-                    className="w-full bg-[#181818] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
-                  />
-                </div>
-
+            {/* Prev arrow */}
+            {product.images.length > 1 && (
+              <>
                 <button
-                  type="submit"
-                  disabled={submittingReview}
-                  className="w-full py-3 bg-[#d89528] hover:bg-[#ffb91d] text-black font-semibold uppercase tracking-[0.2em] transition-all"
+                  onClick={() => lightboxPrev(product.images!.length)}
+                  className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 bg-black/60 hover:bg-[#ffb91d]/20 border border-white/20 hover:border-[#ffb91d] flex items-center justify-center text-white text-2xl transition-all"
+                  aria-label="Previous image"
                 >
-                  {submittingReview ? 'Submitting...' : 'Post Appraisal'}
+                  ‹
                 </button>
-              </form>
+
+                {/* Next arrow */}
+                <button
+                  onClick={() => lightboxNext(product.images!.length)}
+                  className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 bg-black/60 hover:bg-[#ffb91d]/20 border border-white/20 hover:border-[#ffb91d] flex items-center justify-center text-white text-2xl transition-all"
+                  aria-label="Next image"
+                >
+                  ›
+                </button>
+
+                {/* Dot indicators */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                  {product.images.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setLightboxIndex(idx)}
+                      className={`rounded-full transition-all ${
+                        idx === lightboxIndex
+                          ? 'bg-[#ffb91d] w-5 h-1.5'
+                          : 'bg-white/30 hover:bg-white/60 w-1.5 h-1.5'
+                      }`}
+                      aria-label={`View image ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
             )}
+
+            {/* Backdrop click to close hint */}
+            <button
+              onClick={closeLightbox}
+              className="absolute inset-0 -z-10 w-full h-full cursor-zoom-out"
+              aria-label="Close lightbox"
+            />
           </div>
         </div>
       )}
+
     </div>
+
   );
 }

@@ -3,9 +3,11 @@ import type { Order, PaymentAttempt } from '@prisma/client';
 
 export interface CreateAttemptResult {
   gatewayOrderId: string;
-  amount: number;       // in paise (smallest currency unit)
+  amount: number;       // in smallest currency unit (cents, paise, fils)
   currency: string;
-  razorpayKeyId: string;
+  razorpayKeyId?: string;
+  stripeClientSecret?: string;
+  stripePublishableKey?: string;
 }
 
 export interface RefundResult {
@@ -13,18 +15,18 @@ export interface RefundResult {
 }
 
 export interface VerifySignatureParams {
-  razorpayOrderId: string;
-  razorpayPaymentId: string;
-  razorpaySignature: string;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
+  stripePaymentIntentId?: string;
 }
 
 /**
- * Abstraction over a payment gateway.
- * Phase 5 synchronous charge() is replaced with an async, webhook-driven model:
+ * Abstraction over a payment gateway (Stripe, Razorpay, Mock).
+ * Webhook-driven model:
  *  - createAttempt()          → starts a payment session (returns data for frontend)
- *  - verifyClientSignature()  → HMAC check for UX feedback only (not authoritative)
+ *  - verifyClientSignature()  → UX feedback verification
  *  - createRefund()           → initiates a refund against a captured payment
- * Authoritative confirmation always arrives via webhook, never as a return value here.
  */
 export interface PaymentService {
   createAttempt(order: Order, idempotencyKey: string): Promise<CreateAttemptResult>;

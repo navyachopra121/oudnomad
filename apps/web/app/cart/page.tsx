@@ -244,7 +244,7 @@ export default function CartPage() {
                 {/* Security and guarantee */}
                 <div className="text-center space-y-1 text-[10px] text-white/50 font-mono">
                   <p>🔒 256-bit Encrypted SSL Checkout</p>
-                  <p>Pan-India & GCC Express Courier Delivery</p>
+                  <p>GCC Express Courier Delivery (UAE, KSA, Qatar, Kuwait, Oman & Bahrain)</p>
                 </div>
               </div>
             </div>

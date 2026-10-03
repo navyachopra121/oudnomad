@@ -16,43 +16,25 @@ interface PageProps {
 const COLLECTION_METAS: Record<string, { title: string; subtitle: string; banner: string }> = {
   all: {
     title: 'All Fragrances',
-    subtitle: 'Explore the complete universe of Oud Arabia Dubai luxury perfumes, concentrated attars, and sacred bakhoors.',
-    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618',
-  },
-  'top-sellers': {
-    title: 'Top Sellers',
-    subtitle: 'Our most celebrated creations coveted across Dubai, India, and worldwide for their intoxicating sillage.',
-    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Voice_of_the_soul_1.jpg?v=1692390886',
+    subtitle: 'Explore the complete Oud Nomad Dubai universe — luxury perfumes and refreshing mists, crafted for the GCC.',
+    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101',
   },
   perfumes: {
-    title: 'Luxury Perfumes',
-    subtitle: 'Handcrafted Eau de Parfum and Extraits de Parfum made with Grasse flower oils and rare agarwood extracts.',
-    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Nadeem_1.jpg?v=1692390847',
+    title: 'Perfumes',
+    subtitle: 'Intense, long-lasting Extrait de Parfum and Eau de Parfum blends built around rare agarwood, saffron, and precious florals.',
+    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/CoffeeOud.jpg?v=1770414703',
   },
-  attars: {
-    title: 'Concentrated Attars',
-    subtitle: 'Pure non-alcoholic botanical distillates infused over Mysore sandalwood oil in handcrafted copper stills.',
-    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Artboard_1_copy_3_3adc834e-2708-444e-a224-0d3149cc0981.png?v=1764672655',
-  },
-  'bakhoor-set': {
-    title: 'Bakhoor Set & Incense',
-    subtitle: 'Handcrafted gold brass burners and traditional fragrant agarwood chips for sacred home sanctuary.',
-    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Bakhoor_Burner_Set.jpg?v=1692391200',
-  },
-  'emerald-collection': {
-    title: 'Emerald Collection',
-    subtitle: 'Prestige limited edition flacons housed in hand-polished crystal and plush velvet presentation boxes.',
-    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Oud_Arabia_No_1.jpg?v=1692390950',
+  mists: {
+    title: 'Mists',
+    subtitle: 'Light, refreshing body and hair mists — the perfect everyday scent for warm GCC days and effortless layering.',
+    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618',
   },
 };
 
 const CATEGORY_TABS = [
   { slug: 'all', label: 'All Fragrances' },
-  { slug: 'top-sellers', label: 'Top Sellers' },
   { slug: 'perfumes', label: 'Perfumes' },
-  { slug: 'attars', label: 'Attars & Oils' },
-  { slug: 'bakhoor-set', label: 'Bakhoor Set' },
-  { slug: 'emerald-collection', label: 'Emerald Collection' },
+  { slug: 'mists', label: 'Mists' },
 ];
 
 export default function CollectionPlpPage({ params }: PageProps) {
@@ -136,7 +118,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
           </nav>
 
           {/* Collection Header Banner */}
-          <div className="relative border border-[#ffb91d]/20 bg-gradient-to-b from-[#141414] via-[#0d0d0d] to-[#070707] p-8 sm:p-14 text-center rounded-none overflow-hidden shadow-2xl">
+          {/* <div className="relative border border-[#ffb91d]/20 bg-gradient-to-b from-[#141414] via-[#0d0d0d] to-[#070707] p-8 sm:p-14 text-center rounded-none overflow-hidden shadow-2xl">
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffb91d_1px,transparent_1px)] [background-size:16px_16px]" />
             <div className="relative z-10 max-w-2xl mx-auto space-y-4">
               <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.35em] uppercase text-[#ffb91d] block">
@@ -149,7 +131,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
                 {meta.subtitle}
               </p>
             </div>
-          </div>
+          </div> */}
 
           {/* Category Filter Pills & Sort Bar */}
           <div className="border border-white/10 bg-[#0e0e0e] p-4 flex flex-col md:flex-row items-center justify-between gap-4 sticky top-20 z-30 backdrop-blur-md">
@@ -227,10 +209,10 @@ export default function CollectionPlpPage({ params }: PageProps) {
                     key={prod.id}
                     onMouseEnter={() => setHoveredProduct(prod.id)}
                     onMouseLeave={() => setHoveredProduct(null)}
-                    className="group border border-white/10 bg-[#0d0d0d] hover:border-[#ffb91d]/50 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-2xl"
+                    className="group border border-white/10 bg-[#0d0d0d] transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-2xl"
                   >
                     {/* Image Area */}
-                    <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#141414]">
+                    <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#141414]">
                       <Link href={`/products/${prod.slug}`} className="block w-full h-full">
                         {/* Primary Image */}
                         <Image
@@ -240,7 +222,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                           className={`object-cover object-center transition-all duration-700 ${isHovered && prod.images?.length > 1
                             ? 'opacity-0 scale-105'
-                            : 'opacity-100 scale-100 group-hover:scale-105'
+                            : 'opacity-100 scale-100'
                             }`}
                         />
                         {/* Secondary Image on Hover */}
@@ -257,7 +239,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
                       </Link>
 
                       {/* Best seller / category badge */}
-                      <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10 pointer-events-none">
+                      {/* <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10 pointer-events-none">
                         {prod.categories?.includes('top-sellers') && (
                           <span className="bg-[#ffb91d] text-black text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 shadow">
                             Top Seller
@@ -266,10 +248,10 @@ export default function CollectionPlpPage({ params }: PageProps) {
                         <span className="bg-black/80 backdrop-blur-sm text-white/90 text-[8px] sm:text-[9px] font-mono tracking-wider px-2 py-0.5 border border-white/10">
                           {prod.features?.quantity || (prod.category === 'attars' ? '12ml' : '100ml')}
                         </span>
-                      </div>
+                      </div> */}
 
                       {/* Quick Action Overlay (Desktop) */}
-                      <div className="absolute inset-x-3 bottom-3 hidden lg:flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
+                      {/* <div className="absolute inset-x-3 bottom-3 hidden lg:flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
                         <button
                           type="button"
                           onClick={() => setQuickViewProduct(prod)}
@@ -285,43 +267,20 @@ export default function CollectionPlpPage({ params }: PageProps) {
                         >
                           +
                         </button>
-                      </div>
+                      </div> */}
                     </div>
 
-                    {/* Meta Info */}
-                    <div className="p-4 sm:p-5 flex flex-col flex-1 justify-between space-y-3">
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-[#ffb91d]">
-                          <span>{prod.category === 'attars' ? 'Pure Attar' : 'Extrait De Parfum'}</span>
-                          <span className="text-white/40">★ 4.9</span>
-                        </div>
-
-                        <Link
-                          href={`/products/${prod.slug}`}
-                          className="font-serif text-sm sm:text-base text-white hover:text-[#ffb91d] transition-colors block line-clamp-1"
-                        >
-                          {prod.name}
-                        </Link>
-
-                        <p className="text-[11px] text-white/50 line-clamp-1 font-sans">
-                          {prod.features?.topNotes ? `Notes: ${prod.features.topNotes}` : prod.description}
-                        </p>
-                      </div>
-
-                      <div className="pt-2 border-t border-white/5 flex items-center justify-between">
-                        <span className="text-sm sm:text-base font-medium text-[#ffb91d] tracking-wide">
-                          {formatPrice(prod.price)}
-                        </span>
-
-                        {/* Mobile quick add button */}
-                        <button
-                          type="button"
-                          onClick={() => handleQuickAddToCart(prod)}
-                          className="lg:hidden text-[10px] uppercase tracking-wider font-semibold px-2.5 py-1 bg-[#ffb91d] text-black rounded-none active:scale-95 transition-all"
-                        >
-                          + Add
-                        </button>
-                      </div>
+                    {/* Meta Info — minimal: name + price only */}
+                    <div className="px-3 py-3">
+                      <Link
+                        href={`/products/${prod.slug}`}
+                        className="font-serif text-sm text-white hover:text-[#ffb91d] transition-colors block line-clamp-1 mb-1"
+                      >
+                        {prod.name}
+                      </Link>
+                      <span className="text-sm font-medium text-[#ffb91d] tracking-wide">
+                        {formatPrice(prod.price)}
+                      </span>
                     </div>
                   </div>
                 );

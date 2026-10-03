@@ -18,8 +18,8 @@ export class RazorpayPaymentService implements PaymentService {
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
   ) {
-    this.keyId = this.config.getOrThrow<string>('RAZORPAY_KEY_ID');
-    this.keySecret = this.config.getOrThrow<string>('RAZORPAY_KEY_SECRET');
+    this.keyId = this.config.get<string>('RAZORPAY_KEY_ID') || 'rzp_test_placeholder';
+    this.keySecret = this.config.get<string>('RAZORPAY_KEY_SECRET') || 'placeholder_secret';
     this.razorpay = new Razorpay({
       key_id: this.keyId,
       key_secret: this.keySecret,

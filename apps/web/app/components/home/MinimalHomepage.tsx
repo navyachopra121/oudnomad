@@ -169,15 +169,15 @@ export default function MinimalHomepage() {
               </Link>
             </Reveal>
 
-            {/* ATTARS BANNER */}
+            {/* MISTS BANNER */}
             <Reveal delayMs={200}>
               <Link
-                href="/collections/attars"
+                href="/collections/mists"
                 className="group relative aspect-[4/3] overflow-hidden block border border-[#ffb91d]/25 shadow-2xl"
               >
                 <Image
                   src="/attar-banner.jpg"
-                  alt="Attars & Oils Collection"
+                  alt="Hair & Body Mists Collection"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
@@ -185,7 +185,7 @@ export default function MinimalHomepage() {
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="absolute inset-x-0 bottom-6 flex justify-center">
                   <span className="px-6 py-2 bg-black/85 backdrop-blur-xs border border-[#ffb91d]/60 text-[#ffb91d] font-normal text-[11px] uppercase tracking-[0.25em]">
-                    ATTARS
+                    MISTS
                   </span>
                 </div>
               </Link>
@@ -194,7 +194,8 @@ export default function MinimalHomepage() {
         </Container>
       </section>
 
-      {/* ── SECTION 4: BAKHOOR SET ── */}
+      {/* ── SECTION 4: BAKHOOR SET (Commented as requested) ── */}
+      {/*
       <section className="py-14 sm:py-20 bg-[#000000] border-t border-[#ffb91d]/15">
         <Container>
           <Reveal>
@@ -228,6 +229,7 @@ export default function MinimalHomepage() {
           </Reveal>
         </Container>
       </section>
+      */}
 
       {/* ── SECTION 5: FEATURED ── */}
       <section className="py-14 sm:py-20 bg-[#000000] border-t border-[#ffb91d]/15">
@@ -322,29 +324,17 @@ export default function MinimalHomepage() {
         </Container>
       </section>
 
-      {/* ── FLOATING ACTION BUTTONS ── */}
-      <div className="fixed bottom-5 left-5 z-40">
-        <a
-          href="https://wa.me/971500000000"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-11 h-11 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-transform"
-          aria-label="Chat on WhatsApp"
-        >
-          <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-            <path d="M12.031 0C5.396 0 .02 5.37.02 12.006c0 2.12.553 4.19 1.604 6.014L0 24l6.143-1.611A11.97 11.97 0 0012.03 24c6.634 0 12.01-5.37 12.01-12.006C24.04 5.37 18.665 0 12.031 0zm6.98 16.945c-.29.815-1.442 1.492-2.38 1.693-.64.137-1.474.246-4.288-.916-3.597-1.487-5.912-5.148-6.091-5.387-.18-.239-1.46-1.944-1.46-3.708 0-1.764.922-2.632 1.25-2.986.327-.354.714-.443.952-.443.238 0 .476.002.684.012.22.01.517-.084.81.619.3.703 1.026 2.508 1.116 2.69.09.18.15.39.03.626-.12.238-.18.388-.358.598-.18.21-.378.47-.54.631-.18.18-.368.376-.158.736.21.36.936 1.545 2.01 2.502 1.382 1.233 2.548 1.616 2.908 1.796.36.18.57.15.78-.09.21-.24.9-1.05 1.14-1.41.24-.36.48-.3.81-.18.33.12 2.096.99 2.456 1.17.36.18.6.27.69.42.09.15.09.87-.2 1.685z" />
-          </svg>
-        </a>
-      </div>
-
+      {/* ── STICKY WHATSAPP BUTTON (Right side) ── */}
       <div className="fixed bottom-5 right-5 z-40">
         <a
-          href="tel:+971500000000"
-          className="w-11 h-11 bg-[#ffb91d] text-black rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-transform"
-          aria-label="Call Customer Concierge"
+          href="https://wa.me/971585719731"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-12 h-12 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-transform"
+          aria-label="Chat with Concierge on WhatsApp"
         >
-          <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-            <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+          <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+            <path d="M12.031 0C5.396 0 .02 5.37.02 12.006c0 2.12.553 4.19 1.604 6.014L0 24l6.143-1.611A11.97 11.97 0 0012.03 24c6.634 0 12.01-5.37 12.01-12.006C24.04 5.37 18.665 0 12.031 0zm6.98 16.945c-.29.815-1.442 1.492-2.38 1.693-.64.137-1.474.246-4.288-.916-3.597-1.487-5.912-5.148-6.091-5.387-.18-.239-1.46-1.944-1.46-3.708 0-1.764.922-2.632 1.25-2.986.327-.354.714-.443.952-.443.238 0 .476.002.684.012.22.01.517-.084.81.619.3.703 1.026 2.508 1.116 2.69.09.18.15.39.03.626-.12.238-.18.388-.358.598-.18.21-.378.47-.54.631-.18.18-.368.376-.158.736.21.36.936 1.545 2.01 2.502 1.382 1.233 2.548 1.616 2.908 1.796.36.18.57.15.78-.09.21-.24.9-1.05 1.14-1.41.24-.36.48-.3.81-.18.33.12 2.096.99 2.456 1.17.36.18.6.27.69.42.09.15.09.87-.2 1.685z" />
           </svg>
         </a>
       </div>

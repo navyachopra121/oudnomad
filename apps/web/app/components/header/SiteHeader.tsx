@@ -139,13 +139,6 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
                         All Fragrances
                       </Link>
                       <Link
-                        href="/collections/top-sellers"
-                        className="px-5 py-3 text-[11px] uppercase tracking-[0.18em] text-white/90 hover:text-[#ffb91d] hover:bg-white/5 transition-colors font-medium"
-                        onClick={() => setCatalogOpen(false)}
-                      >
-                        Top Sellers
-                      </Link>
-                      <Link
                         href="/collections/perfumes"
                         className="px-5 py-3 text-[11px] uppercase tracking-[0.18em] text-white/90 hover:text-[#ffb91d] hover:bg-white/5 transition-colors font-medium"
                         onClick={() => setCatalogOpen(false)}
@@ -153,29 +146,23 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
                         Perfumes
                       </Link>
                       <Link
-                        href="/collections/attars"
+                        href="/collections/mists"
                         className="px-5 py-3 text-[11px] uppercase tracking-[0.18em] text-white/90 hover:text-[#ffb91d] hover:bg-white/5 transition-colors font-medium"
                         onClick={() => setCatalogOpen(false)}
                       >
-                        Attars & Oils
-                      </Link>
-                      <Link
-                        href="/collections/bakhoor-set"
-                        className="px-5 py-3 text-[11px] uppercase tracking-[0.18em] text-white/90 hover:text-[#ffb91d] hover:bg-white/5 transition-colors font-medium"
-                        onClick={() => setCatalogOpen(false)}
-                      >
-                        Bakhoor Set
-                      </Link>
-                      <Link
-                        href="/collections/emerald-collection"
-                        className="px-5 py-3 text-[11px] uppercase tracking-[0.18em] text-white/90 hover:text-[#ffb91d] hover:bg-white/5 transition-colors font-medium"
-                        onClick={() => setCatalogOpen(false)}
-                      >
-                        Emerald Collection
+                        Hair & Body Mists
                       </Link>
                     </div>
                   )}
                 </div>
+
+                <Link
+                  href="/fragrance-finder"
+                  className="nav-link py-2 text-[#ffb91d] hover:text-white transition-colors font-medium flex items-center gap-1.5"
+                >
+                  <span>FRAGRANCE FINDER</span>
+                  <span className="text-[9px] px-1 py-0.5 bg-[#ffb91d]/15 text-[#ffb91d] border border-[#ffb91d]/40 rounded-xs tracking-normal">QUIZ</span>
+                </Link>
               </nav>
             </div>
 

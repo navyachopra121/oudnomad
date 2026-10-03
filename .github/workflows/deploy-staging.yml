@@ -1,27 +1,43 @@
-name: Deploy Staging
+name: Deploy to Staging (dev branch)
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-    branches: [main]
+  push:
+    branches: [dev]
 
 jobs:
-  deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  deploy-staging:
+    name: Deploy to Staging
     runs-on: ubuntu-latest
+    # Only runs if you have STAGING_HOST secret set;
+    # if not configured, this job simply skips
+    if: vars.STAGING_ENABLED == 'true'
+    environment:
+      name: staging
+
     steps:
-      - uses: appleboy/ssh-action@v1
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Staging VPS via SSH
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.STAGING_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            cd /opt/app
-            export IMAGE_TAG=${{ github.sha }}
-            export GITHUB_REPOSITORY=${{ github.repository }}
-            docker compose -f docker-compose.yml -f docker-compose.staging.yml pull
-            docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d
-            docker compose -f docker-compose.yml -f docker-compose.staging.yml exec -T app npx prisma migrate deploy
+            set -e
+            cd /var/www/oudnomad
+
+            git pull origin dev
+
+            pnpm install --filter api --filter notification-worker --filter web --frozen-lockfile
+            pnpm --filter api build
+            pnpm --filter notification-worker build
+            pnpm --filter web build
+            pnpm --filter api exec prisma migrate deploy
+
+            pm2 restart ecosystem.config.cjs --update-env
+            pm2 save
+
             sleep 5
-            curl -f http://localhost:3001/api/health || (echo "Staging health check failed post-deploy" && exit 1)
+            curl -sf http://localhost:3001/api/health || exit 1
+            echo "✅ Staging deploy complete"

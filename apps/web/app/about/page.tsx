@@ -28,10 +28,10 @@ export default function AboutPage() {
               HEADQUARTERED IN DUBAI • CRAFTED WITHOUT COMPROMISE
             </span>
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-white tracking-wide uppercase leading-tight">
-              About Oud Arabia
+              About Oud Nomad
             </h1>
             <p className="text-xs sm:text-sm font-sans text-white/70 leading-relaxed max-w-2xl mx-auto">
-              “We believe that a perfumer is a poet or a storyteller who use intangible ingredients to create emotions. The main idea behind Oud Arabia is to abstract memories that evoke our cores. We paint pictures without using paint. We are storytellers who do not need words.”
+              “We believe that a perfumer is a poet or a storyteller who uses intangible ingredients to create emotions. The main idea behind Oud Nomad is to abstract memories that evoke our cores. We paint pictures without using paint. We are storytellers who do not need words.”
             </p>
           </div>
 
@@ -40,7 +40,7 @@ export default function AboutPage() {
             <div className="lg:col-span-6 relative aspect-[4/3] w-full bg-[#161616] overflow-hidden border border-white/10">
               <Image
                 src="https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618"
-                alt="Oud Arabia Luxury Perfumes Dubai"
+                alt="Oud Nomad Luxury Perfumes Dubai"
                 fill
                 priority
                 className="object-cover object-center"
@@ -55,10 +55,10 @@ export default function AboutPage() {
                 Extracted from 100-Year-Old Trees
               </h2>
               <p>
-                Oud Arabia is a premium perfume brand headquartered in Dubai. Oud itself is an ingredient that is extracted from a special kind of Fungus from 100 years old tree. Oud is sweet, woody, aromatic, and complex scent and can last sometimes as long as five days.
+                Oud Nomad is a premium luxury perfume house headquartered in the UAE. Oud itself is an ingredient that is extracted from aged Aquilaria trees. Oud is sweet, woody, aromatic, and complex, radiating for hours and days.
               </p>
               <p>
-                Oud Arabia firmly believes that there is a perfume for everyone, and we tried to capture the very essence of life in a bottle. Our aim has never been to create just a perfume brand but a world inspired by poetry, painting, and stories that have been told since time immemorial.
+                Oud Nomad firmly believes that there is a perfume for everyone, capturing the very essence of life in a bottle. Our aim has never been to create just a perfume brand, but a world inspired by heritage, artistry, and timeless stories.
               </p>
             </div>
           </div>
@@ -67,23 +67,29 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center border border-white/10 bg-[#0e0e0e] p-6 sm:p-10">
             <div className="lg:col-span-6 space-y-5 text-xs sm:text-sm text-white/80 font-sans leading-relaxed order-2 lg:order-1">
               <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#ffb91d] block">
-                CREATIVE BOUTIQUE EXPERIENCE
+                BESPOKE SENSORY EXPERIENCE
               </span>
               <h2 className="text-2xl sm:text-3xl font-serif text-white">
-                Hands-On Luxury Retail
+                Artisanal Luxury Perfumes & Mists
               </h2>
               <p>
-                Oud Arabia is equally well known for its creative boutique style retail outlets, for the most luxurious hands-on experience of its products to the consumers.
+                Oud Nomad is renowned for its bespoke artisanal approach, providing connoisseurs worldwide with an immersive journey through the highest grade agarwood, Taif rose, and rare Grasse absolutes.
               </p>
               <p>
-                The concept for Oud Arabia is simple; it is our fundamental belief that there is a perfect perfume for everyone, and the collection is a balanced palette of scents that allows a client to find the perfect scent for them.
+                Our philosophy is simple: there is a signature scent for every soul. Through our interactive Fragrance Finder and master perfumers, we guide clients to find their ideal fragrance and layering pairs.
               </p>
-              <div className="pt-2">
+              <div className="pt-2 flex flex-wrap gap-4">
                 <Link
-                  href="/stores"
+                  href="/fragrance-finder"
                   className="inline-block px-6 py-3 bg-[#d89528] hover:bg-[#ffb91d] text-black text-xs uppercase tracking-widest font-semibold transition-all shadow-md"
                 >
-                  Explore Boutique Stores →
+                  Find Your Scent Quiz →
+                </Link>
+                <Link
+                  href="/collections"
+                  className="inline-block px-6 py-3 border border-[#ffb91d]/40 hover:border-[#ffb91d] text-white hover:text-[#ffb91d] text-xs uppercase tracking-widest font-semibold transition-all"
+                >
+                  Explore Catalogue →
                 </Link>
               </div>
             </div>

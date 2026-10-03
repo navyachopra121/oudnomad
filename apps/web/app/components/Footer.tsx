@@ -11,7 +11,8 @@ import { useCurrency } from './concierge/CurrencyContext';
 
 const QUICK_LINKS = [
   { label: 'Catalogue', href: '/collections' },
-  { label: 'Gcc shipping', href: '/collections' },
+  { label: 'Fragrance Finder', href: '/fragrance-finder' },
+  { label: 'GCC Shipping', href: '/collections' },
   { label: 'Contact Us', href: '/contact' },
   { label: 'My Account', href: '/account' },
   { label: 'About Us', href: '/about' },
@@ -55,18 +56,36 @@ export default function Footer() {
               ABOUT OUD NOMAD
             </h3>
             <p className="text-xs leading-relaxed text-white font-normal">
-              Oud Nomad Dubai offers artisanal luxury oriental perfumes, aged pure attars, and bespoke bakhoor incense crafted with rare ingredients for connoisseurs worldwide.
+              Oud Nomad Dubai offers artisanal luxury oriental perfumes and bespoke mists crafted with rare ingredients for connoisseurs worldwide.
             </p>
           </div>
 
-          {/* Col 2: Customer Care & Express Shipping */}
+          {/* Col 2: Customer Care & Registered Address */}
           <div>
             <h3 className="font-sans text-[11px] uppercase tracking-[0.24em] text-[#ffb91d] font-semibold mb-4">
               CUSTOMER CARE
             </h3>
             <div className="text-xs leading-relaxed text-white space-y-2 font-normal">
-              <p>Email: <a href="mailto:hello.oudnomaddubai@gmail.com" className="hover:text-[#ffb91d] transition-colors underline">hello.oudnomaddubai@gmail.com</a></p>
-              <p>Phone: <a href="tel:+97140000000" className="hover:text-[#ffb91d] transition-colors underline">+971 4 000 0000</a></p>
+              <p>
+                Phone / WhatsApp:{' '}
+                <a href="https://wa.me/971585719731" target="_blank" rel="noopener noreferrer" className="hover:text-[#ffb91d] transition-colors underline font-medium">
+                  +971 58 571 9731
+                </a>
+              </p>
+              <p>
+                Email:{' '}
+                <a href="mailto:hello.oudnomaddubai@gmail.com" className="hover:text-[#ffb91d] transition-colors underline">
+                  hello.oudnomaddubai@gmail.com
+                </a>
+              </p>
+              <div className="pt-2 text-white/80">
+                <p className="text-[10px] uppercase tracking-wider text-[#ffb91d] font-semibold mb-0.5">
+                  REGISTERED ADDRESS
+                </p>
+                <p className="leading-snug text-[11px]">
+                  VUET1829, COMPASS BUILDING- AL HULAILA, AL HULAILA INDUSTRIAL ZONE-FZ, RAS AL KHAIMAH, Ras Al Khaimah
+                </p>
+              </div>
               <p className="pt-1 text-[#ffb91d]">Express Delivery: UAE, Saudi Arabia, Qatar, Kuwait, Oman & Bahrain</p>
             </div>
           </div>
@@ -120,6 +139,15 @@ export default function Footer() {
             )}
 
             <div className="mt-8 flex flex-wrap items-center gap-3 text-[11px] tracking-wider text-[#ffb91d] font-semibold uppercase">
+              <a
+                href="https://www.facebook.com/share/19qn9GNXqL/?mibextid=wwXIfr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                FACEBOOK
+              </a>
+              <span>·</span>
               <a
                 href="https://www.instagram.com/oudnomaddubai?stkn=NWtkMGc4ZmFvc3pv&utm_source=qr"
                 target="_blank"

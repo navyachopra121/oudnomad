@@ -1,19 +1,59 @@
+# Production overrides — overlays on top of docker-compose.yml
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
 services:
   app:
-    image: ghcr.io/${GITHUB_REPOSITORY:-your-org/oudnomad}/app:${IMAGE_TAG:?IMAGE_TAG required for production deploy}
+    image: ghcr.io/${GITHUB_REPOSITORY}/api:${IMAGE_TAG:-latest}
     environment:
       NODE_ENV: production
       LOG_LEVEL: info
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      KAFKA_BROKER: kafka:9092
+      OPENSEARCH_NODE: http://opensearch:9200
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-stripe}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      DEFAULT_CURRENCY: ${DEFAULT_CURRENCY:-AED}
+      STORAGE_DRIVER: local
+      UPLOAD_DIR: /app/uploads
+      PUBLIC_STORAGE_URL: https://oudnomaddubai.com/uploads
+      FRONTEND_URL: https://oudnomaddubai.com
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-OudNomad <noreply@oudnomaddubai.com>}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
     restart: always
+    volumes:
+      - uploads_data:/app/uploads
 
   web:
-    image: ghcr.io/${GITHUB_REPOSITORY:-your-org/oudnomad}/web:${IMAGE_TAG:?IMAGE_TAG required for production deploy}
+    image: ghcr.io/${GITHUB_REPOSITORY}/web:${IMAGE_TAG:-latest}
     environment:
       NODE_ENV: production
+      NEXT_PUBLIC_API_URL: https://oudnomaddubai.com/api
     restart: always
 
   notification-worker:
-    image: ghcr.io/${GITHUB_REPOSITORY:-your-org/oudnomad}/notification-worker:${IMAGE_TAG:?IMAGE_TAG required for production deploy}
+    image: ghcr.io/${GITHUB_REPOSITORY}/notification-worker:${IMAGE_TAG:-latest}
     environment:
       NODE_ENV: production
+      KAFKA_BROKER: kafka:9092
+      KAFKA_BROKERS: kafka:9092
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-smtp}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-OudNomad <noreply@oudnomaddubai.com>}
+      DATABASE_URL: ${DATABASE_URL}
     restart: always
+
+volumes:
+  uploads_data:

@@ -58,10 +58,12 @@ function getFallbackData<T>(path: string, options: RequestInit): Promise<T> {
 
       if (path.includes('/catalog/products')) {
         const catalogProducts = [
-          { id: 'prod-1', name: 'Royal Cambodian Oud Extrait', slug: 'royal-cambodian-oud', category: { name: 'Royal Oud & Extraits' }, status: 'ACTIVE', price: 420, sku: 'OUD-ROY-50ML' },
-          { id: 'prod-2', name: 'Taif Rose & Aged Sandalwood Attar', slug: 'taif-rose-attar', category: { name: 'Pure Concentrated Attars' }, status: 'ACTIVE', price: 280, sku: 'ATT-TAIF-12ML' },
-          { id: 'prod-3', name: 'Sacred Amber Bakhoor Chips', slug: 'sacred-amber-bakhoor', category: { name: 'Incense & Sacred Bakhoor' }, status: 'ACTIVE', price: 160, sku: 'BAK-AMB-100G' },
-          { id: 'prod-4', name: 'Mukhallat Royale Special Reserve', slug: 'mukhallat-royale', category: { name: 'Royal Oud & Extraits' }, status: 'ACTIVE', price: 580, sku: 'MUK-ROY-50ML' },
+          { id: 'prod-perf-001', name: 'Dakhoon', slug: 'dakhoon', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 299, sku: 'PERF-DAK-100ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101'] },
+          { id: 'prod-perf-002', name: 'Coffee Oud', slug: 'coffee-oud', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 279, sku: 'PERF-COF-100ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/CoffeeOud.jpg?v=1770414703'] },
+          { id: 'prod-perf-003', name: 'The Dark Horse', slug: 'the-dark-horse', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 319, sku: 'PERF-DRK-100ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dark_Horse.png?v=1770388755'] },
+          { id: 'prod-mist-001', name: 'Rose Saffron Mist', slug: 'rose-saffron-mist', category: { name: 'Mists' }, status: 'ACTIVE', price: 89, sku: 'MIST-ROS-200ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618'] },
+          { id: 'prod-mist-002', name: 'Oud Noir Mist', slug: 'oud-noir-mist', category: { name: 'Mists' }, status: 'ACTIVE', price: 95, sku: 'MIST-OUD-200ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Voice_of_the_soul_1.jpg?v=1692390886'] },
+          { id: 'prod-mist-003', name: 'Citrus Bloom Mist', slug: 'citrus-bloom-mist', category: { name: 'Mists' }, status: 'ACTIVE', price: 79, sku: 'MIST-CIT-200ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Nadeem_1.jpg?v=1692390847'] },
         ];
         resolve({ items: catalogProducts, total: catalogProducts.length } as any);
         return;
@@ -92,6 +94,16 @@ function getFallbackData<T>(path: string, options: RequestInit): Promise<T> {
         return;
       }
 
+      if (path.includes('/admin/collections') || path.includes('/catalog/collections')) {
+        const seedCollections = [
+          { id: 'col-all', name: 'All Fragrances', slug: 'all', description: 'Explore the complete Oud Nomad Dubai universe — luxury perfumes and refreshing mists.', bannerImage: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101', status: 'ACTIVE', sortOrder: 0, productCount: 6, products: [] },
+          { id: 'col-perfumes', name: 'Perfumes', slug: 'perfumes', description: 'Intense, long-lasting Extrait de Parfum and Eau de Parfum blends built around rare agarwood, saffron, and precious florals.', bannerImage: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/CoffeeOud.jpg?v=1770414703', status: 'ACTIVE', sortOrder: 1, productCount: 3, products: [] },
+          { id: 'col-mists', name: 'Mists', slug: 'mists', description: 'Light, refreshing body and hair mists — the perfect everyday scent for warm GCC days and effortless layering.', bannerImage: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618', status: 'ACTIVE', sortOrder: 2, productCount: 3, products: [] },
+        ];
+        resolve({ items: seedCollections, total: seedCollections.length } as any);
+        return;
+      }
+
       // Default fallback
       resolve({ success: true } as any);
     }, 100);
@@ -110,6 +122,15 @@ export const AdminApi = {
   createProduct: (data: any) => apiFetch<any>('/catalog/products', { method: 'POST', body: JSON.stringify(data) }),
   updateProduct: (id: string, data: any) => apiFetch<any>(`/catalog/products/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   deleteProduct: (id: string) => apiFetch<any>(`/catalog/products/${id}`, { method: 'DELETE' }),
+
+  // Collections
+  getCollections: (params: { page?: number; limit?: number; search?: string } = {}) => {
+    const query = new URLSearchParams(params as any).toString();
+    return apiFetch<any>(`/admin/collections?${query}`);
+  },
+  createCollection: (data: any) => apiFetch<any>('/admin/collections', { method: 'POST', body: JSON.stringify(data) }),
+  updateCollection: (id: string, data: any) => apiFetch<any>(`/admin/collections/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  deleteCollection: (id: string) => apiFetch<any>(`/admin/collections/${id}`, { method: 'DELETE' }),
 
   // Orders
   getOrders: (params: { status?: string; startDate?: string; endDate?: string; page?: number; limit?: number } = {}) => {

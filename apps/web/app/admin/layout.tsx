@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 const navItems = [
   { label: 'Dashboard', href: '/admin', icon: '📊' },
   { label: 'Products', href: '/admin/products', icon: '🧴' },
+  { label: 'Collections', href: '/admin/collections', icon: '🗂️' },
   { label: 'Orders', href: '/admin/orders', icon: '📦' },
   { label: 'Inventory', href: '/admin/inventory', icon: '🏬' },
   { label: 'Users', href: '/admin/users', icon: '👥' },

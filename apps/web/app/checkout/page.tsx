@@ -9,16 +9,11 @@ import Container from '../components/Container';
 import { useCart } from '../components/cart/CartContext';
 import { useCurrency } from '../components/concierge/CurrencyContext';
 
-const INDIAN_STATES = [
-  'Andhra Pradesh', 'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh', 'Delhi', 'Goa',
-  'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu & Kashmir', 'Jharkhand', 'Karnataka',
-  'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Odisha', 'Punjab', 'Rajasthan',
-  'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
-];
 
 const GCC_COUNTRIES = [
-  'India', 'United Arab Emirates', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Oman', 'Bahrain'
+  'United Arab Emirates', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Oman', 'Bahrain'
 ];
+
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -36,27 +31,24 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState('');
   const [apartment, setApartment] = useState('');
   const [city, setCity] = useState('');
-  const [state, setState] = useState('Delhi');
+  const [state, setState] = useState('');
   const [pinCode, setPinCode] = useState('');
   const [phone, setPhone] = useState('');
 
   // Payment method
-  const [paymentMethod, setPaymentMethod] = useState<'prepaid' | 'cod'>('prepaid');
-  const [upiOption, setUpiOption] = useState<'gpay' | 'phonepe' | 'paytm' | 'card'>('gpay');
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank_transfer'>('card');
 
   // Coupon state
   const [couponCode, setCouponCode] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
+  const prepaidDiscount = 0; // reserved for future prepaid offers
 
   // Submission state
   const [submitting, setSubmitting] = useState(false);
 
-  // Auto prepaid discount like Oud Arabia ("Extra ₹200 Off on Prepaid Orders")
-  const prepaidDiscount = paymentMethod === 'prepaid' ? 200 : 0;
-  const totalDiscount = couponDiscount + prepaidDiscount;
   const shippingFee = 0; // Free express shipping
-  const finalTotal = Math.max(0, subtotal - totalDiscount + shippingFee);
+  const finalTotal = Math.max(0, subtotal - couponDiscount + shippingFee);
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,53 +115,6 @@ export default function CheckoutPage() {
             <form onSubmit={handleCompleteOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
               {/* ── LEFT COLUMN: Checkout Form Steps ── */}
               <div className="lg:col-span-7 space-y-8">
-                {/* Express Checkout Bar */}
-                <div className="border border-white/10 bg-[#0e0e0e] p-5 space-y-3">
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-mono block text-center">
-                    Express Instant Checkout
-                  </span>
-                  <div className="grid grid-cols-3 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPaymentMethod('prepaid');
-                        setUpiOption('gpay');
-                      }}
-                      className="py-2.5 bg-[#181818] hover:bg-[#222] border border-white/10 flex items-center justify-center font-bold text-xs text-white transition-all"
-                    >
-                      Google Pay
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPaymentMethod('prepaid');
-                        setUpiOption('phonepe');
-                      }}
-                      className="py-2.5 bg-[#181818] hover:bg-[#222] border border-white/10 flex items-center justify-center font-bold text-xs text-white transition-all"
-                    >
-                      PhonePe
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPaymentMethod('prepaid');
-                        setUpiOption('paytm');
-                      }}
-                      className="py-2.5 bg-[#181818] hover:bg-[#222] border border-white/10 flex items-center justify-center font-bold text-xs text-white transition-all"
-                    >
-                      Paytm / UPI
-                    </button>
-                  </div>
-                  <div className="relative text-center my-3">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-white/10" />
-                    </div>
-                    <span className="relative bg-[#0e0e0e] px-4 text-[10px] text-white/40 uppercase tracking-widest">
-                      OR ENTER SHIPPING DETAILS
-                    </span>
-                  </div>
-                </div>
-
                 {/* Step 1: Contact Information */}
                 <div className="border border-white/10 bg-[#0e0e0e] p-6 space-y-4">
                   <div className="flex items-center justify-between">
@@ -269,7 +214,7 @@ export default function CheckoutPage() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <input
                           type="text"
@@ -282,26 +227,11 @@ export default function CheckoutPage() {
                       </div>
 
                       <div>
-                        <select
-                          value={state}
-                          onChange={(e) => setState(e.target.value)}
-                          className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d] cursor-pointer"
-                        >
-                          {INDIAN_STATES.map((s) => (
-                            <option key={s} value={s}>
-                              {s}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
                         <input
                           type="text"
-                          required
-                          value={pinCode}
-                          onChange={(e) => setPinCode(e.target.value)}
-                          placeholder="PIN code"
+                          value={state}
+                          onChange={(e) => setState(e.target.value)}
+                          placeholder="Emirate / Region (optional)"
                           className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
                         />
                       </div>
@@ -342,38 +272,10 @@ export default function CheckoutPage() {
                   </h3>
 
                   <div className="space-y-3">
-                    {/* Prepaid Option (with ₹200 off badge) */}
+                    {/* Credit / Debit Card */}
                     <div
-                      onClick={() => setPaymentMethod('prepaid')}
-                      className={`border p-4 cursor-pointer transition-all ${paymentMethod === 'prepaid'
-                        ? 'border-[#ffb91d] bg-[#161616]'
-                        : 'border-white/10 bg-[#101010] hover:border-white/30'
-                        }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="flex items-center gap-2 cursor-pointer font-medium text-xs text-white">
-                          <input
-                            type="radio"
-                            name="payment"
-                            checked={paymentMethod === 'prepaid'}
-                            onChange={() => setPaymentMethod('prepaid')}
-                            className="accent-[#ffb91d]"
-                          />
-                          <span>Prepaid Online Payment (UPI / Cards / NetBanking)</span>
-                        </label>
-                        <span className="bg-[#53ff73] text-black text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 shadow">
-                          Extra ₹200 Off
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-white/60 ml-5">
-                        Instant payment via Google Pay, PhonePe, Paytm, Debit/Credit Card or NetBanking.
-                      </p>
-                    </div>
-
-                    {/* Cash on Delivery Option */}
-                    <div
-                      onClick={() => setPaymentMethod('cod')}
-                      className={`border p-4 cursor-pointer transition-all ${paymentMethod === 'cod'
+                      onClick={() => setPaymentMethod('card')}
+                      className={`border p-4 cursor-pointer transition-all ${paymentMethod === 'card'
                         ? 'border-[#ffb91d] bg-[#161616]'
                         : 'border-white/10 bg-[#101010] hover:border-white/30'
                         }`}
@@ -382,14 +284,37 @@ export default function CheckoutPage() {
                         <input
                           type="radio"
                           name="payment"
-                          checked={paymentMethod === 'cod'}
-                          onChange={() => setPaymentMethod('cod')}
+                          checked={paymentMethod === 'card'}
+                          onChange={() => setPaymentMethod('card')}
                           className="accent-[#ffb91d]"
                         />
-                        <span>Cash on Delivery (COD)</span>
+                        <span>Credit / Debit Card (Visa, Mastercard, Amex)</span>
                       </label>
                       <p className="text-[11px] text-white/60 ml-5 mt-1">
-                        Pay with cash upon physical handover by the courier at your doorstep.
+                        Secure 3D-authenticated card payment. All major international cards accepted.
+                      </p>
+                    </div>
+
+                    {/* Bank Transfer */}
+                    <div
+                      onClick={() => setPaymentMethod('bank_transfer')}
+                      className={`border p-4 cursor-pointer transition-all ${paymentMethod === 'bank_transfer'
+                        ? 'border-[#ffb91d] bg-[#161616]'
+                        : 'border-white/10 bg-[#101010] hover:border-white/30'
+                        }`}
+                    >
+                      <label className="flex items-center gap-2 cursor-pointer font-medium text-xs text-white">
+                        <input
+                          type="radio"
+                          name="payment"
+                          checked={paymentMethod === 'bank_transfer'}
+                          onChange={() => setPaymentMethod('bank_transfer')}
+                          className="accent-[#ffb91d]"
+                        />
+                        <span>Bank Transfer / WhatsApp Order</span>
+                      </label>
+                      <p className="text-[11px] text-white/60 ml-5 mt-1">
+                        Our concierge will contact you on WhatsApp (+971 58 571 9731) to confirm and process your order.
                       </p>
                     </div>
                   </div>
@@ -460,7 +385,7 @@ export default function CheckoutPage() {
                   </div>
                   {couponApplied && (
                     <p className="text-[11px] text-[#53ff73] font-mono">
-                      ✓ Code applied: -₹{couponDiscount}
+                      ✓ Code applied: -{formatPrice(couponDiscount)}
                     </p>
                   )}
                 </div>

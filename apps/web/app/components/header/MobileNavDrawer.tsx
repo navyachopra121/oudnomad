@@ -131,29 +131,23 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
                   Perfumes
                 </Link>
                 <Link
-                  href="/collections/attars"
+                  href="/collections/mists"
                   className="block text-white/80 hover:text-[#ffb91d] transition-colors py-1"
                   onClick={onClose}
                 >
-                  Attars & Oils
-                </Link>
-                <Link
-                  href="/collections/bakhoor-set"
-                  className="block text-white/80 hover:text-[#ffb91d] transition-colors py-1"
-                  onClick={onClose}
-                >
-                  Bakhoor Set
-                </Link>
-                <Link
-                  href="/collections/emerald-collection"
-                  className="block text-white/80 hover:text-[#ffb91d] transition-colors py-1"
-                  onClick={onClose}
-                >
-                  Emerald Collection
+                  Hair & Body Mists
                 </Link>
               </div>
             )}
           </div>
+
+          <Link
+            href="/fragrance-finder"
+            className="block py-2.5 text-[#ffb91d] hover:text-white transition-colors border-b border-white/10 font-medium"
+            onClick={onClose}
+          >
+            FRAGRANCE FINDER QUIZ
+          </Link>
 
           <Link
             href="/contact"
@@ -161,14 +155,6 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
             onClick={onClose}
           >
             CONTACT
-          </Link>
-
-          <Link
-            href="/stores"
-            className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors border-b border-white/10"
-            onClick={onClose}
-          >
-            STORES
           </Link>
 
           <Link
@@ -190,14 +176,22 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
 
         {/* Social Box Bottom Bar */}
         <div className="p-4 border-t border-[#ffb91d]/20 bg-[#0a0a0a]">
-          <div className="grid grid-cols-4 gap-1.5 text-center text-[9px] tracking-wider text-[#ffb91d] font-semibold">
+          <div className="grid grid-cols-5 gap-1 text-center text-[8px] tracking-wider text-[#ffb91d] font-semibold">
+            <a
+              href="https://www.facebook.com/share/19qn9GNXqL/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2 border border-[#ffb91d]/30 hover:border-[#ffb91d] hover:bg-[#ffb91d] hover:text-black transition-all"
+            >
+              FB
+            </a>
             <a
               href="https://www.instagram.com/oudnomaddubai?stkn=NWtkMGc4ZmFvc3pv&utm_source=qr"
               target="_blank"
               rel="noopener noreferrer"
               className="py-2 border border-[#ffb91d]/30 hover:border-[#ffb91d] hover:bg-[#ffb91d] hover:text-black transition-all"
             >
-              INSTAGRAM
+              INSTA
             </a>
             <a
               href="https://x.com/oudnomad?s=11"
@@ -205,7 +199,7 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
               rel="noopener noreferrer"
               className="py-2 border border-[#ffb91d]/30 hover:border-[#ffb91d] hover:bg-[#ffb91d] hover:text-black transition-all"
             >
-              X / TWITTER
+              X
             </a>
             <a
               href="https://www.linkedin.com/posts/oud-nomad_oudnomad-luxuryfragrance-activity-7508052849604435968-vmRv?utm_source=share&utm_medium=member_ios&rcm=ACoAAEW4eq0Bm-115qea9ir7xuPfrWztpoN0l_4"

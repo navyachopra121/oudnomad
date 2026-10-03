@@ -61,7 +61,7 @@ export default function CartDrawer() {
               </span>
             ) : (
               <span className="text-white/70">
-                Free Express Delivery on all perfume orders across India & GCC.
+                Free Express Delivery on all perfume orders across GCC countries.
               </span>
             )}
           </div>
