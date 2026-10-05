@@ -40,7 +40,7 @@ export default function AboutPage() {
             <div className="lg:col-span-6 relative aspect-[4/3] w-full bg-[#161616] overflow-hidden border border-white/10">
               <Image
                 src="https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618"
-                alt="Oud Nomad Luxury Perfumes Dubai"
+                alt="Oud Nomad Luxury Perfumes"
                 fill
                 priority
                 className="object-cover object-center"
@@ -97,7 +97,7 @@ export default function AboutPage() {
             <div className="lg:col-span-6 relative aspect-[4/3] w-full bg-[#161616] overflow-hidden border border-white/10 order-1 lg:order-2">
               <Image
                 src="https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Voice_of_the_soul_1.jpg?v=1692390886"
-                alt="Oud Arabia Boutique Flacons"
+                alt="Oud Nomad Boutique Flacons"
                 fill
                 className="object-cover object-center"
               />
@@ -113,7 +113,7 @@ export default function AboutPage() {
               Finest Quality Materials in the Industry
             </h2>
             <p className="text-xs sm:text-sm text-white/70 leading-relaxed font-sans max-w-2xl mx-auto">
-              Oud Arabia is renowned for working with only the finest quality materials in the industry; from Rose de Mai (France), Jasmine de Grasse (France), natural Ambergris (Pacific Ocean), Oud/Agarwood (Vietnam, Cambodia, Indonesia), Bergamot (Calabria).
+              Oud Nomad is renowned for working with only the finest quality materials in the industry; from Rose de Mai (France), Jasmine de Grasse (France), natural Ambergris (Pacific Ocean), Oud/Agarwood (Vietnam, Cambodia, Indonesia), Bergamot (Calabria).
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 text-left">
@@ -137,7 +137,7 @@ export default function AboutPage() {
                 <span className="text-[#ffb91d] font-mono text-xs block">03 / HERITAGE</span>
                 <h3 className="font-serif text-lg text-white">Master Perfumers (20+ Years)</h3>
                 <p className="text-xs text-white/60 leading-relaxed font-sans">
-                  Each scent is made in Dubai and handcrafted by master perfumers with more than 20 years of experience. Oud Arabia attars are mixed and painstakingly poured by hand.
+                  Each scent is handcrafted by master perfumers with more than 20 years of experience. Oud Nomad fragrances are mixed and painstakingly poured by hand.
                 </p>
               </div>
             </div>

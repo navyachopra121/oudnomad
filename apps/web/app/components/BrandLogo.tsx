@@ -26,7 +26,7 @@ export default function BrandLogo({
   className = '',
   asLink = true,
   href = '/',
-  showDubai = true,
+  showDubai = false,
   onClick,
 }: BrandLogoProps) {
   // Size classes for OUD NOMAD
@@ -110,7 +110,7 @@ export default function BrandLogo({
         onClick={onClick}
         className={`inline-flex flex-col cursor-pointer group hover:brightness-115 active:scale-[0.99] transition-all duration-300 ${isCenter ? 'items-center justify-center' : 'items-start justify-start'
           }`}
-        aria-label="Oud Nomad Dubai Home"
+        aria-label="Oud Nomad Home"
       >
         {logoContent}
       </Link>

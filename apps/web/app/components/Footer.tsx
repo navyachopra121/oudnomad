@@ -41,10 +41,10 @@ export default function Footer() {
           {/* Col 1: Brand Logo & About Oud Nomad */}
           <div>
             <div className="mb-4">
-              <Link href="/" className="inline-block group" aria-label="Oud Nomad Dubai Home">
+              <Link href="/" className="inline-block group" aria-label="Oud Nomad Home">
                 <Image
                   src="/oudnomadfinallogo.png"
-                  alt="Oud Nomad Dubai"
+                  alt="Oud Nomad"
                   width={140}
                   height={138}
                   className="w-24 sm:w-28 h-auto object-contain transition-transform duration-300 group-hover:brightness-110"
@@ -56,7 +56,7 @@ export default function Footer() {
               ABOUT OUD NOMAD
             </h3>
             <p className="text-xs leading-relaxed text-white font-normal">
-              Oud Nomad Dubai offers artisanal luxury oriental perfumes and bespoke mists crafted with rare ingredients for connoisseurs worldwide.
+              Oud Nomad offers artisanal luxury oriental perfumes and bespoke mists crafted with rare ingredients for connoisseurs worldwide.
             </p>
           </div>
 

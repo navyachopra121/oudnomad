@@ -120,7 +120,7 @@ export default function ContactPage() {
                   <span className="text-3xl text-[#53ff73]">✓</span>
                   <h3 className="text-lg text-white font-serif">Message Received</h3>
                   <p className="text-xs text-white/70 max-w-sm mx-auto leading-relaxed">
-                    Thank you for contacting Oud Nomad Dubai. Our client care team will respond to your email or WhatsApp within 24 hours.
+                    Thank you for contacting Oud Nomad. Our client care team will respond to your email or WhatsApp within 24 hours.
                   </p>
                   <button
                     onClick={() => {

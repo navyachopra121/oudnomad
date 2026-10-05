@@ -168,10 +168,10 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
 
             {/* ── CENTER COLUMN: Brand Logo ── */}
             <div className="justify-self-center text-center shrink-0 flex items-center justify-center py-1">
-              <Link href="/" aria-label="Oud Nomad Dubai Home" className="inline-block group">
+              <Link href="/" aria-label="Oud Nomad Home" className="inline-block group">
                 <Image
                   src="/oudnomadtextlogo.png"
-                  alt="Oud Nomad Dubai"
+                  alt="Oud Nomad"
                   width={300}
                   height={40}
                   className="h-6 sm:h-7 lg:h-8 w-auto object-contain group-hover:brightness-110 transition-all duration-300"
@@ -188,7 +188,7 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
                   href="/contact"
                   className="nav-link py-2 text-white hover:text-[#ffb91d] transition-colors"
                 >
-                  CONTACT
+                  CONTACT US
                 </Link>
                 {/* <Link
                   href="/stores"

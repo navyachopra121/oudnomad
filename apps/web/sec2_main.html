@@ -1,0 +1,518 @@
+<section id="shopify-section-template--27727028158684__fragrance_finder_main_B3FYLY" class="shopify-section fragrance-finder-main">
+  
+    <link href="//us.kayali.com/cdn/shop/t/53/assets/fragrance-finder-main.css?v=123448275316368872031790751695" rel="stylesheet" type="text/css" media="all" />
+  
+
+
+  <div class="r--fragrance-finder wrapper flex f-d-column hide f-gap-24--desktop f-gap-8--tablet key--dont-know-a-lot" data-fragrance-finder>
+    <div class="r--fragrance-finder__progress flex f-j-between f-a-center">
+      <button class="r--fragrance-finder__progress-back flex f-a-center f-gap-4 font-body-s--desktop font-body-xxs--tablet text-upper" rv-on-click="controller.previousStep">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
+          <path d="M9.70701 12.3559C9.75056 12.3994 9.78511 12.4511 9.80868 12.508C9.83225 12.5649 9.84438 12.6259 9.84438 12.6875C9.84438 12.7491 9.83225 12.8101 9.80868 12.867C9.78511 12.9239 9.75056 12.9756 9.70701 13.0192C9.66346 13.0627 9.61175 13.0973 9.55485 13.1208C9.49795 13.1444 9.43696 13.1565 9.37537 13.1565C9.31378 13.1565 9.25279 13.1444 9.19589 13.1208C9.13898 13.0973 9.08728 13.0627 9.04373 13.0192L4.35623 8.33166C4.31265 8.28812 4.27807 8.23642 4.25448 8.17952C4.23089 8.12261 4.21875 8.06162 4.21875 8.00002C4.21875 7.93842 4.23089 7.87742 4.25448 7.82051C4.27807 7.76361 4.31265 7.71191 4.35623 7.66838L9.04373 2.98088C9.13168 2.89292 9.25098 2.84351 9.37537 2.84351C9.49976 2.84351 9.61905 2.89292 9.70701 2.98088C9.79497 3.06883 9.84438 3.18813 9.84438 3.31252C9.84438 3.43691 9.79497 3.5562 9.70701 3.64416L5.35056 8.00002L9.70701 12.3559Z" fill="black"/>
+        </svg>
+        Back
+      </button>
+
+      <p rv-if="data.current_step_index | isFinalStep data.steps | not" class="font-body-xs--desktop font-body-xxs--tablet text-upper">
+        <span rv-text="data.current_step_index | getProgressStep data.steps"></span>
+        out of
+        <span rv-text="data.steps | length"></span>
+      </p>
+
+      <button rv-on-click="controller.reset" rv-if="data.current_step_index | isFinalStep data.steps" class="font-body-xs--desktop font-body-xxs--tablet text-upper text-underline">
+        Start again
+      </button>
+    </div>
+
+    <div rv-each-step="data.steps" class="r--fragrance-finder__step flex f-d-column f-gap-32--desktop f-gap-24--tablet" data-fragrance-finder-step rv-class-shown="step.index | eq data.current_step_index">
+      <div class="content-area flex text-center f-d-column f-a-center f-j-center f-gap-16--desktop f-gap-8--tablet">
+        <h2 rv-text="step.title" class="text-regular r--fragrance-finder__step-title" tabindex="-1"></h2>
+        <div class="rte font-body-xs" rv-html="step.content"></div>
+      </div>
+
+      <div class="selection-area flex f-d-column f-gap-32--desktop f-gap-24--tablet">
+        <ul class="value-area flex f-gap-8 f-wrap f-j-center" rv-class-multiple="step.limit | gt 1" rv-class-has-2="step.filter.values | length | eq 2" rv-class-r--fragrance-finder-scroll="step.limit | eq 1">
+          <li rv-each-value="step.filter.values" class="r--fragrance-finder__step-value" rv-class-selected="value | isSelected step.selected_values">
+            <button
+              type="button"
+              class="r--fragrance-finder__step-value-trigger"
+              rv-on-click="controller.selectValue"
+              rv-aria-label="value.label"
+              rv-aria-pressed="value | isSelected step.selected_values | toAriaBool"
+            ></button>
+            <p class="h4 text-upper text-medium" rv-text="value.label"></p>
+            <div class="object-fit--cover image-area">
+              <img rv-src="value.image | getSizedImage '400x' " rv-srcset="value.image | getSrcSet '400x' " alt="">
+            </div>
+          </li>
+        </ul>
+        <div class="nav-area flex f-j-center">
+          <button class="btn btn--secondary" rv-if="step.index | eq data.step_count | not" rv-on-click="controller.nextStep" rv-disabled="step.selected_values | length | eq 0">
+            Next
+          </button>
+
+          <button rv-if="step.index | eq data.step_count" class="btn btn--secondary" rv-on-click="controller.getRecommendations" rv-disabled="step.selected_values | length | eq 0">
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div rv-class-shown="data.current_step_index | isFinalStep data.steps" class="r--fragrance-finder__final flex f-d-column f-gap-56--desktop f-gap-40--tablet">
+      <div class="flex f-d-column f-gap-32">
+        <div class="r--fragrance-finder__final-header text-center flex f-d-column f-a-center f-j-center f-gap-16--desktop f-gap-8--tablet">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="picture-element-wrapper wrapper--35182006534364 object-fit--cover profile-image tablet-only" style="--aspect-desktop: 0.8007968127490039; --aspect-tablet: 0.8007968127490039;"  >
+
+  
+    
+  <picture class="">
+    
+    
+
+    
+
+    
+
+    <source 
+      media="(max-width: 834px)"
+      data-srcset="
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=165 165w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=330 330w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=400 400w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=535 535w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=750 750w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=1000 1000w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=1500 1500w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=1920 1920w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=2000 2000w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=3000 3000w
+"
+      data-sizes="100px"
+    >
+
+    <img
+      draggable="false" 
+      data-srcset="
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=165 165w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=330 330w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=400 400w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=535 535w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=750 750w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=1000 1000w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=1500 1500w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=1920 1920w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=2000 2000w,
+//us.kayali.com/cdn/shop/files/185fb9a8a94519b0df7c4a2618068eeae30afd86.png?v=1751537425&width=3000 3000w
+" 
+      data-sizes="100px"
+      width="201"
+      height="251"
+      alt="" 
+      data-lazy
+      class="picture-element-image"
+      style="--focal-desktop: 50.0% 50.0%; ">
+  </picture>
+
+  
+
+  
+  
+</div>
+
+
+
+          <h3 class="h2 text-regular " tabindex="-1" data-fragrance-finder-results-heading>
+            Your results
+          </h3>
+          
+            <div class="rte font-body-xs">
+              <p>Sun-warmed skin, salty breeze, and soft florals define you. You carry a carefree spirit wrapped in nostalgia—like sunscreen on sunlit skin and coconut-sweet memories. You seek freedom, warmth, and moments that feel like a perfect day by the sea.</p>
+            </div>
+          
+
+          
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="picture-element-wrapper wrapper--35182007353564 object-fit--cover signature-image tablet-only" style="--aspect-desktop: 4.294117647058823; --aspect-tablet: 4.294117647058823;"  >
+
+  
+    
+  <picture class="">
+    
+    
+
+    
+
+    
+
+    <source 
+      media="(max-width: 834px)"
+      data-srcset="
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=165 165w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=330 330w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=400 400w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=535 535w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=750 750w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=1000 1000w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=1500 1500w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=1920 1920w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=2000 2000w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=3000 3000w
+"
+      data-sizes="280px"
+    >
+
+    <img
+      draggable="false" 
+      data-srcset="
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=165 165w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=330 330w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=400 400w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=535 535w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=750 750w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=1000 1000w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=1500 1500w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=1920 1920w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=2000 2000w,
+//us.kayali.com/cdn/shop/files/Layer_1_8e4e1728-2b3e-48cd-94ce-04626c1ef241.svg?v=1751537428&width=3000 3000w
+" 
+      data-sizes="280px"
+      width="146"
+      height="34"
+      alt="" 
+      data-lazy
+      class="picture-element-image"
+      style="--focal-desktop: 50.0% 50.0%; ">
+  </picture>
+
+  
+
+  
+  
+</div>
+
+
+          
+        </div>
+        <div data-fragrance-finder-recs></div>
+        <span class="progress-bar tablet-only ff-progress-bar">
+          <span></span>
+        </span>
+      </div>
+
+      <div data-fragrance-finder-upsells class="product-upsells flex f-d-column f-gap-24">
+        <div class="r--fragrance-finder__final-header text-center flex f-d-column f-a-center f-j-center">
+          <h3 class="h2 text-regular ">
+            Layers well with
+          </h3>
+          
+            <div class="rte font-body-xs desktop-only">
+              <p>Your selected fragrances pair well with...</p>
+            </div>
+          
+        </div>
+
+        <div data-fragrance-finder-upsells-grid></div>
+      </div>
+
+      
+        <div class="cant-decide-area flex f-a-center f-wrap">
+          <div class="content-area flex f-a-center f-j-center">
+            <div class="inner">
+              
+                <p class="font-body-md text-upper desktop-only">Discover Your Scent</p>
+              
+
+              
+                <h2 class="text-regular">
+                  Still Can't Decide?
+                </h2>
+              
+
+              
+                <div class="rte font-body-s--desktop font-body-xs--tablet">
+                  <p>Try our discovery kits so you can try before you buy!</p>
+                </div>
+              
+            </div>
+          </div>
+          
+        </div>
+      
+
+      
+        <div class="helpful-links-area flex f-d-column f-gap-16--desktop f-gap-12--tablet">
+          <h4 class="h4 text-regular">Helpful Links</h4>
+          <ul class="flex f-wrap f-gap-8">
+            
+              <li>
+                <a class="font-body-s" href="https://kayalihelp.zendesk.com/hc/en-us">FAQs</a>
+              </li>
+            
+              <li>
+                <a class="font-body-s" href="https://kayalihelp.zendesk.com/hc/en-us/requests/new">Contact Us</a>
+              </li>
+            
+              <li>
+                <a class="font-body-s" href="https://www.instagram.com/kayali/">Instagram</a>
+              </li>
+            
+              <li>
+                <a class="font-body-s" href="https://www.tiktok.com/@kayali">TikTok</a>
+              </li>
+            
+          </ul>
+        </div>
+      
+
+      
+    </div>
+
+    <script type="application/json" data-fragrance-finder-json>
+      {
+          "collection": {"id":453631279324,"handle":"fragrance-finder","title":"Fragrance Finder","updated_at":"2026-10-05T04:10:02-04:00","body_html":"","published_at":"2025-07-09T05:24:54-04:00","sort_order":"best-selling","template_suffix":"promo-hero","disjunctive":false,"rules":[{"column":"variant_price","relation":"greater_than","condition":"0"}],"published_scope":"global"},
+          "limit": 5,
+          "steps": [
+              
+{
+                      "title": "Which fragrance notes always get a yes from you?",
+                      "content": "\u003cp\u003e\u003cstrong\u003ePick a few that you love\u003c\/strong\u003e\u003c\/p\u003e",
+                      "filter": "notes-that-get-a-yes",
+                      "limit": 99
+                  },
+              
+{
+                      "title": "What’s your favourite type of scent?",
+                      "content": "\u003cp\u003e\u003cstrong\u003ePick a few that you love\u003c\/strong\u003e\u003c\/p\u003e",
+                      "filter": "favourite-type-of-scent",
+                      "limit": 50
+                  },
+              
+{
+                      "title": "What kind of fragrances do you gravitate towards?",
+                      "content": "\u003cp\u003e\u003cstrong\u003ePick a few that you love\u003c\/strong\u003e\u003c\/p\u003e",
+                      "filter": "gravitate",
+                      "limit": 4
+                  }
+              
+          ],
+          "images": [
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/juicy-fruity-florals.jpg?v=1757411568",
+                      "filter": "Juicy Fruity Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/bright-and-woody.jpg?v=1757411579",
+                      "filter": "Bright \u0026 Woody"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/bright-florals.jpg?v=1757411569",
+                      "filter": "Bright Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/classic-woods.jpg?v=1757411569",
+                      "filter": "Classic Woods"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/cozy-woods.jpg?v=1757411569",
+                      "filter": "Cozy Woods"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/delicate-and-cozy.jpg?v=1757411570",
+                      "filter": "Delicate \u0026 Cozy"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/elegant-and-timeless-florals.jpg?v=1757411569",
+                      "filter": "Elegant \u0026 Timeless Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/fresh-and-fruity.jpg?v=1757411570",
+                      "filter": "Fresh \u0026 Fruity"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/ocean-breeze.jpg?v=1757411570",
+                      "filter": "Ocean Breeze"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/soft-powdery-florals.jpg?v=1757411570",
+                      "filter": "Soft Powdery Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/sun-kissed-vacation.jpg?v=1757411579",
+                      "filter": "Sun-kissed Freshness"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/warm-and-delicious.jpg?v=1757411571",
+                      "filter": "Warm \u0026 Delicious"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/warm-and-sensual-florals.jpg?v=1757411568",
+                      "filter": "Warm \u0026 Sensual Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/woody-spices.jpg?v=1757411571",
+                      "filter": "Woody Spices"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/blooming-fruit-garden.jpg?v=1757411572",
+                      "filter": "Blooming Fruit Garden"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/a-comforting-hug.jpg?v=1757411572",
+                      "filter": "A Comforting Hug"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/a-crisp-autumn-morning.jpg?v=1757411572",
+                      "filter": "A Crisp Autumn Morning"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/arabian-spiced-market.jpg?v=1757411572",
+                      "filter": "Arabian Spiced Market"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/fresh-donut.jpg?v=1757411580",
+                      "filter": "Delicious \u0026 Sweet"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/exploring-a-new-city.jpg?v=1757411573",
+                      "filter": "Exploring a New City"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/fresh-bouquet-of-flowers.jpg?v=1757411574",
+                      "filter": "Fresh Bouquet of Flowers"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/mist-midnight.jpg?v=1757411576",
+                      "filter": "Misty Midnight"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/ocean-breeze.jpg?v=1757411570",
+                      "filter": "Ocean Breeze"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/powdery-petals.jpg?v=1757411598",
+                      "filter": "Powdery Petals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/radiant-sunset.jpg?v=1757411574",
+                      "filter": "Radiant Sunset"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/spiced-woods.jpg?v=1757411574",
+                      "filter": "Spiced Woods"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/tropical-indulgence.jpg?v=1757411574",
+                      "filter": "Tropical Indulgence"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/wildflowers-in-sun.jpg?v=1757411575",
+                      "filter": "Wildflowers in the sun"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/pexels-secret-garden-333350-931177_Large_a4d09407-4a97-4a51-ab21-2bb7d04285cc.jpg?v=1757411543",
+                      "filter": "Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/different-spices-background_Large_2c7a5f05-47e5-4ce1-9ff4-7a0aa77300ca.jpg?v=1757411545",
+                      "filter": "Warm \u0026 Spicy"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/7_5f53593d-dee2-4c35-978c-5c5259901f44.jpg?v=1757411540",
+                      "filter": "Earthy \u0026 Woody"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/front-close-view-green-leaf-with-drops-dark-color-nature-dew-forest-green-air-tree_Large_de632c81-13d4-4422-85e2-8768509b7068.jpg?v=1757411543",
+                      "filter": "Fresh"
+                  }
+              
+          ]}
+    </script>
+  </div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</section>

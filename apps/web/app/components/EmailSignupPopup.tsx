@@ -115,7 +115,7 @@ export default function EmailSignupPopup() {
               Get access to{' '}
               <span className="text-[#ffb91d] font-semibold">member only offers</span>{' '}
               and new launches from{' '}
-              <span className="font-semibold">Oud Nomad Dubai</span>
+              <span className="font-semibold">Oud Nomad</span>
             </p>
           </div>
 
@@ -123,7 +123,7 @@ export default function EmailSignupPopup() {
           <div className="relative w-full aspect-[4/3] overflow-hidden">
             <Image
               src="/banners.jpg"
-              alt="Oud Nomad Dubai luxury fragrances"
+              alt="Oud Nomad luxury fragrances"
               fill
               sizes="360px"
               className="object-cover object-center"

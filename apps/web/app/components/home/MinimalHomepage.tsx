@@ -318,7 +318,7 @@ export default function MinimalHomepage() {
               A FRAGRANCE STORY
             </h2>
             <p className="text-[13px] sm:text-[14px] leading-[1.7] text-white font-normal tracking-[0.04em] max-w-3xl mx-auto">
-              Oud Nomad Dubai was born from a desire to elevate Oriental perfumery to its highest expression. Combining centuries-old Arabian distillation traditions with modern Parisian elegance, each flacon contains liquid gold born of patient aging and uncompromising passion.
+              Oud Nomad was born from a desire to elevate Oriental perfumery to its highest expression. Combining centuries-old Arabian distillation traditions with modern Parisian elegance, each flacon contains liquid gold born of patient aging and uncompromising passion.
             </p>
           </Reveal>
         </Container>

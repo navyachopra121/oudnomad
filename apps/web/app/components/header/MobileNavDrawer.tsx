@@ -64,10 +64,10 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
       >
         {/* Top bar with close X */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#ffb91d]/20">
-          <Link href="/" onClick={onClose} aria-label="Oud Nomad Dubai Home" className="inline-block group">
+          <Link href="/" onClick={onClose} aria-label="Oud Nomad Home" className="inline-block group">
             <Image
               src="/oudnomadtextlogo.png"
-              alt="Oud Nomad Dubai"
+              alt="Oud Nomad"
               width={200}
               height={28}
               className="h-5 w-auto object-contain group-hover:brightness-110 transition-all duration-300"
@@ -117,13 +117,6 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
                   All Fragrances
                 </Link>
                 <Link
-                  href="/collections/top-sellers"
-                  className="block text-white/80 hover:text-[#ffb91d] transition-colors py-1"
-                  onClick={onClose}
-                >
-                  Top Sellers
-                </Link>
-                <Link
                   href="/collections/perfumes"
                   className="block text-white/80 hover:text-[#ffb91d] transition-colors py-1"
                   onClick={onClose}
@@ -143,7 +136,7 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
 
           <Link
             href="/fragrance-finder"
-            className="block py-2.5 text-[#ffb91d] hover:text-white transition-colors border-b border-white/10 font-medium"
+            className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors border-b border-white/10"
             onClick={onClose}
           >
             FRAGRANCE FINDER QUIZ
@@ -154,7 +147,7 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
             className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors border-b border-white/10"
             onClick={onClose}
           >
-            CONTACT
+            CONTACT US
           </Link>
 
           <Link

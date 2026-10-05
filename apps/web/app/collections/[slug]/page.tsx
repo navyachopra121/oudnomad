@@ -16,7 +16,7 @@ interface PageProps {
 const COLLECTION_METAS: Record<string, { title: string; subtitle: string; banner: string }> = {
   all: {
     title: 'All Fragrances',
-    subtitle: 'Explore the complete Oud Nomad Dubai universe — luxury perfumes and refreshing mists, crafted for the GCC.',
+    subtitle: 'Explore the complete Oud Nomad universe — luxury perfumes and refreshing mists, crafted for the GCC.',
     banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101',
   },
   perfumes: {
@@ -122,7 +122,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffb91d_1px,transparent_1px)] [background-size:16px_16px]" />
             <div className="relative z-10 max-w-2xl mx-auto space-y-4">
               <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.35em] uppercase text-[#ffb91d] block">
-                OUD ARABIA DUBAI • ARCHIVES
+                OUD NOMAD • ARCHIVES
               </span>
               <h1 className="text-3xl sm:text-5xl font-light tracking-[0.18em] uppercase text-white font-serif">
                 {meta.title}
@@ -134,7 +134,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
           </div> */}
 
           {/* Category Filter Pills & Sort Bar */}
-          <div className="border border-white/10 bg-[#0e0e0e] p-4 flex flex-col md:flex-row items-center justify-between gap-4 sticky top-20 z-30 backdrop-blur-md">
+          <div className=" bg-[#0e0e0e] p-4 flex flex-col md:flex-row items-center justify-between gap-4 sticky top-20 z-30 backdrop-blur-md">
             {/* Category tabs */}
             <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto scrollbar-none pb-2 md:pb-0">
               {CATEGORY_TABS.map((tab) => {
@@ -209,9 +209,9 @@ export default function CollectionPlpPage({ params }: PageProps) {
                     key={prod.id}
                     onMouseEnter={() => setHoveredProduct(prod.id)}
                     onMouseLeave={() => setHoveredProduct(null)}
-                    className="group border border-white/10 bg-[#0d0d0d] transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-2xl"
+                    className="group bg-[#0d0d0d] transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-2xl"
                   >
-                    {/* Image Area */}
+                    {/* Image Area */}  
                     <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#141414]">
                       <Link href={`/products/${prod.slug}`} className="block w-full h-full">
                         {/* Primary Image */}
@@ -320,7 +320,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
 
               <div className="space-y-4">
                 <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#ffb91d]">
-                  OUD ARABIA DUBAI
+                  OUD NOMAD
                 </span>
                 <h3 className="text-2xl font-serif text-white tracking-wide">
                   {quickViewProduct.name}

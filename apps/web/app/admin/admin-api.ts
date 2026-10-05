@@ -96,7 +96,7 @@ function getFallbackData<T>(path: string, options: RequestInit): Promise<T> {
 
       if (path.includes('/admin/collections') || path.includes('/catalog/collections')) {
         const seedCollections = [
-          { id: 'col-all', name: 'All Fragrances', slug: 'all', description: 'Explore the complete Oud Nomad Dubai universe — luxury perfumes and refreshing mists.', bannerImage: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101', status: 'ACTIVE', sortOrder: 0, productCount: 6, products: [] },
+          { id: 'col-all', name: 'All Fragrances', slug: 'all', description: 'Explore the complete Oud Nomad universe — luxury perfumes and refreshing mists.', bannerImage: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101', status: 'ACTIVE', sortOrder: 0, productCount: 6, products: [] },
           { id: 'col-perfumes', name: 'Perfumes', slug: 'perfumes', description: 'Intense, long-lasting Extrait de Parfum and Eau de Parfum blends built around rare agarwood, saffron, and precious florals.', bannerImage: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/CoffeeOud.jpg?v=1770414703', status: 'ACTIVE', sortOrder: 1, productCount: 3, products: [] },
           { id: 'col-mists', name: 'Mists', slug: 'mists', description: 'Light, refreshing body and hair mists — the perfect everyday scent for warm GCC days and effortless layering.', bannerImage: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618', status: 'ACTIVE', sortOrder: 2, productCount: 3, products: [] },
         ];

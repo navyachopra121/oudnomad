@@ -1,0 +1,192 @@
+<script type="application/json" data-fragrance-finder-json>
+      {
+          "collection": {"id":453631279324,"handle":"fragrance-finder","title":"Fragrance Finder","updated_at":"2026-10-05T04:10:02-04:00","body_html":"","published_at":"2025-07-09T05:24:54-04:00","sort_order":"best-selling","template_suffix":"promo-hero","disjunctive":false,"rules":[{"column":"variant_price","relation":"greater_than","condition":"0"}],"published_scope":"global"},
+          "limit": 5,
+          "steps": [
+              
+{
+                      "title": "Which fragrance notes always get a yes from you?",
+                      "content": "\u003cp\u003e\u003cstrong\u003ePick a few that you love\u003c\/strong\u003e\u003c\/p\u003e",
+                      "filter": "notes-that-get-a-yes",
+                      "limit": 99
+                  },
+              
+{
+                      "title": "What’s your favourite type of scent?",
+                      "content": "\u003cp\u003e\u003cstrong\u003ePick a few that you love\u003c\/strong\u003e\u003c\/p\u003e",
+                      "filter": "favourite-type-of-scent",
+                      "limit": 50
+                  },
+              
+{
+                      "title": "What kind of fragrances do you gravitate towards?",
+                      "content": "\u003cp\u003e\u003cstrong\u003ePick a few that you love\u003c\/strong\u003e\u003c\/p\u003e",
+                      "filter": "gravitate",
+                      "limit": 4
+                  }
+              
+          ],
+          "images": [
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/juicy-fruity-florals.jpg?v=1757411568",
+                      "filter": "Juicy Fruity Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/bright-and-woody.jpg?v=1757411579",
+                      "filter": "Bright \u0026 Woody"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/bright-florals.jpg?v=1757411569",
+                      "filter": "Bright Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/classic-woods.jpg?v=1757411569",
+                      "filter": "Classic Woods"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/cozy-woods.jpg?v=1757411569",
+                      "filter": "Cozy Woods"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/delicate-and-cozy.jpg?v=1757411570",
+                      "filter": "Delicate \u0026 Cozy"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/elegant-and-timeless-florals.jpg?v=1757411569",
+                      "filter": "Elegant \u0026 Timeless Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/fresh-and-fruity.jpg?v=1757411570",
+                      "filter": "Fresh \u0026 Fruity"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/ocean-breeze.jpg?v=1757411570",
+                      "filter": "Ocean Breeze"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/soft-powdery-florals.jpg?v=1757411570",
+                      "filter": "Soft Powdery Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/sun-kissed-vacation.jpg?v=1757411579",
+                      "filter": "Sun-kissed Freshness"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/warm-and-delicious.jpg?v=1757411571",
+                      "filter": "Warm \u0026 Delicious"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/warm-and-sensual-florals.jpg?v=1757411568",
+                      "filter": "Warm \u0026 Sensual Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/woody-spices.jpg?v=1757411571",
+                      "filter": "Woody Spices"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/blooming-fruit-garden.jpg?v=1757411572",
+                      "filter": "Blooming Fruit Garden"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/a-comforting-hug.jpg?v=1757411572",
+                      "filter": "A Comforting Hug"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/a-crisp-autumn-morning.jpg?v=1757411572",
+                      "filter": "A Crisp Autumn Morning"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/arabian-spiced-market.jpg?v=1757411572",
+                      "filter": "Arabian Spiced Market"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/fresh-donut.jpg?v=1757411580",
+                      "filter": "Delicious \u0026 Sweet"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/exploring-a-new-city.jpg?v=1757411573",
+                      "filter": "Exploring a New City"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/fresh-bouquet-of-flowers.jpg?v=1757411574",
+                      "filter": "Fresh Bouquet of Flowers"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/mist-midnight.jpg?v=1757411576",
+                      "filter": "Misty Midnight"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/ocean-breeze.jpg?v=1757411570",
+                      "filter": "Ocean Breeze"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/powdery-petals.jpg?v=1757411598",
+                      "filter": "Powdery Petals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/radiant-sunset.jpg?v=1757411574",
+                      "filter": "Radiant Sunset"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/spiced-woods.jpg?v=1757411574",
+                      "filter": "Spiced Woods"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/tropical-indulgence.jpg?v=1757411574",
+                      "filter": "Tropical Indulgence"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/wildflowers-in-sun.jpg?v=1757411575",
+                      "filter": "Wildflowers in the sun"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/pexels-secret-garden-333350-931177_Large_a4d09407-4a97-4a51-ab21-2bb7d04285cc.jpg?v=1757411543",
+                      "filter": "Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/different-spices-background_Large_2c7a5f05-47e5-4ce1-9ff4-7a0aa77300ca.jpg?v=1757411545",
+                      "filter": "Warm \u0026 Spicy"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/7_5f53593d-dee2-4c35-978c-5c5259901f44.jpg?v=1757411540",
+                      "filter": "Earthy \u0026 Woody"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/front-close-view-green-leaf-with-drops-dark-color-nature-dew-forest-green-air-tree_Large_de632c81-13d4-4422-85e2-8768509b7068.jpg?v=1757411543",
+                      "filter": "Fresh"
+                  }
+              
+          ]}
+    </script>

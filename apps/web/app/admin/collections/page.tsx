@@ -57,7 +57,7 @@ const SEED_COLLECTIONS: CollectionRow[] = [
     id: 'col-all',
     name: 'All Fragrances',
     slug: 'all',
-    description: 'Explore the complete Oud Nomad Dubai universe — luxury perfumes and refreshing mists, crafted for the GCC.',
+    description: 'Explore the complete Oud Nomad universe — luxury perfumes and refreshing mists, crafted for the GCC.',
     bannerImage: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101',
     status: 'ACTIVE',
     sortOrder: 0,

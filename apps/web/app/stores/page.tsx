@@ -22,7 +22,7 @@ interface Boutique {
 const BOUTIQUES: Boutique[] = [
   {
     id: 'dubai-flagship',
-    name: 'Oud Arabia Dubai Flagship Boutique',
+    name: 'Oud Nomad Flagship Boutique',
     city: 'Dubai',
     region: 'Dubai',
     country: 'United Arab Emirates',
@@ -34,7 +34,7 @@ const BOUTIQUES: Boutique[] = [
   },
   {
     id: 'chandigarh-elante',
-    name: 'Oud Arabia Chandigarh Boutique',
+    name: 'Oud Nomad Chandigarh Boutique',
     city: 'Chandigarh',
     region: 'Chandigarh',
     country: 'India',
@@ -46,7 +46,7 @@ const BOUTIQUES: Boutique[] = [
   },
   {
     id: 'mohali-headquarters',
-    name: 'Oud Arabia Experience Center & Hub',
+    name: 'Oud Nomad Experience Center & Hub',
     city: 'Mohali',
     region: 'Chandigarh',
     country: 'India',
@@ -58,7 +58,7 @@ const BOUTIQUES: Boutique[] = [
   },
   {
     id: 'delhi-dlf',
-    name: 'Oud Arabia Delhi NCR Boutique',
+    name: 'Oud Nomad Delhi NCR Boutique',
     city: 'Noida / Delhi NCR',
     region: 'Delhi NCR',
     country: 'India',
@@ -70,7 +70,7 @@ const BOUTIQUES: Boutique[] = [
   },
   {
     id: 'mumbai-palladium',
-    name: 'Oud Arabia Mumbai Boutique',
+    name: 'Oud Nomad Mumbai Boutique',
     city: 'Mumbai',
     region: 'Mumbai',
     country: 'India',
@@ -82,7 +82,7 @@ const BOUTIQUES: Boutique[] = [
   },
   {
     id: 'bangalore-marketcity',
-    name: 'Oud Arabia Bangalore Boutique',
+    name: 'Oud Nomad Bangalore Boutique',
     city: 'Bangalore',
     region: 'Bangalore',
     country: 'India',

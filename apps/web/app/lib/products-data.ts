@@ -1,4 +1,4 @@
-﻿// Oud Nomad Dubai — Curated product catalogue (GCC / AED)
+// Oud Nomad — Curated product catalogue (GCC / AED)
 export interface ProductFeature {
   topNotes: string;
   middleNotes: string;
@@ -39,7 +39,7 @@ export const OUD_COLLECTIONS: CollectionMeta[] = [
   {
     handle: 'all',
     title: 'All Fragrances',
-    description: 'Explore the complete universe of Oud Nomad Dubai — luxury perfumes and refreshing mists, crafted for the GCC.',
+    description: 'Explore the complete universe of Oud Nomad — luxury perfumes and refreshing mists, crafted for the GCC.',
     count: 6,
   },
   {

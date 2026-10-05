@@ -158,7 +158,7 @@ export default function ProductDetailPage({ params }: PageProps) {
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Hello Oud Nomad Dubai, I would like to order *${product.name}* (Price: ${formatPrice(product.price)}). Please assist me with my order.`
+    `Hello Oud Nomad, I would like to order *${product.name}* (Price: ${formatPrice(product.price)}). Please assist me with my order.`
   );
   const whatsappUrl = `https://wa.me/971585719731?text=${whatsappMessage}`;
 
@@ -511,7 +511,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                   </button>
                   {openAccordion === 'manufacturer' && (
                     <div className="pb-4 text-white/70 space-y-2 leading-relaxed bg-[#121212] p-4 border border-white/5 animate-fadeIn font-mono text-[11px]">
-                      <p><strong className="text-white font-sans">Brand:</strong> OUD NOMAD DUBAI</p>
+                      <p><strong className="text-white font-sans">Brand:</strong> OUD NOMAD</p>
                       <p><strong className="text-white font-sans">Registered Address:</strong> VUET1829, COMPASS BUILDING — AL HULAILA INDUSTRIAL ZONE-FZ, RAS AL KHAIMAH, UAE</p>
                       <p><strong className="text-white font-sans">Contact:</strong> +971 58 571 9731</p>
                       <p><strong className="text-white font-sans">Country of Origin:</strong> United Arab Emirates</p>

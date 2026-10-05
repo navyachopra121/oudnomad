@@ -479,7 +479,7 @@ export const StoreApi = {
           id: 'all',
           name: 'All Fragrances',
           slug: 'all',
-          description: 'Explore the complete Oud Nomad Dubai universe — luxury perfumes and refreshing mists.',
+          description: 'Explore the complete Oud Nomad universe — luxury perfumes and refreshing mists.',
           children: [],
         },
         {

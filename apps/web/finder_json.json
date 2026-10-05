@@ -1,0 +1,145 @@
+{
+          "collection": {"id":453631279324,"handle":"fragrance-finder","title":"Fragrance Finder","updated_at":"2026-10-05T04:10:02-04:00","body_html":"","published_at":"2025-07-09T05:24:54-04:00","sort_order":"best-selling","template_suffix":"promo-hero","disjunctive":false,"rules":[{"column":"variant_price","relation":"greater_than","condition":"0"}],"published_scope":"global"},
+          "limit": 5,
+          "steps": [
+              
+{
+                      "title": "How do you want your fragrance to make you feel?",
+                      "content": "\u003cp\u003e\u003cstrong\u003ePick a few that you love\u003c\/strong\u003e\u003c\/p\u003e",
+                      "filter": "make-you-feel",
+                      "limit": 99
+                  },
+              
+{
+                      "title": "What mood should your perfume radiate?",
+                      "content": "\u003cp\u003e\u003cstrong\u003ePick a few that you love\u003c\/strong\u003e\u003c\/p\u003e",
+                      "filter": "what-mood-radiates",
+                      "limit": 50
+                  },
+              
+{
+                      "title": "What kind of fragrances do you gravitate towards?",
+                      "content": "\u003cp\u003e\u003cstrong\u003ePick a few that you love\u003c\/strong\u003e\u003c\/p\u003e",
+                      "filter": "gravitate",
+                      "limit": 2
+                  }
+              
+          ],
+          "images": [
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/touch-of-glamour.jpg?v=1757411575",
+                      "filter": "To add a touch of glamour to every moment"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/feeling-freshed-and-energised.jpg?v=1757411575",
+                      "filter": "To keep me feeling fresh and energized"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/attractive-seductive-sensual-stylish-woman-boho-dress-sitting-vintage-retro-cafe-holding-perfume.jpg?v=1757411581",
+                      "filter": "To leave a captivating \u0026 alluring scent trail"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/confidence.jpg?v=1757411579",
+                      "filter": "To make me feel confident and empowered"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/spark-sweet-memories.jpg?v=1757411583",
+                      "filter": "To spark sweet memories"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/dreamy-escape.jpg?v=1757411576",
+                      "filter": "To transport me to a dreamy escape"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/wrap-me-in-comfort.jpg?v=1757411589",
+                      "filter": "To wrap me in comfort and warmth"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/a-cozy-night-in.jpg?v=1757411576",
+                      "filter": "A cozy night in"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/geletaria-in-italy.jpg?v=1757411576",
+                      "filter": "A cute gelateria in Italy"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/stroll-through-a-rose-garden.jpg?v=1757411577",
+                      "filter": "A stroll through a rose garden"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/mouthwatering-fruit.jpg?v=1757411577",
+                      "filter": "Biting into a juicy, mouthwatering fruit"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/confidence-that-cant-be-ignored.jpg?v=1757411577",
+                      "filter": "Confidence that can’t be ignored"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/dancing-with-friends.jpg?v=1757411577",
+                      "filter": "Dancing till dawn with friends"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/love-letter.jpg?v=1757411577",
+                      "filter": "Reading a love letter"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/freshky-washed-sheets.jpg?v=1757411578",
+                      "filter": "Sliding into freshly washed sheets"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/Sweet.jpg?v=1757411641",
+                      "filter": "Smelling like my favorite dessert"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/sweet-wonderland.jpg?v=1757411578",
+                      "filter": "Stepping into a sweet wonderland"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/sun-kissed-vacation.jpg?v=1757411579",
+                      "filter": "Sun-kissed on vacation in paradise"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/vibrant-spice-market.jpg?v=1757411579",
+                      "filter": "Wandering through a vibrant spice market"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/pexels-secret-garden-333350-931177_Large_a4d09407-4a97-4a51-ab21-2bb7d04285cc.jpg?v=1757411543",
+                      "filter": "Florals"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/front-close-view-green-leaf-with-drops-dark-color-nature-dew-forest-green-air-tree_Large_de632c81-13d4-4422-85e2-8768509b7068.jpg?v=1757411543",
+                      "filter": "Fresh"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/Earthy-and-Woody.jpg?v=1757411633",
+                      "filter": "Earthy \u0026 Woody"
+                  },
+              
+{
+                      "image": "\/\/us.kayali.com\/cdn\/shop\/files\/arabian-spiced-market.jpg?v=1757411572",
+                      "filter": "Warm \u0026 Spicy"
+                  }
+              
+          ]}
