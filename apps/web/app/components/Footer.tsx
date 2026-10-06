@@ -35,7 +35,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#000000] text-white border-t border-[#ffb91d]/20 mt-auto font-sans">
+    <footer className="bg-[#000000] text-white mt-auto font-sans">
       <Container className="py-14 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12">
           {/* Col 1: Brand Logo & About Oud Nomad */}

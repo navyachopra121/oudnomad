@@ -21,6 +21,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'us.kayali.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'oudnomaddubai.com',
         pathname: '/**',
       },

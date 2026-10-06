@@ -1,0 +1,283 @@
+@keyframes rotate {
+  0% {
+  transform:rotate(0)
+}
+to {
+  transform:rotate(360deg)
+}
+
+}
+.r-section.fragrance-finder-intro {
+  margin-top:calc(var(--header-main-height)*-1);
+  min-height:calc(var(--vh)*100 - var(--header-top-height));
+  position:relative;
+  overflow:hidden
+}
+.r-section.fragrance-finder-intro.on-step-2 {
+  min-height:0
+}
+.r-section.fragrance-finder-intro .step-1,.r-section.fragrance-finder-intro .step-2 {
+  width:100%;
+  height:100%;
+  transition:all .35s;
+  position:absolute;
+  top:0;
+  left:0
+}
+.r-section.fragrance-finder-intro .step-1:not(.active),.r-section.fragrance-finder-intro .step-2:not(.active) {
+  opacity:0;
+  visibility:hidden
+}
+.r-section.fragrance-finder-intro .step-1 {
+  height:calc(var(--vh)*100 - var(--header-top-height));
+  overflow:hidden
+}
+.r-section.fragrance-finder-intro .step-1 .caption-area {
+  z-index:2;
+  transition:transform 1s;
+  position:relative
+}
+.r-section.fragrance-finder-intro .step-1 .caption-area:not(.before-reveal) {
+  transform:translateY(-500px)
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image {
+  pointer-events:none;
+  width:810px;
+  transition:transform 1s;
+  display:none;
+  position:absolute
+}
+@media screen and (width<=1023px) {
+  .r-section.fragrance-finder-intro .step-1 .floating-image {
+  width:450px
+}
+
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-1 {
+  display:block;
+  top:-250px;
+  left:0
+}
+@media screen and (width<=1023px) {
+  .r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-1 {
+  top:-126px;
+  left:-130px
+}
+
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-1:not(.before-reveal) {
+  transform:translateY(-100%)
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-2 {
+  display:block;
+  top:-450px;
+  right:-88px
+}
+@media screen and (width<=1023px) {
+  .r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-2 {
+  top:-160px;
+  right:-196px
+}
+
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-2:not(.before-reveal) {
+  transform:translateY(-100%)
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-3 {
+  display:block;
+  top:0;
+  right:-380px
+}
+@media screen and (width<=1023px) {
+  .r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-3 {
+  display:none
+}
+
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-3:not(.before-reveal) {
+  transform:translate(100%,50%)
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-4 {
+  display:block;
+  bottom:-50px;
+  right:-189px
+}
+@media screen and (width>=1024px) {
+  .r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-4 {
+  bottom:-200px;
+  right:-50px
+}
+
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-4:not(.before-reveal) {
+  transform:translate(100%,50%)
+}
+@media screen and (width>=1024px) {
+  .r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-4:not(.before-reveal) {
+  transform:translateY(100%)
+}
+
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-5 {
+  display:block;
+  bottom:-452px;
+  left:104px
+}
+@media screen and (width<=1023px) {
+  .r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-5 {
+  width:380px;
+  bottom:-182px;
+  left:30px
+}
+
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-5:not(.before-reveal) {
+  transform:translateY(100%)
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-6 {
+  display:block;
+  bottom:-153px;
+  left:-286px
+}
+@media screen and (width<=1023px) {
+  .r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-6 {
+  bottom:-50px;
+  left:-212px
+}
+
+}
+.r-section.fragrance-finder-intro .step-1 .floating-image.floating-image-6:not(.before-reveal) {
+  transform:translate(-100%,50%)
+}
+.r-section.fragrance-finder-intro .step-2 {
+  height:0;
+  margin-top:var(--header-main-height);
+  padding:40px 16px 120px;
+  transition-delay:1s;
+  position:relative
+}
+@media screen and (width<=1023px) {
+  .r-section.fragrance-finder-intro .step-2 {
+  padding-top:16px;
+  padding-bottom:16px
+}
+
+}
+.r-section.fragrance-finder-intro .step-2.active {
+  height:auto;
+  position:relative
+}
+.r-section.fragrance-finder-intro .step-2:not(.active) .chat-area .messages li,.r-section.fragrance-finder-intro .step-2:not(.active) .chat-area .signature-image,.r-section.fragrance-finder-intro .step-2:not(.active) .chat-area .answers {
+  transform:translateY(500px)
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area {
+  width:100%;
+  max-width:420px
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area>* {
+  width:100%
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area .chat-image {
+  border-radius:50%;
+  width:88px;
+  height:88px;
+  overflow:hidden
+}
+@media screen and (width<=1023px) {
+  .r-section.fragrance-finder-intro .step-2 .chat-area .chat-image {
+  width:74px;
+  height:74px
+}
+
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area .messages li,.r-section.fragrance-finder-intro .step-2 .chat-area .answers li {
+  border:1px solid;
+  padding:13px;
+  position:relative
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area .messages li {
+  transition:all 1s;
+  transition-delay:calc(1.5s + var(--index)*1s);
+  margin-left:10px
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area .messages li:before {
+  content:"";
+  z-index:1;
+  border-top:0 solid #0000;
+  border-bottom:10px solid #0000;
+  border-left:0 solid #0000;
+  border-right:10px solid #fff;
+  width:0;
+  height:0;
+  position:absolute;
+  top:0;
+  right:100%;
+  transform:rotate(0)
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area .messages li:after {
+  content:"";
+  border-top:0 solid #0000;
+  border-bottom:11px solid #0000;
+  border-left:0 solid #0000;
+  border-right:11px solid #696259;
+  width:0;
+  height:0;
+  position:absolute;
+  top:-1px;
+  right:calc(100% + 1px);
+  transform:rotate(0)
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area .answers {
+  max-width:280px;
+  transition:all 1s;
+  transition-delay:calc(3.5s + var(--index)*1s);
+  align-self:flex-end
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area .answers li {
+  cursor:pointer;
+  background:#fceded;
+  border-color:#fceded;
+  width:100%;
+  margin-right:10px;
+  padding:0
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area .answers li .answer-trigger {
+  appearance:none;
+  width:100%;
+  color:inherit;
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+  background:0 0;
+  border:0;
+  padding:13px
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area .answers li .answer-trigger:focus-visible {
+  outline-offset:2px;
+  outline:2px solid
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area .answers li:after {
+  content:"";
+  border-top:11px solid #fceded;
+  border-bottom:0 solid #0000;
+  border-left:0 solid #0000;
+  border-right:11px solid #0000;
+  width:0;
+  height:0;
+  position:absolute;
+  top:-1px;
+  left:100%;
+  transform:rotate(0)
+}
+.r-section.fragrance-finder-intro .step-2 .chat-area .signature-image {
+  width:150px;
+  transition:all 1s;
+  transition-delay:calc(2.5s + var(--index)*1s);
+  margin-bottom:60px
+}
+@media screen and (width<=1023px) {
+  .r-section.fragrance-finder-intro .step-2 .chat-area .signature-image {
+  margin-bottom:20px
+}
+
+}

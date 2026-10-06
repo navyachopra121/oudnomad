@@ -102,10 +102,10 @@ export default function CollectionPlpPage({ params }: PageProps) {
     <div className="min-h-screen bg-[#070707] text-[#f2efe9] flex flex-col font-sans selection:bg-[#ffb91d] selection:text-black">
       <SiteHeader />
 
-      <main className="flex-1 w-full pt-8 pb-20">
+      <main className="flex-1 w-full pt-4 pb-12 sm:pt-8 sm:pb-20">
         <Container className="space-y-8">
           {/* Breadcrumbs */}
-          <nav className="text-[11px] font-sans tracking-[0.2em] uppercase text-white/50 flex flex-wrap items-center gap-2">
+          <nav className="text-[8px] sm:text-[11px] font-sans tracking-[0.2em] uppercase text-white/50 flex flex-wrap items-center gap-2">
             <Link href="/" className="hover:text-[#ffb91d] transition-colors">
               Home
             </Link>
@@ -134,16 +134,16 @@ export default function CollectionPlpPage({ params }: PageProps) {
           </div> */}
 
           {/* Category Filter Pills & Sort Bar */}
-          <div className=" bg-[#0e0e0e] p-4 flex flex-col md:flex-row items-center justify-between gap-4 sticky top-20 z-30 backdrop-blur-md">
+          <div className=" p-0 sm:px-0 sm:py-4 flex flex-col md:flex-row items-center justify-between gap-4 sticky top-20 z-30 backdrop-blur-md">
             {/* Category tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto scrollbar-none pb-2 md:pb-0">
+            <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto w-full md:w-auto scrollbar-none pb-2 md:pb-0">
               {CATEGORY_TABS.map((tab) => {
                 const isActive = activeCategory === tab.slug;
                 return (
                   <button
                     key={tab.slug}
                     onClick={() => setActiveCategory(tab.slug)}
-                    className={`shrink-0 px-4 py-2 text-[11px] uppercase tracking-[0.2em] transition-all font-medium border ${isActive
+                    className={`shrink-0 px-2 sm:px-4 py-2 sm:py-2 text-[9px] sm:text-[11px] uppercase tracking-[0.2em] transition-all font-medium  ${isActive
                       ? 'bg-[#ffb91d] text-black border-[#ffb91d] shadow-md'
                       : 'bg-transparent text-white/75 border-white/10 hover:border-[#ffb91d]/50 hover:text-white'
                       }`}
@@ -211,7 +211,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
                     onMouseLeave={() => setHoveredProduct(null)}
                     className="group bg-[#0d0d0d] transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-2xl"
                   >
-                    {/* Image Area */}  
+                    {/* Image Area */}
                     <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#141414]">
                       <Link href={`/products/${prod.slug}`} className="block w-full h-full">
                         {/* Primary Image */}

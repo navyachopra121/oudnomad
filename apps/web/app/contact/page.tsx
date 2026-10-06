@@ -18,10 +18,10 @@ export default function ContactPage() {
     <div className="min-h-screen bg-[#070707] text-[#f2efe9] font-sans selection:bg-[#ffb91d] selection:text-black">
       <SiteHeader />
 
-      <main className="pt-0 pb-20">
-        <Container className="space-y-12">
+      <main className="pt-4 sm:pt-6 pb-20 sm:pb-24">
+        <Container className="space-y-8 sm:space-y-10 max-w-4xl">
           {/* Breadcrumbs */}
-          <nav className="text-[11px] font-sans uppercase tracking-[0.2em] text-white/50 flex items-center gap-2">
+          <nav className="text-[9px] sm:text-[10px] px-2 sm:px-4 font-sans uppercase tracking-[0.2em] text-white/50 flex items-center gap-2">
             <Link href="/" className="hover:text-[#ffb91d] transition-colors">
               Home
             </Link>
@@ -30,113 +30,56 @@ export default function ContactPage() {
           </nav>
 
           {/* Page Header */}
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-[10px] font-mono tracking-[0.35em] uppercase text-[#ffb91d] block">
+          <div className="text-center max-w-xl mx-auto space-y-2.5">
+            <span className="text-[9px] sm:text-[10px] font-sans tracking-[0.35em] uppercase text-[#ffb91d] block">
               WE ARE AT YOUR SERVICE
             </span>
-            <h1 className="text-3xl sm:text-5xl font-serif text-white uppercase tracking-wider">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-serif text-white uppercase tracking-wider">
               Get in Touch
             </h1>
-            <p className="text-xs sm:text-sm text-white/70 leading-relaxed font-sans max-w-lg mx-auto">
-              For fragrance inquiries, bespoke concierge orders, and shipping assistance, connect with our dedicated team.
+            <p className="text-xs sm:text-sm text-white/60 leading-relaxed font-sans max-w-md mx-auto">
+              For fragrance inquiries, bespoke concierge orders, and shipping assistance, connect with our atelier team.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 max-w-5xl mx-auto items-start">
-            {/* Left: Direct Contact Information */}
-            <div className="lg:col-span-5 space-y-6 bg-[#0e0e0e] border border-white/10 p-6 sm:p-8">
-              <div>
-                <h3 className="text-xs uppercase tracking-[0.25em] text-[#ffb91d] font-mono mb-2">
-                  WHATSAPP & PHONE
-                </h3>
-                <a
-                  href="https://wa.me/971585719731"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-base sm:text-lg font-mono text-white hover:text-[#ffb91d] transition-colors block"
-                >
-                  +971 58 571 9731
-                </a>
-                <span className="text-[11px] text-white/50 block mt-0.5">
-                  Direct WhatsApp chat for instant order assistance & concierge
-                </span>
-              </div>
-
-              <div className="pt-4 border-t border-white/10">
-                <h3 className="text-xs uppercase tracking-[0.25em] text-[#ffb91d] font-mono mb-2">
-                  CUSTOMER CALLS
-                </h3>
-                <a
-                  href="tel:+971585719731"
-                  className="text-base sm:text-lg font-mono text-white hover:text-[#ffb91d] transition-colors block"
-                >
-                  +971 58 571 9731
-                </a>
-                <span className="text-[11px] text-white/50 block mt-0.5">
-                  Monday to Saturday: 10:00 AM – 8:00 PM GST (Gulf Standard Time)
-                </span>
-              </div>
-
-              <div className="pt-4 border-t border-white/10">
-                <h3 className="text-xs uppercase tracking-[0.25em] text-[#ffb91d] font-mono mb-2">
-                  MAIL US
-                </h3>
-                <a
-                  href="mailto:hello.oudnomaddubai@gmail.com"
-                  className="text-sm sm:text-base font-mono text-white hover:text-[#ffb91d] transition-colors block"
-                >
-                  hello.oudnomaddubai@gmail.com
-                </a>
-              </div>
-
-              <div className="pt-4 border-t border-white/10 space-y-3 font-mono text-xs">
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-[10px] uppercase text-[#ffb91d] tracking-wider block">
-                      REGISTERED ADDRESS & CONTACT
-                    </span>
-                    <span className="text-[10px] text-[#ffb91d]/80 font-sans" dir="rtl">
-                      العنوان المسجل ورقم التواصل
-                    </span>
-                  </div>
-                  <p className="text-white/80 leading-relaxed">
-                    VUET1829, COMPASS BUILDING- AL HULAILA, AL HULAILA INDUSTRIAL ZONE-FZ, RAS AL KHAIMAH, Ras Al Khaimah
-                  </p>
-                  <p className="text-white font-semibold mt-1">
-                    +971 58 571 9731
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Interactive Contact Form */}
-            <div className="lg:col-span-7 bg-[#0e0e0e] border border-white/10 p-6 sm:p-8 space-y-6">
-              <h2 className="text-lg font-serif uppercase tracking-wider text-white">
-                Send Us a Message
-              </h2>
+          {/* Centered Interactive Contact Form */}
+          <div className="max-w-2xl mx-auto w-full">
+            <div className=" p-2 sm:p-6 shadow-2xl space-y-6">
+              {/* <div className="text-center space-y-1.5 pb-2 ">
+                <h2 className="text-base sm:text-lg font-serif uppercase tracking-wider text-white">
+                  Send Us a Message
+                </h2>
+                <p className="text-[11px] sm:text-xs text-white/45 font-sans">
+                  Our concierge team will respond within 24 hours.
+                </p>
+              </div> */}
 
               {submitted ? (
-                <div className="py-12 text-center space-y-3 bg-[#141414] border border-[#53ff73]/30 p-8">
-                  <span className="text-3xl text-[#53ff73]">✓</span>
-                  <h3 className="text-lg text-white font-serif">Message Received</h3>
-                  <p className="text-xs text-white/70 max-w-sm mx-auto leading-relaxed">
-                    Thank you for contacting Oud Nomad. Our client care team will respond to your email or WhatsApp within 24 hours.
+                <div className="py-10 sm:py-14 text-center space-y-3.5 bg-[#141414] border border-[#ffb91d]/30 p-6 sm:p-8">
+                  <div className="w-12 h-12 rounded-full bg-[#ffb91d]/10 border border-[#ffb91d]/40 flex items-center justify-center mx-auto text-[#ffb91d] text-xl">
+                    ✓
+                  </div>
+                  <h3 className="text-lg sm:text-xl text-white font-serif uppercase tracking-wide">
+                    Message Received
+                  </h3>
+                  <p className="text-xs sm:text-sm text-white/60 max-w-sm mx-auto leading-relaxed font-sans">
+                    Thank you for contacting Oud Nomad. Our client care team will respond to your inquiry shortly.
                   </p>
                   <button
                     onClick={() => {
                       setSubmitted(false);
                       setForm({ name: '', email: '', phone: '', message: '' });
                     }}
-                    className="mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-mono"
+                    className="mt-3 px-6 py-2.5 bg-white/5 hover:bg-[#ffb91d] hover:text-black border border-white/15 text-white text-[11px] uppercase tracking-[0.2em] font-sans transition-all"
                   >
                     Send Another Message
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4 text-xs font-sans">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 text-xs font-sans">
                   <div>
-                    <label className="block text-[10px] uppercase tracking-wider text-white/70 mb-1 font-mono">
-                      Name
+                    <label className="block text-[10px] sm:text-[11px] uppercase tracking-wider text-white/70 mb-1.5 font-sans font-medium">
+                      Your Name
                     </label>
                     <input
                       type="text"
@@ -144,28 +87,28 @@ export default function ContactPage() {
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       placeholder="Your Full Name"
-                      className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
+                      className="w-full bg-[#141414] focus:border-[#ffb91d] px-3.5 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm text-white outline-none transition-colors rounded-none placeholder:text-white/25"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                     <div>
-                      <label className="block text-[10px] uppercase tracking-wider text-white/70 mb-1 font-mono">
-                        Email
+                      <label className="block text-[10px] sm:text-[11px] uppercase tracking-wider text-white/70 mb-1.5 font-sans font-medium">
+                        Email Address
                       </label>
                       <input
                         type="email"
                         required
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        placeholder="you@domain.com"
-                        className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
+                        placeholder="you@example.com"
+                        className="w-full bg-[#141414] focus:border-[#ffb91d] px-3.5 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm text-white outline-none transition-colors rounded-none placeholder:text-white/25"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[10px] uppercase tracking-wider text-white/70 mb-1 font-mono">
-                        Phone number
+                      <label className="block text-[10px] sm:text-[11px] uppercase tracking-wider text-white/70 mb-1.5 font-sans font-medium">
+                        Phone Number
                       </label>
                       <input
                         type="tel"
@@ -173,13 +116,13 @@ export default function ContactPage() {
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
                         placeholder="+971 58 571 9731"
-                        className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d]"
+                        className="w-full bg-[#141414] focus:border-[#ffb91d] px-3.5 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm text-white outline-none transition-colors rounded-none placeholder:text-white/25"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] uppercase tracking-wider text-white/70 mb-1 font-mono">
+                    <label className="block text-[10px] sm:text-[11px] uppercase tracking-wider text-white/70 mb-1.5 font-sans font-medium">
                       Message
                     </label>
                     <textarea
@@ -188,19 +131,19 @@ export default function ContactPage() {
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
                       placeholder="How may our fragrance concierges assist you today?"
-                      className="w-full bg-[#141414] border border-white/15 p-3 text-white outline-none focus:border-[#ffb91d] resize-none"
+                      className="w-full bg-[#141414] focus:border-[#ffb91d] px-3.5 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm text-white outline-none transition-colors rounded-none placeholder:text-white/25 resize-none leading-relaxed"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 bg-[#d89528] hover:bg-[#ffb91d] text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all shadow-xl active:scale-98"
+                    className="w-full py-3.5 sm:py-4 bg-[#ffb91d] hover:bg-[#e5a61a] text-black font-semibold text-xs sm:text-[12px] uppercase tracking-[0.25em] transition-all shadow-lg active:scale-[0.99] mt-2"
                   >
                     Send Message
                   </button>
 
-                  <p className="text-[10px] text-white/40 text-center font-mono pt-2">
-                    This site is protected by reCAPTCHA and privacy policies apply.
+                  <p className="text-[10px] sm:text-[11px] text-white/35 text-center font-sans pt-1">
+                    Your details are handled with complete confidentiality.
                   </p>
                 </form>
               )}

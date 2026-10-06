@@ -178,10 +178,10 @@ export default function ProductDetailPage({ params }: PageProps) {
         })}
       />
 
-      <main className="flex-1 w-full pt-8 pb-20">
+      <main className="flex-1 w-full pt-4 sm:pt-8 pb-12 sm:pb-20">
         <Container className="space-y-12">
           {/* Breadcrumbs */}
-          <nav className="text-[11px] font-sans tracking-[0.18em] uppercase text-white/50 flex flex-wrap items-center gap-2">
+          <nav className="text-[8px] sm:text-[11px] font-sans tracking-[0.2em] uppercase text-white/50 flex flex-wrap items-center gap-1 sm:gap-2">
             <Link href="/" className="hover:text-[#ffb91d] transition-colors">
               Home
             </Link>
@@ -253,11 +253,10 @@ export default function ProductDetailPage({ params }: PageProps) {
                         <button
                           key={idx}
                           onClick={() => setCarouselIndex(idx)}
-                          className={`w-1.5 h-1.5 rounded-full transition-all ${
-                            idx === carouselIndex
-                              ? 'bg-[#ffb91d] w-4'
-                              : 'bg-white/40 hover:bg-white/70'
-                          }`}
+                          className={`w-1.5 h-1.5 rounded-full transition-all ${idx === carouselIndex
+                            ? 'bg-[#ffb91d] w-4'
+                            : 'bg-white/40 hover:bg-white/70'
+                            }`}
                           aria-label={`Go to image ${idx + 1}`}
                         />
                       ))}
@@ -691,11 +690,10 @@ export default function ProductDetailPage({ params }: PageProps) {
                     <button
                       key={idx}
                       onClick={() => setLightboxIndex(idx)}
-                      className={`rounded-full transition-all ${
-                        idx === lightboxIndex
-                          ? 'bg-[#ffb91d] w-5 h-1.5'
-                          : 'bg-white/30 hover:bg-white/60 w-1.5 h-1.5'
-                      }`}
+                      className={`rounded-full transition-all ${idx === lightboxIndex
+                        ? 'bg-[#ffb91d] w-5 h-1.5'
+                        : 'bg-white/30 hover:bg-white/60 w-1.5 h-1.5'
+                        }`}
                       aria-label={`View image ${idx + 1}`}
                     />
                   ))}

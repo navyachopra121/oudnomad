@@ -178,3 +178,16 @@ feature/* → one task per branch, branch from dev
 ## License
 
 Private — all rights reserved.
+
+
+<!-- Push from local to server -->
+
+git switch dev
+# changes karein
+git add .
+git commit -m "Update application"
+git push origin dev
+
+git switch main
+git merge dev
+git push origin main

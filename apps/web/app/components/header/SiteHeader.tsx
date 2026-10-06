@@ -170,7 +170,7 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
             <div className="justify-self-center text-center shrink-0 flex items-center justify-center py-1">
               <Link href="/" aria-label="Oud Nomad Home" className="inline-block group">
                 <Image
-                  src="/oudnomadtextlogo.png"
+                  src="/odlogowitharabic.png"
                   alt="Oud Nomad"
                   width={300}
                   height={40}
