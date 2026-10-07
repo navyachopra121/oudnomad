@@ -174,7 +174,7 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
                   alt="Oud Nomad"
                   width={300}
                   height={40}
-                  className="h-6 sm:h-8 lg:h-12 w-auto object-contain group-hover:brightness-110 transition-all duration-300"
+                  className="h-9 sm:h-10 lg:h-12 w-auto object-contain group-hover:brightness-110 transition-all duration-300"
                   priority
                 />
               </Link>

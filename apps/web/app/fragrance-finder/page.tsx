@@ -565,7 +565,7 @@ export default function FragranceFinderPage() {
             sub="Select up to 2 — reveals automatically"
           />
 
-          {/* Options Grid (4 main families with authentic Kayali photography) */}
+          {/* Options Grid (4 main fragrance families) */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
             {GRAVITATE_OPTIONS.map((opt) => {
               const selected = step3Sel.includes(opt.id);
