@@ -96,6 +96,10 @@ function ProductBlock({
 }
 
 export default function SignatureCollection() {
+  if (!SIGNATURE_PRODUCTS || SIGNATURE_PRODUCTS.length === 0) {
+    return null;
+  }
+
   return (
     <section className="bg-ivory" aria-labelledby="signature-heading">
       <Container className="pt-16 md:pt-24 pb-4">

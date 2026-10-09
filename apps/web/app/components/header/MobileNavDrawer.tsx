@@ -17,7 +17,7 @@ type Props = {
   onClose: () => void;
   categories: CategoryNode[];
   reduceMotion: boolean;
-};  
+};
 
 export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) {
   const [catalogExpanded, setCatalogExpanded] = useState(false);
@@ -66,11 +66,11 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#ffb91d]/20">
           <Link href="/" onClick={onClose} aria-label="Oud Nomad Home" className="inline-block group">
             <Image
-              src="/oudnomadtextlogo.png"
+              src="/logofinal.png"
               alt="Oud Nomad"
               width={200}
-              height={28}
-              className="h-5 w-auto object-contain group-hover:brightness-110 transition-all duration-300"
+              height={30}
+              className="h-7 w-auto object-contain group-hover:brightness-110 transition-all duration-300"
               priority
             />
           </Link>
@@ -136,10 +136,10 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
 
           <Link
             href="/fragrance-finder"
-            className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors border-b border-white/10"
+            className="block py-2.5 text-[#ffb91d] hover:text-[#ffb91d] transition-colors border-b border-white/10"
             onClick={onClose}
           >
-            FRAGRANCE FINDER QUIZ
+            FRAGRANCE FINDER
           </Link>
 
           <Link

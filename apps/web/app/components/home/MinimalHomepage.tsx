@@ -8,48 +8,28 @@ import UGCSection from './UGCSection';
 
 const TOP_SELLERS_PRODUCTS = [
   {
-    id: 'majesty-extrait',
-    name: 'MAJESTY EXTRAIT [ 100ML ]',
-    price: 'Rs. 4,990.00',
-    slug: 'majesty-extrait-100ml',
-    image: 'https://picsum.photos/seed/malaki-oud-bottle/900/1100',
+    id: 'cedre',
+    name: 'CEDRE EXTRAIT [ 100ML ]',
+    price: 'AED 495.00',
+    slug: 'cedre',
+    image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1000&q=80',
   },
   {
-    id: 'amber-royale',
-    name: 'AMBER ROYALE [ 100ML ]',
-    price: 'Rs. 4,990.00',
-    slug: 'amber-royale-100ml',
-    image: 'https://picsum.photos/seed/noor-attar-stilllife/900/1100',
+    id: 'selene',
+    name: 'SELENE EXTRAIT [ 100ML ]',
+    price: 'AED 495.00',
+    slug: 'selene',
+    image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=1000&q=80',
   },
   {
-    id: 'ramsay-extrait',
-    name: 'RAMSAY [ 100ML ]',
-    price: 'Rs. 5,490.00',
-    slug: 'ramsay-extrait-100ml',
-    image: 'https://picsum.photos/seed/dusk-mukhallat-bottle/900/1100',
-  },
-  {
-    id: 'royal-oud-extrait',
-    name: 'ROYAL OUD EXTRAIT [ 100ML ]',
-    price: 'Rs. 4,990.00',
-    slug: 'royal-oud-100ml',
-    image: 'https://picsum.photos/seed/royal-cambodi-oud/900/1100',
-  },
-  {
-    id: 'vintage-attar',
-    name: 'VINTAGE ATTAR [ 50ML ]',
-    price: 'Rs. 3,990.00',
-    slug: 'vintage-attar-50ml',
-    image: 'https://picsum.photos/seed/raw-agarwood-heartwood/800/800',
-  },
-  {
-    id: 'imperial-resin',
-    name: 'IMPERIAL RESIN [ 100ML ]',
-    price: 'Rs. 5,990.00',
-    slug: 'imperial-resin-100ml',
-    image: 'https://picsum.photos/seed/taif-rose-petals/800/800',
+    id: 'ivoire',
+    name: 'IVOIRE EXTRAIT [ 100ML ]',
+    price: 'AED 495.00',
+    slug: 'ivoire',
+    image: 'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=1000&q=80',
   },
 ];
+
 
 export default function MinimalHomepage() {
   return (
@@ -95,44 +75,46 @@ export default function MinimalHomepage() {
       </section>
 
       {/* ── SECTION 2: TOP SELLERS ── */}
-      <section id="top-sellers" className="py-14 sm:py-20 bg-[#000000] border-t border-[#ffb91d]/15">
-        <Container>
-          <Reveal>
-            <div className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
-              {/* Reference site section h2: 14px, font-weight 400, letter-spacing 0.3em, uppercase */}
-              <h2 className="font-sans text-[13px] sm:text-[14px] text-[#ffb91d] font-normal uppercase tracking-[0.3em]">
-                TOP SELLERS
-              </h2>
-            </div>
-          </Reveal>
+      {TOP_SELLERS_PRODUCTS.length > 0 && (
+        <section id="top-sellers" className="py-14 sm:py-20 bg-[#000000] border-t border-[#ffb91d]/15">
+          <Container>
+            <Reveal>
+              <div className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
+                {/* Reference site section h2: 14px, font-weight 400, letter-spacing 0.3em, uppercase */}
+                <h2 className="font-sans text-[13px] sm:text-[14px] text-[#ffb91d] font-normal uppercase tracking-[0.3em]">
+                  TOP SELLERS
+                </h2>
+              </div>
+            </Reveal>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 lg:gap-10">
-            {TOP_SELLERS_PRODUCTS.map((product, idx) => (
-              <Reveal key={product.id} delayMs={idx * 80}>
-                <Link href={`/products/${product.slug}`} className="block text-center cursor-pointer group">
-                  <div className="relative aspect-square w-full overflow-hidden bg-[#070707] border border-[#ffb91d]/15 mb-3 group-hover:border-[#ffb91d]/40 transition-colors">
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 33vw"
-                      className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  {/* Product name: 11px, font-weight 400, letter-spacing 0.16em */}
-                  <h3 className="font-sans text-[11px] font-normal tracking-[0.16em] uppercase text-[#ffb91d] mb-1">
-                    {product.name}
-                  </h3>
-                  {/* Product price: 11px, font-weight 400 */}
-                  <p className="text-[11px] font-normal text-white tracking-[0.05em]">
-                    {product.price}
-                  </p>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </Container>
-      </section>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 lg:gap-10">
+              {TOP_SELLERS_PRODUCTS.map((product, idx) => (
+                <Reveal key={product.id} delayMs={idx * 80}>
+                  <Link href={`/products/${product.slug}`} className="block text-center cursor-pointer group">
+                    <div className="relative aspect-square w-full overflow-hidden bg-[#070707] border border-[#ffb91d]/15 mb-3 group-hover:border-[#ffb91d]/40 transition-colors">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 33vw"
+                        className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    {/* Product name: 11px, font-weight 400, letter-spacing 0.16em */}
+                    <h3 className="font-sans text-[11px] font-normal tracking-[0.16em] uppercase text-[#ffb91d] mb-1">
+                      {product.name}
+                    </h3>
+                    {/* Product price: 11px, font-weight 400 */}
+                    <p className="text-[11px] font-normal text-white tracking-[0.05em]">
+                      {product.price}
+                    </p>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* ── SECTION 3: SHOP BY CATEGORY ── */}
       <section className="py-14 sm:py-20 bg-[#000000] border-t border-[#ffb91d]/15">

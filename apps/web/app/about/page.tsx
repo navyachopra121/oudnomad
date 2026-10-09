@@ -42,7 +42,7 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-[#070707] text-[#f2efe9] font-sans selection:bg-[#ffb91d] selection:text-black relative overflow-x-hidden">
       {/* Universal Floating Scent Molecule Background */}
-      {/* <GoldParticleField className="fixed inset-0 z-0 opacity-40 pointer-events-none" /> */}
+      <GoldParticleField className="fixed inset-0 z-0 opacity-40 pointer-events-none" />
 
       {/* Ambient Radial Color Washes (Organic luxury light) */}
       <div
@@ -81,7 +81,7 @@ export default function AboutPage() {
           {/* ========================================================= */}
           <section className="relative min-h-[75vh] sm:min-h-[82vh] flex flex-col justify-between pt-8 sm:pt-14 pb-12 sm:pb-16 px-5 sm:px-10 lg:px-10 max-w-7xl mx-auto">
             {/* Top Minimal Breadcrumb & Coordinates */}
-            <div className="flex flex-wrap items-center justify-between gap-3 text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.25em] text-white/45 pb-4 border-b border-white/5">
+            <div className="flex flex-wrap items-center justify-between gap-3 text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.001em] md:tracking-[0.25em] text-white/45 pb-4 border-b border-white/5">
               <div className="flex items-center gap-2">
                 <Link href="/" className="hover:text-[#ffb91d] transition-colors">
                   Oud Nomad

@@ -448,7 +448,7 @@ export const StoreApi = {
         (p) => p.slug.toLowerCase() === cleanSlug || p.id === cleanSlug || cleanSlug.includes(p.slug.toLowerCase()) || p.slug.toLowerCase().includes(cleanSlug)
       );
       if (match) return match;
-      return FALLBACK_PRODUCTS[0];
+      return null;
     }
   },
 

@@ -17,17 +17,17 @@ const COLLECTION_METAS: Record<string, { title: string; subtitle: string; banner
   all: {
     title: 'All Fragrances',
     subtitle: 'Explore the complete Oud Nomad universe — luxury perfumes and refreshing mists, crafted for the GCC.',
-    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101',
+    banner: '/perfume-banner.jpg',
   },
   perfumes: {
     title: 'Perfumes',
     subtitle: 'Intense, long-lasting Extrait de Parfum and Eau de Parfum blends built around rare agarwood, saffron, and precious florals.',
-    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/CoffeeOud.jpg?v=1770414703',
+    banner: '/perfume-banner.jpg',
   },
   mists: {
     title: 'Mists',
     subtitle: 'Light, refreshing body and hair mists — the perfect everyday scent for warm GCC days and effortless layering.',
-    banner: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618',
+    banner: '/banners.jpg',
   },
 };
 

@@ -12,6 +12,10 @@ import SectionImage from './SectionImage';
 export default function GrandVitrineSection() {
   const [selectedFlacon, setSelectedFlacon] = useState<string | null>(null);
 
+  if (!VITRINE_MASTERPIECES || VITRINE_MASTERPIECES.length === 0) {
+    return null;
+  }
+
   return (
     <section id="vitrine" className="relative bg-ivory text-espresso section-py overflow-hidden border-b border-border">
       <Container className="relative z-10">

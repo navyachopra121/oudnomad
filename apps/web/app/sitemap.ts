@@ -11,12 +11,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/legal/refund-policy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
   ];
 
-  // Dynamic product entries (placeholder for active catalog items fetched via API/DB)
-  const sampleProducts = [
-    'royal-oud-parfum',
-    'aged-cambodian-taifi-rose',
-    'hindu-kush-wild-attar',
-  ];
+  // Dynamic product entries
+  const sampleProducts: string[] = ['cedre', 'selene', 'ivoire'];
 
   const productRoutes: MetadataRoute.Sitemap = sampleProducts.map((slug) => ({
     url: `${baseUrl}/products/${slug}`,

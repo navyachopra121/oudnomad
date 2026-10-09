@@ -85,74 +85,42 @@ interface Product {
 
 const PRODUCTS: Product[] = [
   {
-    title: 'Dakhoon',
-    handle: 'dakhoon-100ml',
+    title: 'Cedre',
+    handle: 'cedre',
     collection: 'perfumes',
-    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101',
-    description: 'An opulent fusion of agarwood, rose, saffron and amber — a smoky oriental masterpiece born in the heart of the Middle East.',
-    notes: 'Agarwood · Rose · Vanilla · Saffron · Frankincense · Amber',
+    image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1000&q=80',
+    description: 'A warm, indulgent fragrance that opens with the soft sweetness of vanilla and honey, unfolding into a rich amber heart and caramel white musk base.',
+    notes: 'Vanilla · Honey · Amber · Caramel · White Musk',
     price: 'AED 495',
-    tags: ['glamour', 'alluring', 'comfort', 'cozy-night', 'love-letter', 'spicy', 'woody', 'warm-sensual', 'woody-spices', 'arabian-market', 'spiced-woods'],
-    layersWith: 'Coffee Oud',
+    tags: ['warm', 'sweet', 'sensual', 'gourmand', 'luxurious', 'warm-delicious', 'delicate-cozy', 'delicious-sweet', 'comforting-hug', 'spicy', 'woody', 'spiced-woods', 'arabian-market', 'cozy-night'],
+    layersWith: 'Ivoire',
   },
   {
-    title: 'Coffee Oud',
-    handle: 'coffee-oud-100ml',
+    title: 'Selene',
+    handle: 'selene',
     collection: 'perfumes',
-    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/CoffeeOud.jpg?v=1770414703',
-    description: 'Bold, addictive, irresistibly warm — freshly brewed coffee kissed with spicy cardamom and deep oud wood.',
-    notes: 'Coffee · Cardamom · Cinnamon · Caramel · Cedar · Agarwood · Vanilla',
+    image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=1000&q=80',
+    description: 'An elegant floral fragrance balanced with soft musk and aromatic lavender, orchid, jasmine, tonka bean, and vetiver.',
+    notes: 'Lavender · Musk · Orchid · Jasmine · Tonka Bean · Vetiver',
     price: 'AED 495',
-    tags: ['glamour', 'confident', 'comfort', 'cozy-night', 'dancing', 'spicy', 'woody', 'warm-delicious', 'bright-woody', 'delicious-sweet', 'comforting-hug'],
-    layersWith: 'Dakhoon',
+    tags: ['floral', 'elegant', 'sophisticated', 'soft', 'refined', 'timeless-florals', 'bright-florals', 'fresh-bouquet', 'misty-midnight', 'florals', 'fresh', 'new-city', 'dancing', 'confidence'],
+    layersWith: 'Ivoire',
   },
   {
-    title: 'The Dark Horse',
-    handle: 'the-dark-horse-100ml',
+    title: 'Ivoire',
+    handle: 'ivoire',
     collection: 'perfumes',
-    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dark_Horse.png?v=1770388755',
-    description: 'Enigmatic and powerful — bergamot and leather oud with neroli heart and sandalwood depth for those who dare to stand out.',
-    notes: 'Lemon · Bergamot · Leather Oud · Neroli · Freesia · Sandalwood · Musk',
+    image: 'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=1000&q=80',
+    description: 'A soft, creamy fragrance built around sweet powder and white honey, melting into sunlit coconut and clean velvet musk.',
+    notes: 'Sweet Powder · White Honey · Coconut · Clean Musk',
     price: 'AED 495',
-    tags: ['fresh', 'confident', 'confidence', 'dancing', 'fresh', 'woody', 'bright-woody', 'fresh-fruity', 'new-city', 'radiant-sunset'],
-    layersWith: 'Royal Oud',
-  },
-  {
-    title: 'Royal Oud',
-    handle: 'royal-oud-attar',
-    collection: 'attars',
-    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Artboard_1_copy_3_3adc834e-2708-444e-a224-0d3149cc0981.png?v=1764672655',
-    description: 'Pure wild oud — 48-hour longevity, oil-based luxury. The quintessential Middle Eastern treasure for the true connoisseur.',
-    notes: 'Jasmine · Taif Rose · Aged Wild Oud · White Musk · Madagascar Vanilla',
-    price: 'AED 495',
-    tags: ['alluring', 'memories', 'rose-garden', 'love-letter', 'florals', 'woody', 'timeless-florals', 'classic-woods', 'arabian-market', 'misty-midnight'],
-    layersWith: 'Nomad Mist — Bloom',
-  },
-  {
-    title: 'Nomad Mist — Bloom',
-    handle: 'mist-bloom',
-    collection: 'mists',
-    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Artboard_1_copy_3_3adc834e-2708-444e-a224-0d3149cc0981.png?v=1764672655',
-    description: 'Delicate florals kissed with white musk — a weightless mist for everyday radiance and feminine grace.',
-    notes: 'Rose · Peony · White Musk · Light Amber · Bergamot',
-    price: 'AED 270',
-    tags: ['fresh', 'dreamy', 'memories', 'rose-garden', 'clean-sheets', 'italy', 'florals', 'fresh', 'fruity-florals', 'bright-florals', 'soft-powdery', 'blooming-garden', 'fresh-bouquet'],
-    layersWith: 'Royal Oud',
-  },
-  {
-    title: 'Nomad Mist — Velvet Oud',
-    handle: 'mist-velvet-oud',
-    collection: 'mists',
-    image: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Artboard_1_copy_3_3adc834e-2708-444e-a224-0d3149cc0981.png?v=1764672655',
-    description: 'Warm oud and amber in a silky mist — everyday oriental luxury, effortlessly wearable from morning to dusk.',
-    notes: 'Oud · Amber · Sandalwood · Vanilla · Soft Musk',
-    price: 'AED 270',
-    tags: ['comfort', 'dreamy', 'glamour', 'cozy-night', 'clean-sheets', 'spicy', 'woody', 'delicate-cozy', 'cozy-woods', 'autumn-morning', 'comforting-hug'],
-    layersWith: 'Dakhoon',
+    tags: ['soft', 'creamy', 'sweet', 'clean', 'sensual', 'soft-powdery', 'comforting-hug', 'clean-sheets', 'delicate-cozy', 'warm-sensual', 'fresh', 'love-letter', 'dreamy'],
+    layersWith: 'Cedre',
   },
 ];
 
 function scoreQuiz(selectedTags: string[]): Product[] {
+  if (PRODUCTS.length === 0) return [];
   const scored = PRODUCTS.map((p) => {
     let s = 0;
     selectedTags.forEach((t) => {
@@ -165,7 +133,7 @@ function scoreQuiz(selectedTags: string[]): Product[] {
 
   // Return at least 1 product, maximum 2 products
   if (topScored.length === 0) {
-    return [PRODUCTS[0]];
+    return PRODUCTS.length > 0 ? [PRODUCTS[0]] : [];
   }
   if (topScored.length >= 2 && topScored[1].s >= topScored[0].s * 0.5) {
     return [topScored[0].p, topScored[1].p];
@@ -254,26 +222,6 @@ export default function FragranceFinderPage() {
           {/* Subtle gold glow */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,rgba(255,185,29,0.11)_0%,transparent_60%)]" />
-          </div>
-
-          {/* Floating bottle images — left */}
-          <div className="absolute left-0 top-0 bottom-0 w-[22%] hidden lg:flex flex-col items-start justify-center gap-10 pl-8 pointer-events-none">
-            <div style={{ animation: 'floatA 6s ease-in-out infinite' }} className="relative w-32 h-52 opacity-55">
-              <Image src="https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101" alt="Dakhoon" fill className="object-cover rounded-sm" sizes="128px" />
-            </div>
-            <div style={{ animation: 'floatB 7.5s ease-in-out infinite' }} className="relative w-24 h-40 opacity-35 ml-10">
-              <Image src="https://cdn.shopify.com/s/files/1/0812/5077/9453/files/CoffeeOud.jpg?v=1770414703" alt="Coffee Oud" fill className="object-cover rounded-sm" sizes="96px" />
-            </div>
-          </div>
-
-          {/* Floating bottle images — right */}
-          <div className="absolute right-0 top-0 bottom-0 w-[22%] hidden lg:flex flex-col items-end justify-center gap-10 pr-8 pointer-events-none">
-            <div style={{ animation: 'floatB 5.5s ease-in-out infinite' }} className="relative w-28 h-44 opacity-50">
-              <Image src="https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dark_Horse.png?v=1770388755" alt="The Dark Horse" fill className="object-cover rounded-sm" sizes="112px" />
-            </div>
-            <div style={{ animation: 'floatA 8s ease-in-out infinite' }} className="relative w-20 h-36 opacity-30 mr-8">
-              <Image src="https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Artboard_1_copy_3_3adc834e-2708-444e-a224-0d3149cc0981.png?v=1764672655" alt="Royal Oud" fill className="object-cover rounded-sm" sizes="80px" />
-            </div>
           </div>
 
           {/* Center Content */}
@@ -747,6 +695,19 @@ export default function FragranceFinderPage() {
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12.031 0C5.396 0 .02 5.37.02 12.006c0 2.12.553 4.19 1.604 6.014L0 24l6.143-1.611A11.97 11.97 0 0012.03 24c6.634 0 12.01-5.37 12.01-12.006C24.04 5.37 18.665 0 12.031 0zm6.98 16.945c-.29.815-1.442 1.492-2.38 1.693-.64.137-1.474.246-4.288-.916-3.597-1.487-5.912-5.148-6.091-5.387-.18-.239-1.46-1.944-1.46-3.708 0-1.764.922-2.632 1.25-2.986.327-.354.714-.443.952-.443.238 0 .476.002.684.012.22.01.517-.084.81.619.3.703 1.026 2.508 1.116 2.69.09.18.15.39.03.626-.12.238-.18.388-.358.598-.18.21-.378.47-.54.631-.18.18-.368.376-.158.736.21.36.936 1.545 2.01 2.502 1.382 1.233 2.548 1.616 2.908 1.796.36.18.57.15.78-.09.21-.24.9-1.05 1.14-1.41.24-.36.48-.3.81-.18.33.12 2.096.99 2.456 1.17.36.18.6.27.69.42.09.15.09.87-.2 1.685z" /></svg>
               Chat with Our Concierge
             </a>
+          </div>
+        </div>
+      )}
+
+      {screen === 'results' && results.length === 0 && (
+        <div style={{ animation: animOut ? 'ffOut 0.28s ease forwards' : 'ffIn 0.55s ease both' }} className="max-w-md mx-auto px-4 sm:px-6 py-20 text-center space-y-4">
+          <p className="text-[10px] uppercase tracking-[0.35em] text-[#ffb91d]">Curated Archive</p>
+          <h2 className="text-xl uppercase tracking-wider text-white">No Fragrances Available</h2>
+          <p className="text-xs text-white/50 leading-relaxed">Our atelier selections are being updated with new harvests. Please check back shortly.</p>
+          <div className="pt-4">
+            <Link href="/" className="inline-block px-6 py-2.5 bg-[#ffb91d] text-black text-xs uppercase tracking-widest font-semibold hover:brightness-110">
+              Return to Home
+            </Link>
           </div>
         </div>
       )}

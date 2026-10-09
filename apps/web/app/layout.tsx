@@ -14,13 +14,13 @@ import EmailSignupPopup from "./components/EmailSignupPopup";
 const display = Cormorant_Garamond({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const ui = Poppins({
   variable: "--font-ui",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const arabic = Noto_Naskh_Arabic({

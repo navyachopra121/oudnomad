@@ -24,66 +24,52 @@ interface FeaturedReview {
 
 const FEATURED_REVIEWS: FeaturedReview[] = [
   {
-    id: 'f-1',
+    id: 'f-cedre',
     author: 'Tariq Al-Mansoor',
     location: 'Dubai, UAE',
-    productName: 'Malaki Extrait No. 1',
-    productSlug: 'malaki-extrait-no-1',
-    image: 'https://picsum.photos/seed/malaki-bottle-1/900/1100',
+    productName: 'Cedre Extrait',
+    productSlug: 'cedre',
+    image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80',
     category: 'oud',
     rating: 5,
-    title: 'The apex of artisanal Assam oud — pure royalty',
-    body: 'Opens with fiery saffron and dew-drenched Taif rose before settling into an astonishingly dark, resinous Assam agarwood and vintage ambergris. Radiates 16+ hours on skin. Haute perfumery in its purest historical expression.',
-    date: 'September 12, 2026',
-    longevity: '16+ Hours',
-    sillage: 'Regal & Enveloping',
+    title: 'A decadent nectar of honey, amber, and roasted caramel',
+    body: 'The honey and vanilla opening is soft and velvety without cloying. The amber heart develops with extraordinary warmth over hours, grounded by caramel and clean white musk. Radiates all evening.',
+    date: 'October 02, 2026',
+    longevity: '14+ Hours',
+    sillage: 'Enveloping & Warm',
   },
   {
-    id: 'f-2',
+    id: 'f-selene',
     author: 'Eleanor Vance',
     location: 'London, UK',
-    productName: 'Noor Pure Attar',
-    productSlug: 'noor-pure-attar',
-    image: 'https://picsum.photos/seed/noor-bottle-1/900/1100',
-    category: 'attars',
-    rating: 5,
-    title: 'Sublime Mysore sandalwood heart with ethereal floral warmth',
-    body: 'The non-alcoholic hydro-distillation gives this attar an organic glow that merges seamlessly with natural body warmth. White musk and saffron balance the creamy sandalwood impeccably.',
-    date: 'September 04, 2026',
-    longevity: '12+ Hours',
-    sillage: 'Graceful & Intimate',
-  },
-  {
-    id: 'f-3',
-    author: 'Karim B.',
-    location: 'Paris, France',
-    productName: 'Royal Cambodi Reserve',
-    productSlug: 'royal-cambodi-reserve',
-    image: 'https://picsum.photos/seed/cambodi-bottle-1/900/1100',
-    category: 'oud',
-    rating: 5,
-    title: 'Pure aged Cambodian oud nectar with honeyed depth',
-    body: 'Warm, molasses-like honey sweetness transitioning into deep animalic and woody undertones. A collector flacon worth every dirham. Unrivaled complexity.',
-    date: 'August 02, 2026',
-    longevity: '24+ Hours on Fabric',
-    sillage: 'Intimate Scent Aura',
-  },
-  {
-    id: 'f-4',
-    author: 'Dr. Julian Sterling',
-    location: 'Geneva, Switzerland',
-    productName: 'Dusk Mukhallat Impériale',
-    productSlug: 'dusk-mukhallat-imperiale',
-    image: 'https://picsum.photos/seed/dusk-bottle-1/900/1100',
+    productName: 'Selene Extrait',
+    productSlug: 'selene',
+    image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80',
     category: 'mukhallat',
     rating: 5,
-    title: 'Hypnotic smoky sweetness with golden amber warmth',
-    body: 'A mysterious harmony of frankincense smoke, dark plum, and aged resin. Perfect for formal winter evenings. The drydown is deeply meditative.',
-    date: 'September 08, 2026',
-    longevity: '14 Hours',
-    sillage: 'Pronounced Trail',
+    title: 'The most sophisticated floral balance of lavender, orchid, and tonka',
+    body: 'A breathtaking transition from aromatic lavender to lush night jasmine and orchid. The dry down of vetiver and tonka bean gives it a modern, grounded presence with timeless grace.',
+    date: 'September 28, 2026',
+    longevity: '12+ Hours',
+    sillage: 'Graceful & Radiant',
+  },
+  {
+    id: 'f-ivoire',
+    author: 'Dr. Karim B.',
+    location: 'Paris, France',
+    productName: 'Ivoire Extrait',
+    productSlug: 'ivoire',
+    image: 'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80',
+    category: 'attars',
+    rating: 5,
+    title: 'An exquisite comforting veil of sweet powder and white honey',
+    body: 'Pure understated luxury. The delicate sweet powder and white honey melt into creamy coconut and clean musk like soft silk against skin. Unmatched comfort and subtlety.',
+    date: 'September 15, 2026',
+    longevity: '12+ Hours',
+    sillage: 'Intimate & Sensual',
   },
 ];
+
 
 export default function ReviewsPage() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -160,8 +146,14 @@ export default function ReviewsPage() {
           </div>
 
           {/* Reviews Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 font-sans">
-            {filtered.map((rev) => (
+          {filtered.length === 0 ? (
+            <div className="py-20 text-center border border-border bg-surface-muted/20 p-8 space-y-3 font-sans">
+              <p className="text-sm text-muted">No appraisals recorded yet.</p>
+              <p className="text-xs text-muted/70">Client reviews will appear here once new collections are acquired.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 font-sans">
+              {filtered.map((rev) => (
               <div
                 key={rev.id}
                 className="bg-surface-muted/30 border border-border hover:border-antique-gold/40 p-6 sm:p-8 flex flex-col justify-between gap-6 transition-all"
@@ -216,6 +208,7 @@ export default function ReviewsPage() {
               </div>
             ))}
           </div>
+          )}
 
           {/* Bottom Call to Action */}
           <div className="p-8 sm:p-12 bg-ivory border border-border text-center space-y-4 max-w-xl mx-auto font-sans">

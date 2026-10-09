@@ -242,149 +242,109 @@ async function main() {
 
   console.log('✅ Categories seeded');
 
-  // 6. Products & Variants
+  // 6. Products & Variants — Cedre, Selene, Ivoire
   const productsData = [
     {
-      name: 'Royal Cambodian Oud',
-      slug: 'royal-cambodian-oud',
+      name: 'Cedre',
+      slug: 'cedre',
       description:
-        'A regal composition capturing vintage wild Cambodian agarwood, sweetened with dark amber, Damascus rose, and warm spiced leather. Deep, meditative, and profoundly long-lasting.',
+        'A warm, indulgent fragrance that opens with the soft sweetness of vanilla and honey, unfolding into a rich amber heart. Caramel and white musk settle into a smooth, sensual base, leaving behind a lingering trail that feels warm, comforting and quietly luxurious.',
       categoryId: categoryParfum.id,
       variants: [
         {
-          sku: 'RCO-50ML',
+          sku: 'CED-50ML',
           name: '50ml Extrait',
           size: '50ml',
-          price: 550.0,
-          stock: 45,
-          priceMinorAED: 55000,
-          priceMinorSAR: 56000,
-          priceMinorUSD: 15000,
-        },
-        {
-          sku: 'RCO-100ML',
-          name: '100ml Extrait Flacon',
-          size: '100ml',
-          price: 890.0,
-          stock: 25,
-          priceMinorAED: 89000,
-          priceMinorSAR: 91000,
-          priceMinorUSD: 24500,
-        },
-      ],
-      images: [
-        'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80',
-      ],
-    },
-    {
-      name: 'Amber Taif Rose Attar',
-      slug: 'amber-taif-rose-attar',
-      description:
-        'First-distillation Taif roses harmonized with 30-year aged Baltic amber resin and a velvety base of creamy Mysore sandalwood. A majestic and romantic oriental masterpiece.',
-      categoryId: categoryAttar.id,
-      variants: [
-        {
-          sku: 'ATRA-3ML',
-          name: 'Quarter Tola (3ml)',
-          size: '3ml',
           price: 320.0,
-          stock: 60,
+          stock: 50,
           priceMinorAED: 32000,
           priceMinorSAR: 33000,
-          priceMinorUSD: 8800,
+          priceMinorUSD: 8700,
         },
         {
-          sku: 'ATRA-12ML',
-          name: 'Full Tola (12ml Crystal Flacon)',
-          size: '12ml',
-          price: 950.0,
-          stock: 20,
-          priceMinorAED: 95000,
-          priceMinorSAR: 97000,
-          priceMinorUSD: 26000,
-        },
-      ],
-      images: [
-        'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80',
-      ],
-    },
-    {
-      name: 'Dehn Al Oud Hindi Qadeem',
-      slug: 'dehn-al-oud-hindi-qadeem',
-      description:
-        'Distilled from wild centuries-old Aquilaria agallocha heartwood in Upper Assam. Animalic, leathery, smoky, unfolding into sweet hay and dry honeyed woods.',
-      categoryId: categoryDehn.id,
-      variants: [
-        {
-          sku: 'DOHQ-3ML',
-          name: 'Quarter Tola (3ml)',
-          size: '3ml',
-          price: 750.0,
-          stock: 15,
-          priceMinorAED: 75000,
-          priceMinorSAR: 77000,
-          priceMinorUSD: 20500,
-        },
-      ],
-      images: [
-        'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80',
-      ],
-    },
-    {
-      name: 'Smoked Velvet Santal',
-      slug: 'smoked-velvet-santal',
-      description:
-        'Creamy sandalwood infused with subtle cardamom smoke, violet leaves, iris root, and sensual cashmeran. Silky, opulent, and exceptionally refined.',
-      categoryId: categoryParfum.id,
-      variants: [
-        {
-          sku: 'SVS-50ML',
-          name: '50ml Extrait',
-          size: '50ml',
-          price: 480.0,
-          stock: 50,
-          priceMinorAED: 48000,
-          priceMinorSAR: 49000,
-          priceMinorUSD: 13000,
-        },
-        {
-          sku: 'SVS-100ML',
+          sku: 'CED-100ML',
           name: '100ml Extrait Flacon',
           size: '100ml',
-          price: 780.0,
-          stock: 30,
-          priceMinorAED: 78000,
-          priceMinorSAR: 80000,
-          priceMinorUSD: 21500,
+          price: 495.0,
+          stock: 35,
+          priceMinorAED: 49500,
+          priceMinorSAR: 51000,
+          priceMinorUSD: 13500,
         },
       ],
       images: [
-        'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1000&q=80',
+        'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=1000&q=80',
       ],
     },
     {
-      name: 'Imperial Musk & Saffron',
-      slug: 'imperial-musk-saffron',
+      name: 'Selene',
+      slug: 'selene',
       description:
-        'Red Kashmiri saffron threads blended with botanical white musk, sweet cedar, and vanilla bourbon. Radiant, addictive, and unmistakably grand.',
+        'An elegant floral fragrance balanced with soft musk and aromatic lavender. Orchid and jasmine create a refined floral heart, while tonka bean and vetiver add depth and warmth to the dry-down. A sophisticated scent that moves effortlessly from fresh and delicate to warm and grounded.',
       categoryId: categoryParfum.id,
       variants: [
         {
-          sku: 'IMS-50ML',
+          sku: 'SEL-50ML',
           name: '50ml Extrait',
           size: '50ml',
-          price: 520.0,
-          stock: 40,
-          priceMinorAED: 52000,
-          priceMinorSAR: 53500,
-          priceMinorUSD: 14200,
+          price: 320.0,
+          stock: 50,
+          priceMinorAED: 32000,
+          priceMinorSAR: 33000,
+          priceMinorUSD: 8700,
+        },
+        {
+          sku: 'SEL-100ML',
+          name: '100ml Extrait Flacon',
+          size: '100ml',
+          price: 495.0,
+          stock: 35,
+          priceMinorAED: 49500,
+          priceMinorSAR: 51000,
+          priceMinorUSD: 13500,
         },
       ],
       images: [
-        'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=1000&q=80',
+        'https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=1000&q=80',
+      ],
+    },
+    {
+      name: 'Ivoire',
+      slug: 'ivoire',
+      description:
+        'A soft, creamy fragrance built around the delicate sweetness of powder and white honey. As it settles, creamy coconut meets clean musk, creating a smooth and comforting trail with an understated sense of luxury.',
+      categoryId: categoryParfum.id,
+      variants: [
+        {
+          sku: 'IVO-50ML',
+          name: '50ml Extrait',
+          size: '50ml',
+          price: 320.0,
+          stock: 50,
+          priceMinorAED: 32000,
+          priceMinorSAR: 33000,
+          priceMinorUSD: 8700,
+        },
+        {
+          sku: 'IVO-100ML',
+          name: '100ml Extrait Flacon',
+          size: '100ml',
+          price: 495.0,
+          stock: 35,
+          priceMinorAED: 49500,
+          priceMinorSAR: 51000,
+          priceMinorUSD: 13500,
+        },
+      ],
+      images: [
+        'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=1000&q=80',
+        'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=1000&q=80',
       ],
     },
   ];
+
 
   for (const p of productsData) {
     const product = await prisma.product.upsert({

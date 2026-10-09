@@ -58,12 +58,9 @@ function getFallbackData<T>(path: string, options: RequestInit): Promise<T> {
 
       if (path.includes('/catalog/products')) {
         const catalogProducts = [
-          { id: 'prod-perf-001', name: 'Dakhoon', slug: 'dakhoon', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 299, sku: 'PERF-DAK-100ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101'] },
-          { id: 'prod-perf-002', name: 'Coffee Oud', slug: 'coffee-oud', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 279, sku: 'PERF-COF-100ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/CoffeeOud.jpg?v=1770414703'] },
-          { id: 'prod-perf-003', name: 'The Dark Horse', slug: 'the-dark-horse', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 319, sku: 'PERF-DRK-100ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dark_Horse.png?v=1770388755'] },
-          { id: 'prod-mist-001', name: 'Rose Saffron Mist', slug: 'rose-saffron-mist', category: { name: 'Mists' }, status: 'ACTIVE', price: 89, sku: 'MIST-ROS-200ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618'] },
-          { id: 'prod-mist-002', name: 'Oud Noir Mist', slug: 'oud-noir-mist', category: { name: 'Mists' }, status: 'ACTIVE', price: 95, sku: 'MIST-OUD-200ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Voice_of_the_soul_1.jpg?v=1692390886'] },
-          { id: 'prod-mist-003', name: 'Citrus Bloom Mist', slug: 'citrus-bloom-mist', category: { name: 'Mists' }, status: 'ACTIVE', price: 79, sku: 'MIST-CIT-200ML', images: ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Nadeem_1.jpg?v=1692390847'] },
+          { id: 'prod-cedre', name: 'Cedre', slug: 'cedre', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 495, sku: 'CED-EXT-100ML', images: ['https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1000&q=80'] },
+          { id: 'prod-selene', name: 'Selene', slug: 'selene', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 495, sku: 'SEL-EXT-100ML', images: ['https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=1000&q=80'] },
+          { id: 'prod-ivoire', name: 'Ivoire', slug: 'ivoire', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 495, sku: 'IVO-EXT-100ML', images: ['https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=1000&q=80'] },
         ];
         resolve({ items: catalogProducts, total: catalogProducts.length } as any);
         return;
@@ -96,9 +93,9 @@ function getFallbackData<T>(path: string, options: RequestInit): Promise<T> {
 
       if (path.includes('/admin/collections') || path.includes('/catalog/collections')) {
         const seedCollections = [
-          { id: 'col-all', name: 'All Fragrances', slug: 'all', description: 'Explore the complete Oud Nomad universe — luxury perfumes and refreshing mists.', bannerImage: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Dakhoon.jpg?v=1770415101', status: 'ACTIVE', sortOrder: 0, productCount: 6, products: [] },
-          { id: 'col-perfumes', name: 'Perfumes', slug: 'perfumes', description: 'Intense, long-lasting Extrait de Parfum and Eau de Parfum blends built around rare agarwood, saffron, and precious florals.', bannerImage: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/CoffeeOud.jpg?v=1770414703', status: 'ACTIVE', sortOrder: 1, productCount: 3, products: [] },
-          { id: 'col-mists', name: 'Mists', slug: 'mists', description: 'Light, refreshing body and hair mists — the perfect everyday scent for warm GCC days and effortless layering.', bannerImage: 'https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618', status: 'ACTIVE', sortOrder: 2, productCount: 3, products: [] },
+          { id: 'col-all', name: 'All Fragrances', slug: 'all', description: 'Explore the complete Oud Nomad universe — luxury perfumes and refreshing creations.', bannerImage: '/perfume-banner.jpg', status: 'ACTIVE', sortOrder: 0, productCount: 3, products: [] },
+          { id: 'col-perfumes', name: 'Perfumes', slug: 'perfumes', description: 'Intense, long-lasting Extrait de Parfum blends crafted with rare botanicals, precious resins, and warm musks.', bannerImage: '/perfume-banner.jpg', status: 'ACTIVE', sortOrder: 1, productCount: 3, products: [] },
+          { id: 'col-mists', name: 'Mists', slug: 'mists', description: 'Light, refreshing body and hair mists — the perfect everyday scent for warm GCC days and effortless layering.', bannerImage: '/banners.jpg', status: 'ACTIVE', sortOrder: 2, productCount: 0, products: [] },
         ];
         resolve({ items: seedCollections, total: seedCollections.length } as any);
         return;

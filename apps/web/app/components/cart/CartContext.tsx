@@ -37,28 +37,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Hydrate from localStorage on mount
+  // Clear demo products from localStorage on mount
   useEffect(() => {
     setMounted(true);
     try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (saved) {
-        setItems(JSON.parse(saved));
-      }
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      localStorage.removeItem('oudnomad_cart');
+      localStorage.removeItem('cart');
+      localStorage.removeItem('BSPD_CART_DATA_LOCAL_KEY');
+      localStorage.removeItem('BSPD_LAST_SENT_CART_PRODUCTS_KEY');
+      setItems([]);
     } catch (err) {
-      console.error('Failed to parse saved cart:', err);
+      console.error('Failed to clear saved cart from local storage:', err);
     }
-
-    // Attempt to sync with backend if online
-    StoreApi.getCart()
-      .then((res) => {
-        if (res && Array.isArray(res.items) && res.items.length > 0) {
-          // Process backend items
-        }
-      })
-      .catch(() => {
-        /* fallback to local state */
-      });
   }, []);
 
   // Save to localStorage on change

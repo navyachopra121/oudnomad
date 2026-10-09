@@ -160,7 +160,7 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
                   href="/fragrance-finder"
                   className="nav-link py-2 text-[#ffb91d] hover:text-white transition-colors font-medium flex items-center gap-1.5"
                 >
-                  <span>FRAGRANCE FINDER</span>
+                  <span className='text-[#ffb91d]'>FRAGRANCE FINDER</span>
                   <span className="text-[9px] px-1 py-0.5 bg-[#ffb91d]/15 text-[#ffb91d] border border-[#ffb91d]/40 rounded-xs tracking-normal">QUIZ</span>
                 </Link>
               </nav>

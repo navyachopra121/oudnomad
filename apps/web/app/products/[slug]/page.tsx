@@ -70,6 +70,11 @@ export default function ProductDetailPage({ params }: PageProps) {
       setLoading(true);
       try {
         const prod = await StoreApi.getProductBySlug(slug);
+        if (!prod) {
+          setProduct(null);
+          setLoading(false);
+          return;
+        }
         setProduct(prod);
         if (prod.images && prod.images.length > 0) {
           setSelectedImage(prod.images[0]);
