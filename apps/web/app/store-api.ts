@@ -33,7 +33,14 @@ export interface ProductItem {
   id: string;
   name: string;
   slug: string;
+  tagline?: string;
   description: string;
+  olfactoryStory?: string;
+  moodAndCharacter?: string;
+  moods?: string[];
+  signature?: string;
+  philosophy?: string;
+  ingredients?: string;
   price: number;
   currency: string;
   category: string;
@@ -346,17 +353,24 @@ export const MAPPED_OUD_PRODUCTS: ProductItem[] = OUD_PRODUCTS.map((p) => ({
   id: p.id,
   name: p.title,
   slug: p.handle,
+  tagline: p.tagline,
   description: p.description,
+  olfactoryStory: p.olfactoryStory,
+  moodAndCharacter: p.moodAndCharacter,
+  moods: p.moods,
+  signature: p.signature,
+  philosophy: p.philosophy,
+  ingredients: p.ingredients,
   price: p.price,
   currency: 'AED',
   category: p.category,
-  concentration: p.features?.type || (p.category === 'attars' ? 'Pure Oil (Attar)' : 'Eau de Parfum / Extrait'),
+  concentration: p.features?.type || 'Fragrance Mist',
   origin: 'Dubai, UAE',
   images: p.images && p.images.length > 0 ? p.images : ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618'],
   notes: {
-    top: p.features?.topNotes ? p.features.topNotes.split(/[,&]+/).map((s: string) => s.trim()).filter(Boolean) : ['Jasmine', 'Taif Rose'],
-    heart: p.features?.middleNotes ? p.features.middleNotes.split(/[,&]+/).map((s: string) => s.trim()).filter(Boolean) : ['Rose de Mai', 'Lily'],
-    base: p.features?.baseNotes ? p.features.baseNotes.split(/[,&]+/).map((s: string) => s.trim()).filter(Boolean) : ['Aged Wild Oud', 'White Musk'],
+    top: p.features?.topNotes ? p.features.topNotes.split(/[,&]+/).map((s: string) => s.trim()).filter(Boolean) : [],
+    heart: p.features?.middleNotes ? p.features.middleNotes.split(/[,&]+/).map((s: string) => s.trim()).filter(Boolean) : [],
+    base: p.features?.baseNotes ? p.features.baseNotes.split(/[,&]+/).map((s: string) => s.trim()).filter(Boolean) : [],
   },
   variants: [
     { id: `${p.id}-std`, size: p.features?.quantity || '100ml', price: p.price, sku: p.handle, inStock: true }

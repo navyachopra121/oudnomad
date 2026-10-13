@@ -270,15 +270,15 @@ export default function CollectionPlpPage({ params }: PageProps) {
                       </div> */}
                     </div>
 
-                    {/* Meta Info — minimal: name + price only */}
-                    <div className="px-3 py-3">
+                    {/* Meta Info — minimal: name (left) + price (right) */}
+                    <div className="px-3.5 py-3 flex items-center justify-between gap-2">
                       <Link
                         href={`/products/${prod.slug}`}
-                        className="font-serif text-sm text-white hover:text-[#ffb91d] transition-colors block line-clamp-1 mb-1"
+                        className="font-serif text-sm text-white uppercase hover:text-[#ffb91d] transition-colors truncate tracking-wide"
                       >
                         {prod.name}
                       </Link>
-                      <span className="text-sm font-medium text-[#ffb91d] tracking-wide">
+                      <span className="text-sm font-medium text-[#ffb91d] tracking-wide shrink-0 font-mono">
                         {formatPrice(prod.price)}
                       </span>
                     </div>

@@ -58,9 +58,51 @@ function getFallbackData<T>(path: string, options: RequestInit): Promise<T> {
 
       if (path.includes('/catalog/products')) {
         const catalogProducts = [
-          { id: 'prod-cedre', name: 'Cedre', slug: 'cedre', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 495, sku: 'CED-EXT-100ML', images: ['https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1000&q=80'] },
-          { id: 'prod-selene', name: 'Selene', slug: 'selene', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 495, sku: 'SEL-EXT-100ML', images: ['https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=1000&q=80'] },
-          { id: 'prod-ivoire', name: 'Ivoire', slug: 'ivoire', category: { name: 'Perfumes' }, status: 'ACTIVE', price: 495, sku: 'IVO-EXT-100ML', images: ['https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=1000&q=80'] },
+          {
+            id: 'prod-cedre',
+            name: 'Cèdre',
+            slug: 'cedre',
+            category: { name: 'Mists' },
+            status: 'ACTIVE',
+            price: 495,
+            sku: 'CED-MST-100ML',
+            tagline: 'A GOLDEN HOUR, HELD IN SCENT.',
+            signature: 'Golden warmth. A lingering presence.',
+            moodAndCharacter: 'Warm · Sensual · Gourmand · Opulent',
+            ingredients: 'Alcohol Denat. 80%, Fragrance (Parfum) 16%, D.M. Water 4%.',
+            features: { quantity: '100ml', type: 'Fragrance Mist', longevity: '8 Hours', topNotes: 'Vanilla, Honey', middleNotes: 'Amber', baseNotes: 'Caramel, White Musk' },
+            images: ['https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1000&q=80']
+          },
+          {
+            id: 'prod-selene',
+            name: 'Sélène',
+            slug: 'selene',
+            category: { name: 'Mists' },
+            status: 'ACTIVE',
+            price: 495,
+            sku: 'SEL-MST-100ML',
+            tagline: 'THE SILENCE BEFORE MIDNIGHT.',
+            signature: 'Quiet elegance. An unforgettable afterglow.',
+            moodAndCharacter: 'Floral · Serene · Sophisticated · Refined',
+            ingredients: 'Alcohol Denat. 80%, Fragrance (Parfum) 16%, D.M. Water 4%.',
+            features: { quantity: '100ml', type: 'Fragrance Mist', longevity: '8 Hours', topNotes: 'Lavender, Musk', middleNotes: 'Orchid, Jasmine', baseNotes: 'Tonka Bean, Vetiver' },
+            images: ['https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=1000&q=80']
+          },
+          {
+            id: 'prod-ivoire',
+            name: 'Ivoire',
+            slug: 'ivoire',
+            category: { name: 'Mists' },
+            status: 'ACTIVE',
+            price: 495,
+            sku: 'IVO-MST-100ML',
+            tagline: 'THE LUXURY OF SOFTNESS.',
+            signature: 'An intimate softness. A lasting impression.',
+            moodAndCharacter: 'Soft · Creamy · Luminous · Sensual',
+            ingredients: 'Alcohol Denat. 80%, Fragrance (Parfum) 16%, D.M. Water 4%.',
+            features: { quantity: '100ml', type: 'Fragrance Mist', longevity: '8 Hours', topNotes: 'Sweet Powder', middleNotes: 'White Honey', baseNotes: 'Coconut, Musk' },
+            images: ['https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=1000&q=80']
+          },
         ];
         resolve({ items: catalogProducts, total: catalogProducts.length } as any);
         return;
@@ -94,8 +136,8 @@ function getFallbackData<T>(path: string, options: RequestInit): Promise<T> {
       if (path.includes('/admin/collections') || path.includes('/catalog/collections')) {
         const seedCollections = [
           { id: 'col-all', name: 'All Fragrances', slug: 'all', description: 'Explore the complete Oud Nomad universe — luxury perfumes and refreshing creations.', bannerImage: '/perfume-banner.jpg', status: 'ACTIVE', sortOrder: 0, productCount: 3, products: [] },
-          { id: 'col-perfumes', name: 'Perfumes', slug: 'perfumes', description: 'Intense, long-lasting Extrait de Parfum blends crafted with rare botanicals, precious resins, and warm musks.', bannerImage: '/perfume-banner.jpg', status: 'ACTIVE', sortOrder: 1, productCount: 3, products: [] },
-          { id: 'col-mists', name: 'Mists', slug: 'mists', description: 'Light, refreshing body and hair mists — the perfect everyday scent for warm GCC days and effortless layering.', bannerImage: '/banners.jpg', status: 'ACTIVE', sortOrder: 2, productCount: 0, products: [] },
+          { id: 'col-mists', name: 'Mists', slug: 'mists', description: 'Light, refreshing body and hair mists — the perfect everyday scent for warm GCC days and effortless layering.', bannerImage: '/banners.jpg', status: 'ACTIVE', sortOrder: 1, productCount: 3, products: [] },
+          { id: 'col-perfumes', name: 'Perfumes', slug: 'perfumes', description: 'Intense, long-lasting Extrait de Parfum blends crafted with rare botanicals, precious resins, and warm musks.', bannerImage: '/perfume-banner.jpg', status: 'ACTIVE', sortOrder: 2, productCount: 0, products: [] },
         ];
         resolve({ items: seedCollections, total: seedCollections.length } as any);
         return;

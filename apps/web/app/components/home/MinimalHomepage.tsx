@@ -9,21 +9,21 @@ import UGCSection from './UGCSection';
 const TOP_SELLERS_PRODUCTS = [
   {
     id: 'cedre',
-    name: 'CEDRE EXTRAIT [ 100ML ]',
+    name: 'CÈDRE MIST [ 100ML ]',
     price: 'AED 495.00',
     slug: 'cedre',
     image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1000&q=80',
   },
   {
     id: 'selene',
-    name: 'SELENE EXTRAIT [ 100ML ]',
+    name: 'SÉLÈNE MIST [ 100ML ]',
     price: 'AED 495.00',
     slug: 'selene',
     image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=1000&q=80',
   },
   {
     id: 'ivoire',
-    name: 'IVOIRE EXTRAIT [ 100ML ]',
+    name: 'IVOIRE MIST [ 100ML ]',
     price: 'AED 495.00',
     slug: 'ivoire',
     image: 'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=1000&q=80',
@@ -59,7 +59,7 @@ export default function MinimalHomepage() {
           <Reveal>
             <div className="max-w-2xl mx-auto px-4 space-y-4">
               <p className="font-sans text-[13px] sm:text-[14px] leading-[1.7] text-white font-normal tracking-[0.06em] drop-shadow-lg">
-                &ldquo;We believe that a perfumer is a poet or a storyteller who use intangible ingredients to create emotions. The main idea behind Oud Nomad is to Abstract memories that evoke our cores. We paint pictures without using paint. We are storytellers who do not need words.&rdquo;
+                &ldquo;Born between two worlds &mdash; the warmth of the East and the ambition of Dubai &mdash; Oud Nomad exists for the woman who belongs everywhere. We don&rsquo;t create perfumes. We craft the stories you carry on your skin.&rdquo;
               </p>
               <div className="pt-2">
                 <Link
@@ -82,7 +82,7 @@ export default function MinimalHomepage() {
               <div className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
                 {/* Reference site section h2: 14px, font-weight 400, letter-spacing 0.3em, uppercase */}
                 <h2 className="font-sans text-[13px] sm:text-[14px] text-[#ffb91d] font-normal uppercase tracking-[0.3em]">
-                  TOP SELLERS
+                  MOST LOVED
                 </h2>
               </div>
             </Reveal>
@@ -231,11 +231,11 @@ export default function MinimalHomepage() {
             <Reveal delayMs={200}>
               <div className="space-y-4 text-center lg:text-left">
                 <h2 className="font-sans text-[13px] sm:text-[14px] text-[#ffb91d] font-normal uppercase tracking-[0.3em]">
-                  FEATURED
+                  OUR ACCORDS
                 </h2>
                 {/* Body text: 13-14px, font-weight 400, leading 1.7 */}
                 <p className="text-[13px] sm:text-[14px] leading-[1.7] text-white font-normal max-w-lg mx-auto lg:mx-0">
-                  Immerse yourself in a universe where scents become memories, and luxury becomes your second skin.
+                  Each accord is a chapter — a place, a memory, a feeling you didn&rsquo;t know you were carrying. Wear your journey.
                 </p>
                 <div className="pt-2">
                   {/* Button: 11px, font-weight 400, letter-spacing 0.22em */}
@@ -243,7 +243,7 @@ export default function MinimalHomepage() {
                     href="/collections"
                     className="inline-block px-8 py-3 text-[11px] uppercase tracking-[0.22em] font-normal bg-[#ffb91d] text-black hover:bg-[#e5a61a] transition-all"
                   >
-                    VISIT GALLERY
+                    EXPLORE ALL
                   </Link>
                 </div>
               </div>
@@ -273,19 +273,19 @@ export default function MinimalHomepage() {
             <div className="max-w-xl bg-black/85 backdrop-blur-md border border-[#ffb91d]/40 p-8 sm:p-12 text-left">
               {/* Eyebrow: 10px, font-weight 400, letter-spacing 0.25em */}
               <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#ffb91d] font-normal block mb-2">
-                EXPRESS SHIPPING
+                WHEREVER YOU WANDER
               </span>
               <h2 className="font-sans text-[13px] sm:text-[14px] text-[#ffb91d] font-normal uppercase tracking-[0.2em] mb-3 leading-snug">
-                DELIVERING ACROSS ALL GCC COUNTRIES
+                YOUR FRAGRANCE, DELIVERED ACROSS THE GCC
               </h2>
               <p className="text-[13px] text-white font-normal leading-[1.7] mb-6">
-                Fast & insured courier shipping to UAE, Saudi Arabia, Qatar, Kuwait, Oman & Bahrain. UK shipping coming soon.
+                Fast &amp; insured delivery to UAE, Saudi Arabia, Qatar, Kuwait, Oman &amp; Bahrain. Your next chapter, on its way.
               </p>
               <Link
-                href="/collections"
+                href="/fragrance-finder"
                 className="inline-block px-8 py-3 text-[11px] uppercase tracking-[0.22em] font-normal bg-[#ffb91d] text-black hover:bg-[#e5a61a] transition-all"
               >
-                EXPLORE COLLECTIONS
+                FIND YOUR SCENT
               </Link>
             </div>
           </Reveal>
@@ -297,10 +297,10 @@ export default function MinimalHomepage() {
         <Container className="max-w-4xl mx-auto text-center px-4">
           <Reveal>
             <h2 className="font-sans text-[13px] sm:text-[14px] font-normal uppercase tracking-[0.3em] text-[#ffb91d] mb-5">
-              A FRAGRANCE STORY
+              WEAR YOUR JOURNEY
             </h2>
             <p className="text-[13px] sm:text-[14px] leading-[1.7] text-white font-normal tracking-[0.04em] max-w-3xl mx-auto">
-              Oud Nomad was born from a desire to elevate Oriental perfumery to its highest expression. Combining centuries-old Arabian distillation traditions with modern Parisian elegance, each flacon contains liquid gold born of patient aging and uncompromising passion.
+              Oud Nomad was founded in Dubai by a woman who grew up between worlds — Amritsar roots, Gulf soul, global spirit. Unable to find a fragrance that honoured both, she built one. Every scent we create holds that tension: Eastern warmth and modern ambition, together on your skin.
             </p>
           </Reveal>
         </Container>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, use } from 'react';
+import React, { useEffect, useState, useRef, use } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -30,6 +30,8 @@ export default function ProductDetailPage({ params }: PageProps) {
   const [selectedVariant, setSelectedVariant] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+  const primaryCtaRef = useRef<HTMLDivElement>(null);
 
   // Lightbox + carousel state
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -61,6 +63,25 @@ export default function ProductDetailPage({ params }: PageProps) {
     document.body.style.overflow = lightboxOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [lightboxOpen]);
+
+  // Show sticky bottom bar once primary CTA scrolls off-screen above viewport
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!primaryCtaRef.current) return;
+      const rect = primaryCtaRef.current.getBoundingClientRect();
+      // Appears when primary CTA is scrolled off-screen above the viewport
+      setShowStickyBar(rect.bottom < 0);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [product]);
 
   // Accordion state
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
@@ -313,25 +334,31 @@ export default function ProductDetailPage({ params }: PageProps) {
             {/* ── RIGHT COLUMN: Product Info — Sticky ── */}
             <div className="lg:col-span-5 lg:sticky lg:top-24 lg:pl-10 space-y-6">
               {/* Header Info */}
-              <div className="space-y-2 border-b border-white/10 pb-6">
-                {/* <span className="text-[10px] font-mono tracking-[0.35em] uppercase text-[#ffb91d] block">
-                  AYAL PERFUMES LLC • DUBAI (UAE)
-                </span> */}
-                <h1 className="text-xl sm:text-3xl font-normal text-white tracking-wide leading-tight">
-                  {product.name}
-                </h1>
+              <div className="space-y-3 border-b border-white/10 pb-6">
+                <div className="space-y-1">
+                  <h1 className="text-xl sm:text-3xl uppercase font-serif text-white tracking-wide leading-tight">
+                    {product.name}
+                  </h1>
+                  {product.tagline && (
+                    <p className="text-[11px] sm:text-xs font-mono tracking-[0.28em] text-[#ffb91d] uppercase font-medium">
+                      {product.tagline}
+                    </p>
+                  )}
+                </div>
 
                 {/* Rating & Reviews */}
-                <div className="flex items-center gap-3 pt-1">
+                <div className="flex items-center gap-3">
                   <div className="flex text-[#ffb91d] text-sm">★★★★★</div>
                   <span className="text-xs text-white/60 font-mono">
                     4.9 / 5.0 (28 customer reviews)
                   </span>
                 </div>
 
+
+
                 {/* Price Display */}
-                <div className="pt-3 flex flex-wrap items-baseline gap-3">
-                  <span className="text-2xl sm:text-3xl font-medium text-[#ffb91d] font-mono tracking-tight">
+                <div className="flex flex-wrap items-baseline gap-3">
+                  <span className="text-xl sm:text-2xl font-medium text-[#ffb91d] font-mono tracking-tight">
                     {formatPrice(activeVariantObj.price)}
                   </span>
                   {product.compareAtPrice && product.compareAtPrice > product.price && (
@@ -339,50 +366,102 @@ export default function ProductDetailPage({ params }: PageProps) {
                       {formatPrice(product.compareAtPrice)}
                     </span>
                   )}
-                  <span className="text-[11px] text-white/60 font-sans block w-full mt-1">
+                  <span className="text-[11px] text-white/60 font-sans block w-full mt-[-10px]">
                     Tax included. <strong className="text-white/80">Free express delivery</strong> across all GCC countries.
                   </span>
                 </div>
 
                 {/* In Stock Badge */}
-                <div className="pt-2 flex items-center gap-2 text-xs font-mono text-[#53ff73]">
-                  <span className="w-2 h-2 rounded-full bg-[#53ff73] animate-pulse" />
+                <div className="pt-1 flex items-center gap-2 text-xs font-mono text-[#ffb91d]">
+                  <span className="w-2 h-2 rounded-full bg-[#ffb91d] animate-pulse" />
                   <span>In stock, ready to dispatch from Dubai warehouse</span>
                 </div>
               </div>
 
 
               {/* ── FRAGRANCE NOTES ── */}
-              <div className="pt-2 space-y-3">
+              <div className="space-y-3">
                 <h3 className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#ffb91d]">
                   Fragrance Notes
                 </h3>
                 <div className="space-y-2.5">
                   {[
-                    { label: 'Top', value: product.features?.topNotes || 'Jasmine, Taif Rose, Ruh al Ward' },
-                    { label: 'Heart', value: product.features?.middleNotes || 'Jasmine Oud, Rose, Lavender' },
-                    { label: 'Base', value: product.features?.baseNotes || 'Amber, White Musk, Bulgarian Rose' },
+                    { label: 'Top', value: product.features?.topNotes || 'Vanilla, Honey' },
+                    { label: 'Heart', value: product.features?.middleNotes || 'Amber' },
+                    { label: 'Base', value: product.features?.baseNotes || 'Caramel, White Musk' },
                   ].map(({ label, value }) => (
                     <div key={label} className="flex items-start gap-3 text-xs">
                       <span className="shrink-0 w-12 text-[10px] font-mono uppercase tracking-widest text-[#ffb91d] pt-0.5">{label}</span>
-                      <span className="text-white/75 leading-relaxed">{value}</span>
+                      <span className="text-white/80 leading-relaxed font-sans">{value}</span>
                     </div>
                   ))}
-                  <div className="flex items-center gap-3 text-xs pt-1 border-t border-white/5">
+                  {/* Desktop View: untouched and exact */}
+                  <div className="hidden sm:flex sm:items-center sm:gap-3 text-xs pt-2 border-t border-white/5">
                     <span className="shrink-0 w-12 text-[10px] font-mono uppercase tracking-widest text-white/40">Vol</span>
-                    <span className="text-white/60 font-mono">{product.features?.quantity || (product.category === 'attars' ? '12ml' : '100ml')}</span>
+                    <span className="text-white/70 font-mono">{product.features?.quantity || '100ml'}</span>
+                    <span className="text-white/20 mx-1">·</span>
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-white/40">Type</span>
+                    <span className="text-white/70 font-mono">{product.features?.type || 'Fragrance Mist'}</span>
                     <span className="text-white/20 mx-1">·</span>
                     <span className="text-[10px] font-mono uppercase tracking-widest text-white/40">Longevity</span>
-                    <span className="text-white/60 font-mono">{product.features?.longevity || '48 Hours'}</span>
+                    <span className="text-white/70 font-mono">{product.features?.longevity || '8 Hours'}</span>
+                  </div>
+
+                  {/* Mobile View: Clean 3-column layout without awkward broken text */}
+                  <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-white/5 sm:hidden">
+                    <div className="flex flex-col">
+                      <span className="text-[9px] font-mono uppercase tracking-widest text-white/40">Vol</span>
+                      <span className="text-white/80 font-mono text-[11px] mt-0.5">{product.features?.quantity || '100ml'}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[9px] font-mono uppercase tracking-widest text-white/40">Type</span>
+                      <span className="text-white/80 font-mono text-[11px] mt-0.5 leading-snug">{product.features?.type || 'Fragrance Mist'}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[9px] font-mono uppercase tracking-widest text-white/40">Longevity</span>
+                      <span className="text-white/80 font-mono text-[11px] mt-0.5 leading-snug">{product.features?.longevity || '8 Hours'}</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
+              {/* The Signature */}
+              {product.signature && (
+                <div className="border-l-2 border-[#ffb91d] bg-white/[0.02] pl-3 py-1.5 my-2">
+                  <span className="block text-[9px] font-mono tracking-[0.25em] uppercase text-white/40">
+                    The Signature
+                  </span>
+                  <p className="text-xs sm:text-sm font-serif italic text-white/90">
+                    &ldquo;{product.signature}&rdquo;
+                  </p>
+                </div>
+              )}
 
+              {/* Mood & Character */}
+              {product.moodAndCharacter && (
+                <div className="pt-1 space-y-1.5">
+                  <span className="text-[9px] font-mono tracking-[0.25em] uppercase text-white/40 block">
+                    Mood & Character
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(Array.isArray(product.moodAndCharacter)
+                      ? product.moodAndCharacter
+                      : (product.moods || product.moodAndCharacter.split('·'))
+                    ).map((m: string) => (
+                      <span
+                        key={m}
+                        className="px-2.5 py-0.5 text-[10px] font-mono uppercase tracking-wider border border-[#ffb91d]/30 bg-[#ffb91d]/5 text-[#ffb91d]"
+                      >
+                        {m.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Quantity & CTA Buttons */}
               <div className="space-y-3 pt-2">
-                <div className="flex items-center gap-3">
+                <div ref={primaryCtaRef} className="flex items-center gap-3">
                   {/* Quantity Stepper */}
                   <div className="flex items-center border border-white/20 bg-[#121212] h-12">
                     <button
@@ -426,21 +505,67 @@ export default function ProductDetailPage({ params }: PageProps) {
                 </button>
 
                 {/* WhatsApp Order Button */}
-                <a
+                {/* <a
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full h-11 bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/40 font-medium text-xs uppercase tracking-[0.16em] transition-all flex items-center justify-center gap-2"
                 >
-                  <span>💬 Order via WhatsApp: +971 58 571 9731</span>
-                </a>
+                  <span>💬  WhatsApp: +971 58 571 9731</span>
+                </a> */}
               </div>
 
 
               {/* ── ACCORDIONS ── */}
               <div className="pt-2 border-t border-white/10 divide-y divide-white/10 font-sans text-xs">
 
-                {/* 1. About This Fragrance */}
+                {/* 1. The Olfactory Story */}
+                {/* <div>
+                  <button
+                    type="button"
+                    onClick={() => toggleAccordion('olfactory')}
+                    className="w-full py-4 flex items-center justify-between text-left text-white/90 hover:text-[#ffb91d] transition-colors font-medium uppercase tracking-wider text-xs"
+                  >
+                    <span>The Olfactory Story</span>
+                    <span className="font-mono text-base">{openAccordion === 'olfactory' ? '−' : '+'}</span>
+                  </button>
+                  {openAccordion === 'olfactory' && (
+                    <div className="pb-4 text-white/80 leading-relaxed bg-[#121212] p-5 border border-white/5 animate-fadeIn text-xs sm:text-sm font-serif space-y-3">
+                      {(product.olfactoryStory || product.description).split('\n\n').map((para, i) => (
+                        <p key={i} className="leading-relaxed">
+                          {para}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                </div> */}
+
+                {/* 2. The Oud Nomad Philosophy */}
+                {/* <div>
+                  <button
+                    type="button"
+                    onClick={() => toggleAccordion('philosophy')}
+                    className="w-full py-4 flex items-center justify-between text-left text-white/90 hover:text-[#ffb91d] transition-colors font-medium uppercase tracking-wider text-xs"
+                  >
+                    <span>The Oud Nomad Philosophy</span>
+                    <span className="font-mono text-base">{openAccordion === 'philosophy' ? '−' : '+'}</span>
+                  </button>
+                  {openAccordion === 'philosophy' && (
+                    <div className="pb-4 text-white/80 leading-relaxed bg-[#121212] p-5 border border-white/5 animate-fadeIn text-xs sm:text-sm space-y-3 font-serif">
+                      <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#ffb91d]">
+                        Born in Dubai, inspired by the spirit of exploration.
+                      </p>
+                      <p className="text-white/80 leading-relaxed font-sans text-xs sm:text-sm">
+                        Oud Nomad approaches fragrance as a personal signature — an invisible expression of presence, memory and individuality. Each composition invites a different encounter with the senses, designed to be experienced rather than simply worn.
+                      </p>
+                      <div className="border-t border-white/10 pt-3 text-[#ffb91d] font-mono text-[11px] uppercase tracking-wider">
+                        Because true luxury does not demand attention. It leaves a trace.
+                      </div>
+                    </div>
+                  )}
+                </div> */}
+
+                {/* 3. About This Fragrance */}
                 <div>
                   <button
                     type="button"
@@ -457,8 +582,33 @@ export default function ProductDetailPage({ params }: PageProps) {
                   )}
                 </div>
 
-                {/* 2. Have Questions? */}
+                {/* Ingredients */}
                 <div>
+                  <button
+                    type="button"
+                    onClick={() => toggleAccordion('ingredients')}
+                    className="w-full py-4 flex items-center justify-between text-left text-white/90 hover:text-[#ffb91d] transition-colors font-medium uppercase tracking-wider text-xs"
+                  >
+                    <span>Ingredients</span>
+                    <span className="font-mono text-base">{openAccordion === 'ingredients' ? '−' : '+'}</span>
+                  </button>
+                  {openAccordion === 'ingredients' && (
+                    <div className="pb-4 text-white/80 leading-relaxed bg-[#121212] p-4 sm:p-5 border border-white/5 animate-fadeIn text-xs space-y-3">
+                      <div>
+
+                        <p className="font-mono text-xs sm:text-[13px] text-white/90 uppercase tracking-wider leading-relaxed">
+                          {product.ingredients || 'Alcohol Denat. 80%, Fragrance (Parfum) 16%, D.M. Water 4%.'}
+                        </p>
+                      </div>
+                      <p className="text-[10px] text-white/40 pt-2 border-t border-white/5 leading-relaxed font-sans">
+                        Formulated in the UAE. Free of parabens, phthalates, and harsh sulfates. Cruelty-free and formulated in accordance with IFRA international fragrance standards.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* 4. Have Questions? */}
+                {/* <div>
                   <button
                     type="button"
                     onClick={() => toggleAccordion('questions')}
@@ -500,10 +650,30 @@ export default function ProductDetailPage({ params }: PageProps) {
                       </p>
                     </div>
                   )}
+                </div> */}
+
+
+
+                {/* 6. Shipping & Delivery */}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => toggleAccordion('shipping')}
+                    className="w-full py-4 flex items-center justify-between text-left text-white/90 hover:text-[#ffb91d] transition-colors font-medium uppercase tracking-wider text-xs"
+                  >
+                    <span>Shipping & Delivery</span>
+                    <span className="font-mono text-base">{openAccordion === 'shipping' ? '−' : '+'}</span>
+                  </button>
+                  {openAccordion === 'shipping' && (
+                    <div className="pb-4 text-white/70 space-y-2 leading-relaxed bg-[#121212] p-4 border border-white/5 animate-fadeIn">
+                      <p>• <strong className="text-white/90">Complimentary Express Shipping</strong> across all GCC countries (UAE, KSA, Qatar, Kuwait, Oman & Bahrain).</p>
+                      <p>• <strong className="text-white/90">Dispatch within 24 hours</strong> in discreet, temperature-controlled packaging.</p>
+                      <p>• <strong className="text-white/90">2–4 business days</strong> to major cities across the GCC.</p>
+                    </div>
+                  )}
                 </div>
 
-
-                {/* 3. Registered Address & Contact */}
+                {/* 5. Registered Address & Contact */}
                 <div>
                   <button
                     type="button"
@@ -523,28 +693,54 @@ export default function ProductDetailPage({ params }: PageProps) {
                   )}
                 </div>
 
-                {/* 3. Shipping & Delivery */}
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => toggleAccordion('shipping')}
-                    className="w-full py-4 flex items-center justify-between text-left text-white/90 hover:text-[#ffb91d] transition-colors font-medium uppercase tracking-wider text-xs"
-                  >
-                    <span>Shipping & Delivery</span>
-                    <span className="font-mono text-base">{openAccordion === 'shipping' ? '−' : '+'}</span>
-                  </button>
-                  {openAccordion === 'shipping' && (
-                    <div className="pb-4 text-white/70 space-y-2 leading-relaxed bg-[#121212] p-4 border border-white/5 animate-fadeIn">
-                      <p>• <strong className="text-white/90">Complimentary Express Shipping</strong> across all GCC countries (UAE, KSA, Qatar, Kuwait, Oman & Bahrain).</p>
-                      <p>• <strong className="text-white/90">Dispatch within 24 hours</strong> in discreet, temperature-controlled packaging.</p>
-                      <p>• <strong className="text-white/90">2–4 business days</strong> to major cities across the GCC.</p>
-                    </div>
-                  )}
-                </div>
-
               </div>
             </div>
           </div>
+
+          {/* ── THE OLFACTORY STORY & MAISON PHILOSOPHY SHOWCASE ── */}
+          {/* <section className="pt-16 sm:pt-24 border-t border-white/10">
+            <div className="max-w-4xl mx-auto text-center space-y-10 px-4">
+              <div className="space-y-3">
+                <span className="text-[10px] font-mono tracking-[0.35em] uppercase text-[#ffb91d]">
+                  THE OLFACTORY STORY
+                </span>
+                <h2 className="text-2xl sm:text-4xl font-serif text-white tracking-wide">
+                  {product.tagline || product.name}
+                </h2>
+              </div>
+
+              {product.olfactoryStory && (
+                <div className="space-y-6 text-white/80 font-serif text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+                  {product.olfactoryStory.split('\n\n').map((para, i) => (
+                    <p key={i}>{para}</p>
+                  ))}
+                </div>
+              )}
+
+              {product.signature && (
+                <div className="pt-4 border-t border-b border-white/10 py-6 max-w-xl mx-auto">
+                  <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-[#ffb91d] block mb-2">
+                    THE SIGNATURE
+                  </span>
+                  <p className="font-serif italic text-lg sm:text-xl text-white">
+                    &ldquo;{product.signature}&rdquo;
+                  </p>
+                </div>
+              )}
+
+              <div className="pt-6 space-y-4 max-w-2xl mx-auto">
+                <span className="text-[9px] font-mono tracking-[0.35em] uppercase text-white/40 block">
+                  THE OUD NOMAD PHILOSOPHY
+                </span>
+                <p className="text-xs sm:text-sm text-white/60 font-sans tracking-wide leading-relaxed">
+                  Born in Dubai, inspired by the spirit of exploration. Oud Nomad approaches fragrance as a personal signature — an invisible expression of presence, memory and individuality. Each composition invites a different encounter with the senses, designed to be experienced rather than simply worn.
+                </p>
+                <p className="text-xs sm:text-sm font-mono tracking-[0.2em] uppercase text-[#ffb91d] pt-2">
+                  Because true luxury does not demand attention. It leaves a trace.
+                </p>
+              </div>
+            </div>
+          </section> */}
 
           {/* ── YOU MAY ALSO LIKE / BEST SELLERS SECTION ── */}
           <section className="pt-16 border-t border-white/10 space-y-8">
@@ -573,11 +769,11 @@ export default function ProductDetailPage({ params }: PageProps) {
                       className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
                     />
                   </div>
-                  <div className="px-3 py-3">
-                    <h4 className="text-xs sm:text-sm font-serif text-white group-hover:text-[#ffb91d] transition-colors line-clamp-1 mb-1">
+                  <div className="px-3.5 py-3 flex items-center justify-between gap-2">
+                    <h4 className="text-xs sm:text-sm font-serif text-white uppercase group-hover:text-[#ffb91d] transition-colors truncate tracking-wide">
                       {rec.name}
                     </h4>
-                    <p className="text-xs font-mono text-[#ffb91d] font-medium">
+                    <p className="text-xs sm:text-sm font-mono text-[#ffb91d] font-medium shrink-0">
                       {formatPrice(rec.price)}
                     </p>
                   </div>
@@ -587,7 +783,7 @@ export default function ProductDetailPage({ params }: PageProps) {
           </section>
 
           {/* ── CUSTOMER REVIEWS ── */}
-          <section id="reviews" className="pt-16 border-t border-white/10 space-y-8">
+          {/* <section id="reviews" className="pt-16 border-t border-white/10 space-y-8">
             <div className="space-y-1">
               <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#ffb91d]">CUSTOMER REVIEWS</span>
               <h2 className="text-2xl font-serif text-white">What Our Clients Say</h2>
@@ -628,7 +824,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                 </div>
               ))}
             </div>
-          </section>
+          </section> */}
         </Container>
       </main>
 
@@ -715,6 +911,79 @@ export default function ProductDetailPage({ params }: PageProps) {
           </div>
         </div>
       )}
+
+      {/* ── STICKY ADD TO CART BAR ── */}
+      <div
+        className={`fixed z-40 transition-all duration-300 ease-out 
+          bottom-0 inset-x-0 sm:bottom-6 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 
+          w-full sm:w-[94%] sm:max-w-2xl px-3 sm:px-0
+          pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 sm:py-0
+          ${showStickyBar ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-full sm:translate-y-12 opacity-0 pointer-events-none'}`}
+      >
+        <div className="bg-[#101010]/95 backdrop-blur-md border border-[#ffb91d]/30 rounded-xl sm:rounded-full px-3.5 sm:px-5 py-2.5 sm:py-2.5 shadow-[0_10px_35px_rgba(0,0,0,0.85)] flex items-center justify-between gap-3 sm:gap-4">
+          {/* Left: Product Thumbnail + Title + Price */}
+          <div className="flex items-center gap-2.5 min-w-0">
+            {product.images && product.images[0] && (
+              <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-sm sm:rounded-full overflow-hidden bg-stone-900 border border-white/10 shrink-0">
+                <Image
+                  src={selectedImage || product.images[0]}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <h4 className="text-xs sm:text-sm font-medium text-white truncate tracking-wide">
+                  {product.name}
+                </h4>
+                <span className="hidden md:inline-block text-[10px] font-mono text-white/40 uppercase">
+                  · {activeVariantObj.size || '100ml'}
+                </span>
+              </div>
+              <div className="text-[11px] sm:text-xs font-mono font-medium text-[#ffb91d]">
+                {formatPrice(activeVariantObj.price)}
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Quantity Selector & Add To Cart Button */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Quantity Stepper */}
+            <div className="flex items-center border border-white/20 bg-black/60 rounded sm:rounded-full h-8 sm:h-9">
+              <button
+                type="button"
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="w-7 sm:w-8 h-full text-white/70 hover:text-white hover:bg-white/10 font-mono text-xs sm:text-sm transition-colors rounded-l sm:rounded-l-full flex items-center justify-center"
+                aria-label="Decrease quantity"
+              >
+                -
+              </button>
+              <span className="px-2 sm:px-2.5 font-mono text-xs font-semibold text-white">
+                {quantity}
+              </span>
+              <button
+                type="button"
+                onClick={() => setQuantity(quantity + 1)}
+                className="w-7 sm:w-8 h-full text-white/70 hover:text-white hover:bg-white/10 font-mono text-xs sm:text-sm transition-colors rounded-r sm:rounded-r-full flex items-center justify-center"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
+
+            {/* Sticky Add to Cart Button */}
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className="h-8 sm:h-9 px-3.5 sm:px-5 bg-[#d89528] hover:bg-[#ffb91d] text-black font-semibold text-[10px] sm:text-xs uppercase tracking-[0.16em] sm:tracking-[0.2em] rounded sm:rounded-full transition-all duration-300 shadow-md flex items-center justify-center gap-1.5 active:scale-95"
+            >
+              <span>{addedToCart ? '✔ Added' : 'Add to Cart'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
     </div>
 

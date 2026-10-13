@@ -139,7 +139,7 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
             className="block py-2.5 text-[#ffb91d] hover:text-[#ffb91d] transition-colors border-b border-white/10"
             onClick={onClose}
           >
-            FRAGRANCE FINDER
+            FIND YOUR SCENTS
           </Link>
 
           <Link
@@ -151,7 +151,7 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
           </Link>
 
           <Link
-            href="/about"
+            href="/about/v2"
             className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors border-b border-white/10"
             onClick={onClose}
           >

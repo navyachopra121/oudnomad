@@ -8,8 +8,13 @@ const defaultForm = () => ({
   name: '',
   slug: '',
   sku: 'OUD-' + Math.floor(100 + Math.random() * 900),
-  categoryName: 'Royal Oud & Extraits',
-  price: 350,
+  categoryName: 'Mists',
+  tagline: '',
+  moodAndCharacter: '',
+  signature: '',
+  olfactoryStory: '',
+  ingredients: 'Alcohol Denat. 80%, Fragrance (Parfum) 16%, D.M. Water 4%.',
+  price: 495,
   compareAtPrice: '',
   status: 'ACTIVE',
   description: '',
@@ -19,9 +24,9 @@ const defaultForm = () => ({
   middleNotes: '',
   baseNotes: '',
   quantity: '100ml',
-  longevity: '8-12 Hours',
-  type: 'Extrait de Parfum',
-  variants: [{ size: '100ml', price: 350, sku: '' }] as { size: string; price: number; sku: string }[],
+  longevity: '8 Hours',
+  type: 'Fragrance Mist',
+  variants: [{ size: '100ml', price: 495, sku: '' }] as { size: string; price: number; sku: string }[],
 });
 
 type FormData = ReturnType<typeof defaultForm>;
@@ -79,8 +84,13 @@ export default function AdminProductsPage() {
       name: product.name || '',
       slug: product.slug || '',
       sku: product.sku || '',
-      categoryName: product.category?.name || 'Royal Oud & Extraits',
-      price: product.price || 350,
+      categoryName: product.category?.name || 'Mists',
+      tagline: product.tagline || '',
+      moodAndCharacter: product.moodAndCharacter || '',
+      signature: product.signature || '',
+      olfactoryStory: product.olfactoryStory || '',
+      ingredients: product.ingredients || 'Alcohol Denat. 80%, Fragrance (Parfum) 16%, D.M. Water 4%.',
+      price: product.price || 495,
       compareAtPrice: product.compareAtPrice || '',
       status: product.status || 'ACTIVE',
       description: product.description || '',
@@ -90,11 +100,11 @@ export default function AdminProductsPage() {
       middleNotes: product.features?.middleNotes || '',
       baseNotes: product.features?.baseNotes || '',
       quantity: product.features?.quantity || '100ml',
-      longevity: product.features?.longevity || '8-12 Hours',
-      type: product.features?.type || product.concentration || 'Extrait de Parfum',
+      longevity: product.features?.longevity || '8 Hours',
+      type: product.features?.type || product.concentration || 'Fragrance Mist',
       variants: product.variants?.length
         ? product.variants.map((v: any) => ({ size: v.size || '100ml', price: v.price || product.price, sku: v.sku || '' }))
-        : [{ size: '100ml', price: product.price || 350, sku: product.sku || '' }],
+        : [{ size: '100ml', price: product.price || 495, sku: product.sku || '' }],
     });
     setShowModal(true);
   };
@@ -107,6 +117,11 @@ export default function AdminProductsPage() {
       slug: formData.slug,
       sku: formData.sku,
       categoryName: formData.categoryName,
+      tagline: formData.tagline,
+      moodAndCharacter: formData.moodAndCharacter,
+      signature: formData.signature,
+      olfactoryStory: formData.olfactoryStory,
+      ingredients: formData.ingredients,
       price: Number(formData.price),
       compareAtPrice: formData.compareAtPrice ? Number(formData.compareAtPrice) : null,
       status: formData.status,
@@ -296,19 +311,38 @@ export default function AdminProductsPage() {
                           name: e.target.value,
                           slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
                         }))}
-                        className={inputClass} placeholder="e.g. Royal Cambodian Oud Extrait" />
+                        className={inputClass} placeholder="e.g. Cèdre" />
+                    </div>
+
+                    <div>
+                      <label className={labelClass}>Tagline / Subtitle</label>
+                      <input type="text" value={formData.tagline} onChange={(e) => set('tagline', e.target.value)}
+                        className={inputClass} placeholder="e.g. A GOLDEN HOUR, HELD IN SCENT." />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className={labelClass}>The Signature</label>
+                        <input type="text" value={formData.signature} onChange={(e) => set('signature', e.target.value)}
+                          className={inputClass} placeholder="e.g. Golden warmth. A lingering presence." />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Mood &amp; Character</label>
+                        <input type="text" value={formData.moodAndCharacter} onChange={(e) => set('moodAndCharacter', e.target.value)}
+                          className={inputClass} placeholder="e.g. Warm · Sensual · Gourmand · Opulent" />
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className={labelClass}>URL Slug *</label>
                         <input required type="text" value={formData.slug} onChange={(e) => set('slug', e.target.value)}
-                          className={`${inputClass} font-mono`} placeholder="royal-cambodian-oud" />
+                          className={`${inputClass} font-mono`} placeholder="cedre" />
                       </div>
                       <div>
                         <label className={labelClass}>SKU *</label>
                         <input required type="text" value={formData.sku} onChange={(e) => set('sku', e.target.value)}
-                          className={`${inputClass} font-mono`} placeholder="OUD-ROY-100ML" />
+                          className={`${inputClass} font-mono`} placeholder="CED-MST-100ML" />
                       </div>
                     </div>
 
@@ -330,6 +364,8 @@ export default function AdminProductsPage() {
                       <div>
                         <label className={labelClass}>Category *</label>
                         <select value={formData.categoryName} onChange={(e) => set('categoryName', e.target.value)} className={inputClass}>
+                          <option value="Mists">Mists</option>
+                          <option value="Perfumes">Perfumes</option>
                           <option value="Royal Oud & Extraits">Royal Oud &amp; Extraits</option>
                           <option value="Pure Concentrated Attars">Pure Concentrated Attars</option>
                           <option value="Incense & Sacred Bakhoor">Incense &amp; Sacred Bakhoor</option>
@@ -352,19 +388,41 @@ export default function AdminProductsPage() {
                 {activeTab === 'content' && (
                   <>
                     <div>
-                      <label className={labelClass}>About This Fragrance (Storytelling)</label>
+                      <label className={labelClass}>The Olfactory Story</label>
                       <p className="text-[10px] text-stone-500 mb-2">
-                        Shown in the <span className="text-amber-400 font-semibold">"About This Fragrance"</span> accordion on the product page.
+                        Storytelling narrative displayed prominently on the product page and accordion.
                       </p>
-                      <textarea rows={8} value={formData.description} onChange={(e) => set('description', e.target.value)}
+                      <textarea rows={5} value={formData.olfactoryStory} onChange={(e) => set('olfactoryStory', e.target.value)}
                         className={inputClass}
-                        placeholder="Write a rich, evocative description — origin story, olfactory journey, craftsmanship..." />
+                        placeholder="There is a moment when the desert light turns to gold..." />
+                    </div>
+
+                    <div>
+                      <label className={labelClass}>About This Fragrance (Product Description)</label>
+                      <p className="text-[10px] text-stone-500 mb-2">
+                        Summary overview of the fragrance composition and character.
+                      </p>
+                      <textarea rows={5} value={formData.description} onChange={(e) => set('description', e.target.value)}
+                        className={inputClass}
+                        placeholder="Write a rich, evocative description..." />
+                    </div>
+
+                    <div>
+                      <label className={labelClass}>Ingredients Formula</label>
+                      <p className="text-[10px] text-stone-500 mb-2">
+                        Displayed in the dedicated "Ingredients" accordion on the product page.
+                      </p>
+                      <input type="text" value={formData.ingredients} onChange={(e) => set('ingredients', e.target.value)}
+                        className={inputClass}
+                        placeholder="e.g. Alcohol Denat. 80%, Fragrance (Parfum) 16%, D.M. Water 4%." />
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className={labelClass}>Concentration / Type</label>
                         <select value={formData.type} onChange={(e) => set('type', e.target.value)} className={inputClass}>
+                          <option>Fragrance Mist</option>
+                          <option>Body &amp; Hair Mist</option>
                           <option>Extrait de Parfum</option>
                           <option>Eau de Parfum</option>
                           <option>Pure Oil (Attar)</option>

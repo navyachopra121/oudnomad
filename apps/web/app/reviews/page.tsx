@@ -27,10 +27,10 @@ const FEATURED_REVIEWS: FeaturedReview[] = [
     id: 'f-cedre',
     author: 'Tariq Al-Mansoor',
     location: 'Dubai, UAE',
-    productName: 'Cedre Extrait',
+    productName: 'Cèdre Fragrance Mist',
     productSlug: 'cedre',
     image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80',
-    category: 'oud',
+    category: 'mists',
     rating: 5,
     title: 'A decadent nectar of honey, amber, and roasted caramel',
     body: 'The honey and vanilla opening is soft and velvety without cloying. The amber heart develops with extraordinary warmth over hours, grounded by caramel and clean white musk. Radiates all evening.',
@@ -42,10 +42,10 @@ const FEATURED_REVIEWS: FeaturedReview[] = [
     id: 'f-selene',
     author: 'Eleanor Vance',
     location: 'London, UK',
-    productName: 'Selene Extrait',
+    productName: 'Sélène Fragrance Mist',
     productSlug: 'selene',
     image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80',
-    category: 'mukhallat',
+    category: 'mists',
     rating: 5,
     title: 'The most sophisticated floral balance of lavender, orchid, and tonka',
     body: 'A breathtaking transition from aromatic lavender to lush night jasmine and orchid. The dry down of vetiver and tonka bean gives it a modern, grounded presence with timeless grace.',
@@ -57,10 +57,10 @@ const FEATURED_REVIEWS: FeaturedReview[] = [
     id: 'f-ivoire',
     author: 'Dr. Karim B.',
     location: 'Paris, France',
-    productName: 'Ivoire Extrait',
+    productName: 'Ivoire Fragrance Mist',
     productSlug: 'ivoire',
     image: 'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80',
-    category: 'attars',
+    category: 'mists',
     rating: 5,
     title: 'An exquisite comforting veil of sweet powder and white honey',
     body: 'Pure understated luxury. The delicate sweet powder and white honey melt into creamy coconut and clean musk like soft silk against skin. Unmatched comfort and subtlety.',
@@ -158,7 +158,7 @@ export default function ReviewsPage() {
                 key={rev.id}
                 className="bg-surface-muted/30 border border-border hover:border-antique-gold/40 p-6 sm:p-8 flex flex-col justify-between gap-6 transition-all"
               >
-                <div className="space-y-4">
+                <div className="space-  y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center text-antique-gold text-sm tracking-wider">
                       {'★'.repeat(rev.rating)}

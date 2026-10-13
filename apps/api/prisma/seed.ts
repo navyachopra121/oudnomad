@@ -210,6 +210,16 @@ async function main() {
   console.log('✅ Shipping Methods seeded');
 
   // 5. Categories
+  const categoryMists = await prisma.category.upsert({
+    where: { slug: 'mists' },
+    update: {},
+    create: {
+      name: 'Mists',
+      slug: 'mists',
+      description: 'Refreshing luxury body and hair mists crafted for the GCC',
+    },
+  });
+
   const categoryParfum = await prisma.category.upsert({
     where: { slug: 'extrait-de-parfum' },
     update: {},
@@ -242,31 +252,21 @@ async function main() {
 
   console.log('✅ Categories seeded');
 
-  // 6. Products & Variants — Cedre, Selene, Ivoire
+  // 6. Products & Variants — Cèdre, Sélène, Ivoire (Mists Collection)
   const productsData = [
     {
-      name: 'Cedre',
+      name: 'Cèdre',
       slug: 'cedre',
       description:
-        'A warm, indulgent fragrance that opens with the soft sweetness of vanilla and honey, unfolding into a rich amber heart. Caramel and white musk settle into a smooth, sensual base, leaving behind a lingering trail that feels warm, comforting and quietly luxurious.',
-      categoryId: categoryParfum.id,
+        'There is a moment when the desert light turns to gold, when warmth settles into the air and the world grows quiet. Cèdre captures that fleeting hour. Honeyed vanilla opens with a soft, inviting sweetness, unfolding into the golden depth of amber. Caramel and white musk linger on the skin, leaving behind a trail that feels warm, intimate and quietly magnetic. A fragrance of enveloping warmth, composed with understated sensuality.',
+      categoryId: categoryMists.id,
       variants: [
         {
-          sku: 'CED-50ML',
-          name: '50ml Extrait',
-          size: '50ml',
-          price: 320.0,
-          stock: 50,
-          priceMinorAED: 32000,
-          priceMinorSAR: 33000,
-          priceMinorUSD: 8700,
-        },
-        {
-          sku: 'CED-100ML',
-          name: '100ml Extrait Flacon',
+          sku: 'CED-MST-100ML',
+          name: '100ml Fragrance Mist',
           size: '100ml',
           price: 495.0,
-          stock: 35,
+          stock: 50,
           priceMinorAED: 49500,
           priceMinorSAR: 51000,
           priceMinorUSD: 13500,
@@ -278,28 +278,18 @@ async function main() {
       ],
     },
     {
-      name: 'Selene',
+      name: 'Sélène',
       slug: 'selene',
       description:
-        'An elegant floral fragrance balanced with soft musk and aromatic lavender. Orchid and jasmine create a refined floral heart, while tonka bean and vetiver add depth and warmth to the dry-down. A sophisticated scent that moves effortlessly from fresh and delicate to warm and grounded.',
-      categoryId: categoryParfum.id,
+        'As the city slips into night, its energy gives way to a more intimate kind of elegance. Sélène opens with the aromatic calm of lavender and musk, revealing a delicate heart of orchid and jasmine. Tonka bean lends a tender warmth, while vetiver grounds the composition in an earthy, sophisticated finish. Floral yet composed, Sélène is an ode to the beauty of restraint — a quiet signature that reveals itself gradually.',
+      categoryId: categoryMists.id,
       variants: [
         {
-          sku: 'SEL-50ML',
-          name: '50ml Extrait',
-          size: '50ml',
-          price: 320.0,
-          stock: 50,
-          priceMinorAED: 32000,
-          priceMinorSAR: 33000,
-          priceMinorUSD: 8700,
-        },
-        {
-          sku: 'SEL-100ML',
-          name: '100ml Extrait Flacon',
+          sku: 'SEL-MST-100ML',
+          name: '100ml Fragrance Mist',
           size: '100ml',
           price: 495.0,
-          stock: 35,
+          stock: 50,
           priceMinorAED: 49500,
           priceMinorSAR: 51000,
           priceMinorUSD: 13500,
@@ -314,25 +304,15 @@ async function main() {
       name: 'Ivoire',
       slug: 'ivoire',
       description:
-        'A soft, creamy fragrance built around the delicate sweetness of powder and white honey. As it settles, creamy coconut meets clean musk, creating a smooth and comforting trail with an understated sense of luxury.',
-      categoryId: categoryParfum.id,
+        'Some of the most captivating things are never announced. They are felt. Ivoire opens like a whisper of powdery sweetness, softened by the golden delicacy of white honey. Coconut introduces a creamy warmth, while musk settles close to the skin, creating a smooth and intimate finish. Tender without being fragile, indulgent without excess, Ivoire is an exploration of softness in its most refined form.',
+      categoryId: categoryMists.id,
       variants: [
         {
-          sku: 'IVO-50ML',
-          name: '50ml Extrait',
-          size: '50ml',
-          price: 320.0,
-          stock: 50,
-          priceMinorAED: 32000,
-          priceMinorSAR: 33000,
-          priceMinorUSD: 8700,
-        },
-        {
-          sku: 'IVO-100ML',
-          name: '100ml Extrait Flacon',
+          sku: 'IVO-MST-100ML',
+          name: '100ml Fragrance Mist',
           size: '100ml',
           price: 495.0,
-          stock: 35,
+          stock: 50,
           priceMinorAED: 49500,
           priceMinorSAR: 51000,
           priceMinorUSD: 13500,
