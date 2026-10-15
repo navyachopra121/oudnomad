@@ -10,6 +10,8 @@ import { useCart } from '../cart/CartContext';
 import { useCurrency } from '../concierge/CurrencyContext';
 import { useAuth } from '../auth/AuthContext';
 import SearchModal from './SearchModal';
+import { getGccCountry } from '../../lib/pricing';
+
 
 type CategoryNode = {
   id: string;
@@ -26,7 +28,8 @@ const FALLBACK_CATEGORIES: CategoryNode[] = [
 
 export default function SiteHeader({ transparentMode = false }: { transparentMode?: boolean }) {
   const { openDrawer, totalItems } = useCart();
-  const { currency, setIsModalOpen } = useCurrency();
+  const { currency, countryCode, setIsModalOpen } = useCurrency();
+  const gccCountry = getGccCountry(countryCode);
   const { isAuthenticated, openAuthModal } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -208,14 +211,16 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
 
               {/* Action Icons */}
               <div className="flex items-center gap-2 sm:gap-4">
-                {/* Currency selector modal trigger */}
+                {/* Ship-to country + currency pill */}
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(true)}
                   className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 text-[11px] uppercase tracking-wider text-[#ffb91d] hover:text-white transition-colors font-medium border border-[#ffb91d]/30 hover:border-[#ffb91d]"
-                  title="Select Currency"
+                  title="Change delivery country"
+                  id="header-ship-to-btn"
                 >
-                  <span>{currency.flag}</span>
+                  <span className="text-sm leading-none">{gccCountry?.flag ?? currency.flag}</span>
+                  <span className="hidden 2xl:inline text-[10px] tracking-[0.15em] mr-0.5">Ship to:</span>
                   <span>{currency.code}</span>
                 </button>
 

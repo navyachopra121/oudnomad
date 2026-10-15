@@ -1,75 +1,90 @@
 'use client';
 
 import React from 'react';
-import { useCurrency, CURRENCIES, CurrencyCode } from './CurrencyContext';
+import { useCurrency, GccCountryCode } from './CurrencyContext';
+import { GCC_COUNTRIES } from '../../lib/pricing';
 
 export default function CurrencySelectorModal() {
-  const { currency, setCurrency, isModalOpen, setIsModalOpen } = useCurrency();
+  const { countryCode, setCountry, isModalOpen, setIsModalOpen } = useCurrency();
 
   if (!isModalOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md transition-opacity animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md bg-surface border border-border p-6 sm:p-8 shadow-2xl rounded-sm space-y-6">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md"
+      onClick={() => setIsModalOpen(false)}
+    >
+      <div
+        className="relative w-full max-w-md bg-[#0e0e0e] border border-white/10 p-6 sm:p-8 shadow-2xl space-y-5"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border/80 pb-4">
+        <div className="flex items-start justify-between border-b border-white/10 pb-4">
           <div>
-            <span className="text-[10px] uppercase tracking-[0.25em] text-antique-gold font-semibold">
-              Global Concierge
+            <span className="text-[10px] uppercase tracking-[0.28em] text-[#ffb91d] font-semibold">
+              GCC Delivery Destination
             </span>
-            <h3 className="font-serif text-xl text-primary font-medium mt-0.5">
-              Select GCC Regional Currency
+            <h3 className="font-serif text-xl text-white font-medium mt-1">
+              Select Your Country
             </h3>
+            <p className="text-[11px] text-white/40 mt-1 leading-relaxed">
+              Prices shown are VAT-inclusive for the selected country.
+            </p>
           </div>
           <button
             onClick={() => setIsModalOpen(false)}
-            className="p-2 text-primary-muted hover:text-primary transition-colors text-lg"
-            aria-label="Close modal"
+            className="p-2 text-white/40 hover:text-white transition-colors text-lg ml-4 flex-shrink-0"
+            aria-label="Close"
           >
             ✕
           </button>
         </div>
 
-        {/* Currency Options */}
-        <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
-          {(Object.keys(CURRENCIES) as CurrencyCode[]).map((code) => {
-            const item = CURRENCIES[code];
-            const isSelected = currency.code === code;
+        {/* Country Options */}
+        <div className="space-y-2">
+          {GCC_COUNTRIES.map((country) => {
+            const isSelected = countryCode === country.code;
             return (
               <button
-                key={code}
+                key={country.code}
+                id={`country-option-${country.code}`}
                 onClick={() => {
-                  setCurrency(code);
+                  setCountry(country.code as GccCountryCode);
                   setIsModalOpen(false);
                 }}
-                className={`w-full flex items-center justify-between p-3.5 border transition-all text-left ${
+                className={`w-full flex items-center justify-between p-3.5 border transition-all text-left group ${
                   isSelected
-                    ? 'border-antique-gold bg-antique-gold/10 shadow-sm'
-                    : 'border-border/60 hover:border-antique-gold/50 bg-surface-muted/40 hover:bg-surface-muted'
+                    ? 'border-[#ffb91d] bg-[#ffb91d]/8'
+                    : 'border-white/8 hover:border-[#ffb91d]/50 bg-white/[0.02] hover:bg-white/[0.04]'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-xl leading-none">{item.flag}</span>
+                  <span className="text-2xl leading-none">{country.flag}</span>
                   <div>
-                    <div className="text-xs font-medium uppercase tracking-wider text-primary">
-                      {item.code} — {item.name}
+                    <div className="text-[12px] font-medium uppercase tracking-wider text-white">
+                      {country.name}
                     </div>
-                    <div className="text-[11px] text-primary-muted">
-                      Base Rate: 1 USD = {item.rate} {item.code}
+                    <div className="text-[11px] text-white/40 mt-0.5">
+                      {country.currency} &mdash; {country.vatNote}
                     </div>
                   </div>
                 </div>
-                <div className="font-serif text-sm font-semibold text-antique-gold">
-                  {item.symbol}
+                <div className="flex items-center gap-2">
+                  <span className="font-serif text-sm font-semibold text-[#ffb91d]">
+                    {country.currency}
+                  </span>
+                  {isSelected && (
+                    <span className="w-2 h-2 rounded-full bg-[#ffb91d] flex-shrink-0" />
+                  )}
                 </div>
               </button>
             );
           })}
         </div>
 
-        {/* Footer Note */}
-        <div className="pt-2 text-center text-[11px] text-primary-muted font-light leading-relaxed border-t border-border/60">
-          Complimentary white-glove courier shipping insured across all GCC countries (UAE, KSA, Qatar, Kuwait, Oman &amp; Bahrain) on orders over $250 USD equivalent.
+        {/* Footer */}
+        <div className="pt-2 text-center text-[11px] text-white/30 leading-relaxed border-t border-white/8">
+          📦 Oud Nomad delivers exclusively within the GCC via insured express courier.
         </div>
       </div>
     </div>

@@ -279,7 +279,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
                         {prod.name}
                       </Link>
                       <span className="text-sm font-medium text-[#ffb91d] tracking-wide shrink-0 font-mono">
-                        {formatPrice(prod.price)}
+                        {formatPrice(prod.price, (prod as any).regionalPrices)}
                       </span>
                     </div>
                   </div>
@@ -326,7 +326,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
                   {quickViewProduct.name}
                 </h3>
                 <p className="text-xl text-[#ffb91d] font-medium font-mono">
-                  {formatPrice(quickViewProduct.price)}
+                  {formatPrice(quickViewProduct.price, (quickViewProduct as any).regionalPrices)}
                 </p>
 
                 <p className="text-xs text-white/70 leading-relaxed line-clamp-3">
@@ -357,7 +357,7 @@ export default function CollectionPlpPage({ params }: PageProps) {
                     }}
                     className="w-full py-3 bg-[#d89528] hover:bg-[#ffb91d] text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all shadow-md active:scale-98"
                   >
-                    Add to Bag • {formatPrice(quickViewProduct.price)}
+                    Add to Bag • {formatPrice(quickViewProduct.price, (quickViewProduct as any).regionalPrices)}
                   </button>
                   <Link
                     href={`/products/${quickViewProduct.slug}`}

@@ -27,10 +27,18 @@ const defaultForm = () => ({
   longevity: '8 Hours',
   type: 'Fragrance Mist',
   variants: [{ size: '100ml', price: 495, sku: '' }] as { size: string; price: number; sku: string }[],
+  regionalPrices: {
+    AED: 495,
+    SAR: 510,
+    KWD: 42,
+    QAR: 505,
+    OMR: 52,
+    BHD: 51,
+  } as Record<string, number | string>,
 });
 
 type FormData = ReturnType<typeof defaultForm>;
-type Tab = 'basic' | 'content' | 'images' | 'fragrance' | 'variants';
+type Tab = 'basic' | 'content' | 'images' | 'fragrance' | 'variants' | 'pricing';
 
 const inputClass = 'w-full bg-stone-950 border border-stone-800 rounded px-3 py-2 text-stone-200 focus:border-amber-500 outline-none text-xs';
 const labelClass = 'block text-stone-400 mb-1 font-semibold uppercase tracking-wider text-[10px]';
@@ -41,6 +49,7 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'images', label: 'Images', icon: '🖼️' },
   { id: 'fragrance', label: 'Fragrance Notes', icon: '🏺' },
   { id: 'variants', label: 'Variants', icon: '📦' },
+  { id: 'pricing', label: 'GCC Pricing', icon: '🌍' },
 ];
 
 export default function AdminProductsPage() {
@@ -105,8 +114,30 @@ export default function AdminProductsPage() {
       variants: product.variants?.length
         ? product.variants.map((v: any) => ({ size: v.size || '100ml', price: v.price || product.price, sku: v.sku || '' }))
         : [{ size: '100ml', price: product.price || 495, sku: product.sku || '' }],
+      regionalPrices: product.regionalPrices || {
+        AED: product.price || 495,
+        SAR: Math.round(((product.price || 495) * 1.025) / 5) * 5,
+        KWD: Math.round((product.price || 495) * 0.084 * 100) / 100,
+        QAR: Math.round(((product.price || 495) * 1.015) / 5) * 5,
+        OMR: Math.round((product.price || 495) * 0.105 * 100) / 100,
+        BHD: Math.round((product.price || 495) * 0.102 * 100) / 100,
+      },
     });
     setShowModal(true);
+  };
+
+  const autoCalculateGccPrices = (baseAed: number) => {
+    setFormData((f) => ({
+      ...f,
+      regionalPrices: {
+        AED: baseAed,
+        SAR: Math.round((baseAed * 1.025) / 5) * 5,
+        KWD: Math.round(baseAed * 0.084 * 100) / 100,
+        QAR: Math.round((baseAed * 1.015) / 5) * 5,
+        OMR: Math.round(baseAed * 0.105 * 100) / 100,
+        BHD: Math.round(baseAed * 0.102 * 100) / 100,
+      },
+    }));
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -127,6 +158,7 @@ export default function AdminProductsPage() {
       status: formData.status,
       description: formData.description,
       images: formData.images,
+      regionalPrices: formData.regionalPrices,
       features: {
         topNotes: formData.topNotes,
         middleNotes: formData.middleNotes,
@@ -609,6 +641,153 @@ export default function AdminProductsPage() {
                       </div>
                     ))}
                   </>
+                )}
+
+                {/* ── TAB 6: GCC PRICING MATRIX ── */}
+                {activeTab === 'pricing' && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between pb-2 border-b border-stone-800">
+                      <div>
+                        <label className={labelClass}>GCC Regional Pricebook</label>
+                        <p className="text-[10px] text-stone-500">
+                          Set exact local market prices for each GCC country. These override automatic currency conversion.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => autoCalculateGccPrices(Number(formData.price) || 495)}
+                        className="px-3 py-1.5 bg-amber-600/20 hover:bg-amber-600/30 text-amber-400 border border-amber-600/30 rounded text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <span>⚡</span> Auto-Calculate from AED Base
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* UAE */}
+                      <div className="bg-stone-950 border border-amber-500/30 p-3.5 rounded-lg space-y-2">
+                        <div className="flex items-center justify-between text-xs font-semibold text-stone-200">
+                          <span className="flex items-center gap-2"><span>🇦🇪</span> United Arab Emirates (Base)</span>
+                          <span className="text-[10px] text-amber-400 font-mono">5% VAT Included</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono text-stone-400 w-10">AED</span>
+                          <input
+                            type="number"
+                            value={formData.regionalPrices?.AED || formData.price}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              set('price', val);
+                              setFormData((f) => ({ ...f, regionalPrices: { ...f.regionalPrices, AED: val } }));
+                            }}
+                            className={`${inputClass} font-mono`}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Saudi Arabia */}
+                      <div className="bg-stone-950 border border-stone-800 p-3.5 rounded-lg space-y-2">
+                        <div className="flex items-center justify-between text-xs font-semibold text-stone-200">
+                          <span className="flex items-center gap-2"><span>🇸🇦</span> Saudi Arabia</span>
+                          <span className="text-[10px] text-stone-400 font-mono">15% VAT Included</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono text-stone-400 w-10">SAR</span>
+                          <input
+                            type="number"
+                            value={formData.regionalPrices?.SAR ?? ''}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              setFormData((f) => ({ ...f, regionalPrices: { ...f.regionalPrices, SAR: val } }));
+                            }}
+                            className={`${inputClass} font-mono`}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Kuwait */}
+                      <div className="bg-stone-950 border border-stone-800 p-3.5 rounded-lg space-y-2">
+                        <div className="flex items-center justify-between text-xs font-semibold text-stone-200">
+                          <span className="flex items-center gap-2"><span>🇰🇼</span> Kuwait</span>
+                          <span className="text-[10px] text-emerald-400 font-mono">Tax-Free (0% VAT)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono text-stone-400 w-10">KWD</span>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={formData.regionalPrices?.KWD ?? ''}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              setFormData((f) => ({ ...f, regionalPrices: { ...f.regionalPrices, KWD: val } }));
+                            }}
+                            className={`${inputClass} font-mono`}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Qatar */}
+                      <div className="bg-stone-950 border border-stone-800 p-3.5 rounded-lg space-y-2">
+                        <div className="flex items-center justify-between text-xs font-semibold text-stone-200">
+                          <span className="flex items-center gap-2"><span>🇶🇦</span> Qatar</span>
+                          <span className="text-[10px] text-emerald-400 font-mono">Tax-Free (0% VAT)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono text-stone-400 w-10">QAR</span>
+                          <input
+                            type="number"
+                            value={formData.regionalPrices?.QAR ?? ''}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              setFormData((f) => ({ ...f, regionalPrices: { ...f.regionalPrices, QAR: val } }));
+                            }}
+                            className={`${inputClass} font-mono`}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Oman */}
+                      <div className="bg-stone-950 border border-stone-800 p-3.5 rounded-lg space-y-2">
+                        <div className="flex items-center justify-between text-xs font-semibold text-stone-200">
+                          <span className="flex items-center gap-2"><span>🇴🇲</span> Oman</span>
+                          <span className="text-[10px] text-stone-400 font-mono">5% VAT Included</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono text-stone-400 w-10">OMR</span>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={formData.regionalPrices?.OMR ?? ''}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              setFormData((f) => ({ ...f, regionalPrices: { ...f.regionalPrices, OMR: val } }));
+                            }}
+                            className={`${inputClass} font-mono`}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Bahrain */}
+                      <div className="bg-stone-950 border border-stone-800 p-3.5 rounded-lg space-y-2">
+                        <div className="flex items-center justify-between text-xs font-semibold text-stone-200">
+                          <span className="flex items-center gap-2"><span>🇧🇭</span> Bahrain</span>
+                          <span className="text-[10px] text-stone-400 font-mono">10% VAT Included</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono text-stone-400 w-10">BHD</span>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={formData.regionalPrices?.BHD ?? ''}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              setFormData((f) => ({ ...f, regionalPrices: { ...f.regionalPrices, BHD: val } }));
+                            }}
+                            className={`${inputClass} font-mono`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )}
 
               </div>

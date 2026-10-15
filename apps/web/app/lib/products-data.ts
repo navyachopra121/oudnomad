@@ -9,13 +9,24 @@ export interface ProductFeature {
   quantity: string;
 }
 
+// GCC Regional Pricebook — admin-set exact prices per country (VAT-inclusive)
+export interface RegionalPricebook {
+  AED?: number; // 🇦🇪 UAE (5% VAT included)
+  SAR?: number; // 🇸🇦 Saudi Arabia (15% VAT included)
+  KWD?: number; // 🇰🇼 Kuwait (Tax-Free)
+  QAR?: number; // 🇶🇦 Qatar (Tax-Free)
+  OMR?: number; // 🇴🇲 Oman (5% VAT included)
+  BHD?: number; // 🇧🇭 Bahrain (10% VAT included)
+}
+
 export interface OudProduct {
   id: string;
   title: string;
   handle: string;
   tagline?: string;
-  price: number;
+  price: number;            // Base price in AED (always)
   compareAtPrice: number | null;
+  regionalPrices: RegionalPricebook; // Admin-configured per-country GCC prices
   category: string;
   categories: string[];
   tags: string[];
@@ -50,7 +61,7 @@ export const OUD_NOMAD_PHILOSOPHY = {
   signatureLine: 'It leaves a trace.',
 };
 
-// ── Collections (All + Perfumes + Mists) ─────────────────────────────────────
+// ── Collections ───────────────────────────────────────────────────────────────
 export const OUD_COLLECTIONS: CollectionMeta[] = [
   {
     handle: 'all',
@@ -72,6 +83,18 @@ export const OUD_COLLECTIONS: CollectionMeta[] = [
   },
 ];
 
+// ── GCC Default Pricebook ─────────────────────────────────────────────────────
+// VAT-inclusive, psychologically rounded luxury price points.
+// Admin can override per product/variant in the admin panel.
+export const GCC_DEFAULT_PRICEBOOK: RegionalPricebook = {
+  AED: 495, // UAE — 5% VAT included
+  SAR: 510, // KSA — 15% VAT included
+  KWD: 42,  // Kuwait — tax-free
+  QAR: 505, // Qatar — tax-free
+  OMR: 52,  // Oman — 5% VAT included
+  BHD: 51,  // Bahrain — 10% VAT included
+};
+
 // ── Products (Mists Collection) — Cèdre, Sélène, Ivoire ──────────────────────
 export const OUD_PRODUCTS: OudProduct[] = [
   {
@@ -81,6 +104,7 @@ export const OUD_PRODUCTS: OudProduct[] = [
     tagline: 'A GOLDEN HOUR, HELD IN SCENT.',
     price: 495,
     compareAtPrice: null,
+    regionalPrices: { ...GCC_DEFAULT_PRICEBOOK },
     category: 'mists',
     categories: ['mists', 'all'],
     tags: ['mist', 'mists', 'warm', 'sensual', 'gourmand', 'opulent', 'golden hour', 'vanilla', 'honey', 'amber', 'caramel', 'white musk'],
@@ -120,6 +144,7 @@ export const OUD_PRODUCTS: OudProduct[] = [
     tagline: 'THE SILENCE BEFORE MIDNIGHT.',
     price: 495,
     compareAtPrice: null,
+    regionalPrices: { ...GCC_DEFAULT_PRICEBOOK },
     category: 'mists',
     categories: ['mists', 'all'],
     tags: ['mist', 'mists', 'floral', 'serene', 'sophisticated', 'refined', 'midnight', 'lavender', 'musk', 'orchid', 'jasmine', 'tonka bean', 'vetiver'],
@@ -159,6 +184,7 @@ export const OUD_PRODUCTS: OudProduct[] = [
     tagline: 'THE LUXURY OF SOFTNESS.',
     price: 495,
     compareAtPrice: null,
+    regionalPrices: { ...GCC_DEFAULT_PRICEBOOK },
     category: 'mists',
     categories: ['mists', 'all'],
     tags: ['mist', 'mists', 'soft', 'creamy', 'luminous', 'sensual', 'powder', 'white honey', 'coconut', 'musk'],
