@@ -8,7 +8,7 @@ export class ResendEmailProvider implements EmailProvider {
   constructor() {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) throw new Error('RESEND_API_KEY env var is required');
-    this.from = process.env.RESEND_FROM ?? 'noreply@oudnomad.com';
+    this.from = process.env.RESEND_FROM ?? 'noreply@oudnomaddubai.com';
     this.client = new Resend(apiKey);
   }
 

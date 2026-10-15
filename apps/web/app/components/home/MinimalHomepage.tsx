@@ -59,14 +59,17 @@ export default function MinimalHomepage() {
           <Reveal>
             <div className="max-w-2xl mx-auto px-4 space-y-4">
               <p className="font-sans text-[13px] sm:text-[14px] leading-[1.7] text-white font-normal tracking-[0.06em] drop-shadow-lg">
-                &ldquo;Born between two worlds &mdash; the warmth of the East and the ambition of Dubai &mdash; Oud Nomad exists for the woman who belongs everywhere. We don&rsquo;t create perfumes. We craft the stories you carry on your skin.&rdquo;
+                &ldquo;Born in Dubai, inspired by the spirit of exploration.
+                &mdash; Oud Nomad approaches fragrance as a personal signature — an invisible expression of presence, memory and individuality. Each composition invites a different encounter with the senses, designed to be experienced rather than simply worn.
+                &mdash; Because true luxury does not demand attention.
+                &rdquo;
               </p>
               <div className="pt-2">
                 <Link
-                  href="/collections"
+                  href="/about"
                   className="inline-block text-[11px] uppercase tracking-[0.22em] text-[#ffb91d] border-b border-[#ffb91d] pb-0.5 hover:text-white hover:border-white transition-colors font-normal"
                 >
-                  LEARN MORE
+                  Discover Our Story
                 </Link>
               </div>
             </div>

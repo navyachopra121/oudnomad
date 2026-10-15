@@ -9,14 +9,14 @@ export class SesEmailProvider implements EmailProvider {
   private readonly from: string;
 
   constructor() {
-    this.from = process.env.SES_FROM ?? 'noreply@oudnomad.com';
+    this.from = process.env.SES_FROM ?? 'noreply@oudnomaddubai.com';
     this.client = new SESClient({
       region: process.env.AWS_REGION ?? 'us-east-1',
       credentials: process.env.AWS_ACCESS_KEY_ID
         ? {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
-          }
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
+        }
         : undefined, // Falls back to IAM role / instance profile in production
     });
   }

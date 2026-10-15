@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SiteHeader from '../../components/header/SiteHeader';
 import Container from '../../components/Container';
 import { useAuth } from '../../components/auth/AuthContext';
+import { StoreApi } from '../../store-api';
 
 interface AddressItem {
   id: string;
@@ -17,32 +18,10 @@ interface AddressItem {
   isDefault: boolean;
 }
 
-const INITIAL_ADDRESSES: AddressItem[] = [
-  {
-    id: 'addr-1',
-    label: 'Primary Residence',
-    name: 'Tariq Al-Mansoor',
-    line1: 'Villa 14, Al Safa 2, Jumeirah Beach Road',
-    city: 'Dubai',
-    emirate: 'Dubai',
-    country: 'United Arab Emirates',
-    isDefault: true,
-  },
-  {
-    id: 'addr-2',
-    label: 'Regional Residence',
-    name: 'Tariq Al-Mansoor',
-    line1: 'Building 82, King Fahd Road, Al Olaya',
-    city: 'Riyadh',
-    emirate: 'Riyadh',
-    country: 'Saudi Arabia',
-    isDefault: false,
-  },
-];
-
 export default function AddressBookPage() {
   const { user } = useAuth();
-  const [addresses, setAddresses] = useState<AddressItem[]>(INITIAL_ADDRESSES);
+  const [addresses, setAddresses] = useState<AddressItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
 
   // New Address Form State
@@ -51,19 +30,56 @@ export default function AddressBookPage() {
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('United Arab Emirates');
 
+  useEffect(() => {
+    async function loadAddresses() {
+      setLoading(true);
+      try {
+        const saved = localStorage.getItem('oudnomad_user_addresses');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setAddresses(parsed);
+            setLoading(false);
+            return;
+          }
+        }
+
+        try {
+          const remote = await StoreApi.getAddresses();
+          if (Array.isArray(remote) && remote.length > 0) {
+            setAddresses(remote);
+          }
+        } catch (_) {}
+      } catch (err) {
+        console.error('Failed to load addresses:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadAddresses();
+  }, []);
+
+  const saveAddresses = (newList: AddressItem[]) => {
+    setAddresses(newList);
+    try {
+      localStorage.setItem('oudnomad_user_addresses', JSON.stringify(newList));
+    } catch (_) {}
+  };
+
   const handleAddAddress = (e: React.FormEvent) => {
     e.preventDefault();
     const newAddress: AddressItem = {
       id: `addr-${Date.now()}`,
-      label: label || 'New Address',
-      name: user?.name || 'Tariq Al-Mansoor',
+      label: label || 'Home',
+      name: user?.name || 'Valued Collector',
       line1,
       city,
       emirate: city,
       country,
       isDefault: addresses.length === 0,
     };
-    setAddresses([...addresses, newAddress]);
+    saveAddresses([...addresses, newAddress]);
     setShowAddModal(false);
     setLabel('');
     setLine1('');
@@ -71,11 +87,11 @@ export default function AddressBookPage() {
   };
 
   const handleDeleteAddress = (id: string) => {
-    setAddresses(addresses.filter((a) => a.id !== id));
+    saveAddresses(addresses.filter((a) => a.id !== id));
   };
 
   const handleSetDefault = (id: string) => {
-    setAddresses(
+    saveAddresses(
       addresses.map((a) => ({
         ...a,
         isDefault: a.id === id,
@@ -87,7 +103,7 @@ export default function AddressBookPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col font-serif">
       <SiteHeader />
 
-      <main className="flex-1 w-full py-6 sm:py-2">
+      <main className="flex-1 w-full py-8 sm:py-12">
         <Container className="space-y-10">
           {/* Breadcrumbs */}
           <nav className="text-[10px] sm:text-[11px] font-sans uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted flex flex-wrap items-center gap-1.5 sm:gap-2 leading-relaxed py-1">
@@ -114,47 +130,71 @@ export default function AddressBookPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-sans">
-            {addresses.map((addr) => (
-              <div
-                key={addr.id}
-                className={`p-6 border bg-surface-muted/40 space-y-4 transition-all relative ${addr.isDefault ? 'border-antique-gold ring-1 ring-antique-gold/30' : 'border-border'
-                  }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="font-display text-lg text-espresso font-normal">{addr.label}</span>
-                    {addr.isDefault && (
-                      <span className="px-2 py-0.5 bg-aged-gold text-accent-on-fill text-[9px] uppercase tracking-wider font-semibold">
-                        Default
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => handleDeleteAddress(addr.id)}
-                    className="text-xs text-muted hover:text-brick-oxblood transition-colors"
-                  >
-                    Delete
-                  </button>
-                </div>
-
-                <div className="text-xs text-espresso/80 space-y-1">
-                  <p className="font-semibold text-espresso">{addr.name}</p>
-                  <p>{addr.line1}</p>
-                  <p>{addr.city}, {addr.country}</p>
-                </div>
-
-                {!addr.isDefault && (
-                  <button
-                    onClick={() => handleSetDefault(addr.id)}
-                    className="text-[10px] uppercase tracking-wider text-antique-gold hover:underline font-semibold"
-                  >
-                    Set as Default Delivery Destination
-                  </button>
-                )}
+          {loading ? (
+            <div className="p-12 text-center border border-border bg-surface-muted/30 font-sans text-xs text-muted">
+              Loading address book...
+            </div>
+          ) : addresses.length === 0 ? (
+            <div className="p-12 sm:p-16 text-center border border-border bg-surface-muted/20 space-y-4 font-sans">
+              <div className="text-4xl text-antique-gold opacity-80">📍</div>
+              <h3 className="font-display text-2xl text-espresso">No Addresses Saved Yet</h3>
+              <p className="text-xs text-muted max-w-md mx-auto leading-relaxed">
+                Add your primary delivery destination to expedite checkout and enjoy white-glove courier shipping to your residence.
+              </p>
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(true)}
+                  className="px-6 py-2.5 bg-antique-gold text-white text-xs font-semibold uppercase tracking-[0.2em] hover:bg-[#c99516] transition-colors"
+                >
+                  + Add Primary Address
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-sans">
+              {addresses.map((addr) => (
+                <div
+                  key={addr.id}
+                  className={`p-6 border bg-surface-muted/40 space-y-4 transition-all relative ${
+                    addr.isDefault ? 'border-antique-gold ring-1 ring-antique-gold/30' : 'border-border'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="font-display text-lg text-espresso font-normal">{addr.label}</span>
+                      {addr.isDefault && (
+                        <span className="px-2 py-0.5 bg-aged-gold text-accent-on-fill text-[9px] uppercase tracking-wider font-semibold">
+                          Default
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleDeleteAddress(addr.id)}
+                      className="text-xs text-muted hover:text-brick-oxblood transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+
+                  <div className="text-xs text-espresso/80 space-y-1">
+                    <p className="font-semibold text-espresso">{addr.name}</p>
+                    <p>{addr.line1}</p>
+                    <p>{addr.city}, {addr.country}</p>
+                  </div>
+
+                  {!addr.isDefault && (
+                    <button
+                      onClick={() => handleSetDefault(addr.id)}
+                      className="text-[10px] uppercase tracking-wider text-antique-gold hover:underline font-semibold"
+                    >
+                      Set as Default Delivery Destination
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Add Address Modal */}
           {showAddModal && (
@@ -177,24 +217,26 @@ export default function AddressBookPage() {
                       required
                       value={label}
                       onChange={(e) => setLabel(e.target.value)}
+                      placeholder="e.g. Primary Residence"
                       className="w-full bg-surface-muted border border-border px-3 py-2 text-espresso outline-none focus:border-antique-gold"
                     />
                   </div>
 
                   <div className="space-y-1">
                     <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold">
-                      Street Address & Villa/Apt #
+                      Street Address & Villa / Apartment
                     </label>
                     <input
                       type="text"
                       required
                       value={line1}
                       onChange={(e) => setLine1(e.target.value)}
+                      placeholder="e.g. Villa 12, Palm Jumeirah"
                       className="w-full bg-surface-muted border border-border px-3 py-2 text-espresso outline-none focus:border-antique-gold"
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
                       <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold">
                         City / Emirate
@@ -204,13 +246,13 @@ export default function AddressBookPage() {
                         required
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
+                        placeholder="Dubai"
                         className="w-full bg-surface-muted border border-border px-3 py-2 text-espresso outline-none focus:border-antique-gold"
                       />
                     </div>
-
                     <div className="space-y-1">
                       <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold">
-                        Country (GCC Only)
+                        Country
                       </label>
                       <select
                         value={country}
@@ -219,25 +261,25 @@ export default function AddressBookPage() {
                       >
                         <option value="United Arab Emirates">United Arab Emirates</option>
                         <option value="Saudi Arabia">Saudi Arabia</option>
-                        <option value="Qatar">Qatar</option>
                         <option value="Kuwait">Kuwait</option>
+                        <option value="Qatar">Qatar</option>
                         <option value="Oman">Oman</option>
                         <option value="Bahrain">Bahrain</option>
                       </select>
                     </div>
                   </div>
 
-                  <div className="pt-4 flex items-center justify-end gap-3">
+                  <div className="pt-2 flex items-center justify-end gap-3">
                     <button
                       type="button"
                       onClick={() => setShowAddModal(false)}
-                      className="px-4 py-2 border border-border text-muted text-xs uppercase tracking-wider"
+                      className="px-4 py-2 border border-border text-muted hover:text-espresso"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-aged-gold text-accent-on-fill text-xs uppercase tracking-wider font-medium"
+                      className="px-5 py-2 bg-antique-gold text-white font-medium uppercase tracking-wider hover:bg-[#c99516]"
                     >
                       Save Address
                     </button>

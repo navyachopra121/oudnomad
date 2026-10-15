@@ -22,7 +22,7 @@ export function PasswordResetEmail({
   expiresInMin = 30,
   resetUrl,
 }: PasswordResetEmailProps) {
-  const appUrl = process.env.APP_URL ?? 'https://oudnomad.com';
+  const appUrl = process.env.APP_URL ?? 'https://oudnomaddubai.com';
   const link = resetUrl ?? `${appUrl}/auth/reset-password?token=${rawToken}`;
 
   return (

@@ -100,6 +100,25 @@ export class StorageService {
   }
 
   /**
+   * Upload a raw Buffer to storage under a given key path.
+   * The key path is used as the relative file path (e.g. "invoices/ORD-001/OUD-INV-2024-00001.pdf").
+   * Returns the public URL to access the file.
+   */
+  async uploadBuffer(buffer: Buffer, keyPath: string, mimeType: string): Promise<string> {
+    const targetPath = path.join(this.uploadRootDir, keyPath);
+    const dir = path.dirname(targetPath);
+
+    if (!existsSync(dir)) {
+      await fs.mkdir(dir, { recursive: true });
+    }
+
+    await fs.writeFile(targetPath, buffer);
+    const url = `${this.baseUrl}/${keyPath}`;
+    this.logger.log(`Uploaded buffer to ${keyPath} (${buffer.length} bytes, ${mimeType})`);
+    return url;
+  }
+
+  /**
    * Deletes a file from local storage using its relative path or URL.
    */
   async deleteFile(relativePathOrUrl: string): Promise<boolean> {

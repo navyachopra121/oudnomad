@@ -28,13 +28,16 @@ import { SearchModule } from './search/search.module.js';
 import { ReviewsModule } from './reviews/reviews.module.js';
 import { RecommendationsModule } from './recommendations/recommendations.module.js';
 import { WishlistModule } from './wishlist/wishlist.module.js';
+import { ShippingModule } from './shipping/shipping.module.js';
+import { InvoiceModule } from './invoice/invoice.module.js';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { RedisThrottlerStorage } from './redis/throttler-redis.storage.js';
+import { validateEnv } from './config/env.validation.js';
 
 @Module({
   imports: [
-    // Load .env variables globally
-    ConfigModule.forRoot({ isGlobal: true, cache: true }),
+    // Load .env variables globally & validate on startup
+    ConfigModule.forRoot({ isGlobal: true, cache: true, validate: validateEnv }),
     ThrottlerModule.forRootAsync({
       imports: [RedisModule],
       inject: [RedisThrottlerStorage],
@@ -68,6 +71,8 @@ import { RedisThrottlerStorage } from './redis/throttler-redis.storage.js';
     HealthModule,
     VerifyModule,
     NotificationsAdminModule,
+    ShippingModule,
+    InvoiceModule,
   ],
   controllers: [AppController],
   providers: [

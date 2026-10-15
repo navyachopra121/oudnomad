@@ -1,29 +1,54 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SiteHeader from '../../components/header/SiteHeader';
 import Container from '../../components/Container';
 import { useAuth } from '../../components/auth/AuthContext';
+import { StoreApi } from '../../store-api';
 
 export default function ProfileSettingsPage() {
   const { user } = useAuth();
-  const [name, setName] = useState(user?.name || 'Tariq Al-Mansoor');
-  const [email, setEmail] = useState(user?.email || 'collector@oudnomad.com');
-  const [phone, setPhone] = useState(user?.phone || '+971 50 888 1234');
+  const [name, setName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phone || '');
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setEmail(user.email || '');
+      setPhone(user.phone || '');
+    }
+  }, [user]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setSaving(true);
+    try {
+      if (user) {
+        const updated = { ...user, name, phone };
+        try {
+          localStorage.setItem('oudnomad_auth_user', JSON.stringify(updated));
+        } catch (_) {}
+
+        try {
+          await StoreApi.updateProfile({ name, phone });
+        } catch (_) {}
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3500);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-serif">
       <SiteHeader />
 
-      <main className="flex-1 w-full py-6 sm:py-2">
+      <main className="flex-1 w-full py-8 sm:py-12">
         <Container className="space-y-10">
           {/* Breadcrumbs */}
           <nav className="text-[10px] sm:text-[11px] font-sans uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted flex flex-wrap items-center gap-1.5 sm:gap-2 leading-relaxed py-1">
@@ -58,6 +83,7 @@ export default function ProfileSettingsPage() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  placeholder="Your Full Name"
                   className="w-full bg-ivory border border-border px-3.5 py-2.5 text-espresso outline-none focus:border-antique-gold"
                 />
               </div>
@@ -69,10 +95,12 @@ export default function ProfileSettingsPage() {
                 <input
                   type="email"
                   required
+                  readOnly
+                  disabled
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-ivory border border-border px-3.5 py-2.5 text-espresso outline-none focus:border-antique-gold"
+                  className="w-full bg-surface-muted/70 border border-border px-3.5 py-2.5 text-muted cursor-not-allowed outline-none"
                 />
+                <span className="text-[10px] text-muted">Email address is permanently linked to your collector account.</span>
               </div>
 
               <div className="space-y-1.5">
@@ -83,6 +111,7 @@ export default function ProfileSettingsPage() {
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+971 50 123 4567"
                   className="w-full bg-ivory border border-border px-3.5 py-2.5 text-espresso outline-none focus:border-antique-gold"
                 />
               </div>
@@ -93,9 +122,10 @@ export default function ProfileSettingsPage() {
                 </Link>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-aged-gold hover:bg-antique-gold text-accent-on-fill text-xs uppercase tracking-[0.2em] font-medium transition-colors shadow-sm"
+                  disabled={saving}
+                  className="px-6 py-3 bg-aged-gold hover:bg-antique-gold text-accent-on-fill text-xs uppercase tracking-[0.2em] font-medium transition-colors shadow-sm disabled:opacity-50"
                 >
-                  Save Profile Changes
+                  {saving ? 'Saving...' : 'Save Profile Changes'}
                 </button>
               </div>
             </form>

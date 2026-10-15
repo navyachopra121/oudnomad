@@ -27,13 +27,13 @@ CLOUDINARY_API_SECRET=""
 
 EMAIL_PROVIDER="resend"
 RESEND_API_KEY=""
-RESEND_FROM="OudNomad <noreply@oudnomad.com>"
+RESEND_FROM="OudNomad <noreply@oudnomaddubai.com>"
 
 NODE_ENV="production"
 PORT=3001
 APP_URL="http://187.126.116.61"
 NEXT_PUBLIC_API_URL="http://187.126.116.61/api"
-CORS_ORIGINS="http://187.126.116.61,https://187.126.116.61,http://oudnomad.com,https://oudnomad.com,http://www.oudnomad.com,https://www.oudnomad.com"
+CORS_ORIGINS="http://187.126.116.61,https://187.126.116.61,http://oudnomaddubai.com,https://oudnomaddubai.com,http://www.oudnomaddubai.com,https://www.oudnomaddubai.com"
 `;
 
 fs.writeFileSync('/var/www/oudnomad/.env', envContent, 'utf8');

@@ -66,7 +66,7 @@ export default function TermsOfServicePage() {
             <section className="space-y-3">
               <h2 className="font-display text-xl text-espresso">5. Governing Law & Atelier Concierge</h2>
               <p>
-                These terms are governed by the laws of Dubai and the United Arab Emirates. For any resolution, inquiries, or mediation, contact our legal atelier at <a href="mailto:legal@oudnomad.com" className="text-antique-gold underline">legal@oudnomad.com</a>.
+                These terms are governed by the laws of Dubai and the United Arab Emirates. For any resolution, inquiries, or mediation, contact our legal atelier at <a href="mailto:hello.oudnomaddubai@gmail.com" className="text-antique-gold underline">hello.oudnomaddubai@gmail.com</a>.
               </p>
             </section>
           </div>

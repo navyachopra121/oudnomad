@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { IconClose } from './icons';
+import { useAuth } from '../auth/AuthContext';
 
 type CategoryNode = {
   id: string;
@@ -20,6 +21,7 @@ type Props = {
 };
 
 export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) {
+  const { isAuthenticated, openAuthModal } = useAuth();
   const [catalogExpanded, setCatalogExpanded] = useState(false);
 
   useEffect(() => {
@@ -151,20 +153,33 @@ export default function MobileNavDrawer({ open, onClose, reduceMotion }: Props) 
           </Link>
 
           <Link
-            href="/about/v2"
+            href="/about"
             className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors border-b border-white/10"
             onClick={onClose}
           >
             ABOUT US
           </Link>
 
-          <Link
-            href="/account"
-            className="block py-2.5 text-white hover:text-[#ffb91d] transition-colors"
-            onClick={onClose}
-          >
-            MY ACCOUNT
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              href="/account"
+              className="block py-2.5 text-[#ffb91d] hover:text-white transition-colors"
+              onClick={onClose}
+            >
+              MY ACCOUNT
+            </Link>
+          ) : (
+            <button
+              type="button"
+              className="block w-full text-left py-2.5 text-white hover:text-[#ffb91d] transition-colors"
+              onClick={() => {
+                onClose();
+                openAuthModal('login');
+              }}
+            >
+              SIGN IN / REGISTER
+            </button>
+          )}
         </nav>
 
         {/* Social Box Bottom Bar */}

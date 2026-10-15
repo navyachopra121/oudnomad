@@ -28,7 +28,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/', '/account/', '/checkout/', '/cart/'],
       },
     ],
-    sitemap: 'https://oudnomad.com/sitemap.xml',
-    host: 'https://oudnomad.com',
+    sitemap: 'https://oudnomaddubai.com/sitemap.xml',
+    host: 'https://oudnomaddubai.com',
   };
 }

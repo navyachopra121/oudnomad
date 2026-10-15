@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 
 const COLLECTION_SEO: Record<string, { title: string; description: string; keywords: string[] }> = {
   all: {
@@ -34,11 +34,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: seo.title,
     description: seo.description,
     keywords: seo.keywords,
-    alternates: { canonical: 'https://oudnomad.com/collections/' + key },
+    alternates: { canonical: 'https://oudnomaddubai.com/collections/' + key },
     openGraph: {
       title: seo.title,
       description: seo.description,
-      url: 'https://oudnomad.com/collections/' + key,
+      url: 'https://oudnomaddubai.com/collections/' + key,
       type: 'website',
       images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: seo.title }],
     },

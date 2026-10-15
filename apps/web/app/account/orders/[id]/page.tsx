@@ -144,11 +144,10 @@ export default function OrderTrackingDossierPage({ params }: PageProps) {
 
               <div className="pt-1">
                 <span
-                  className={`inline-flex px-3 py-1 text-[10px] uppercase font-medium tracking-widest border ${
-                    order.status === 'Delivered'
+                  className={`inline-flex px-3 py-1 text-[10px] uppercase font-medium tracking-widest border ${order.status === 'Delivered'
                       ? 'bg-deep-emerald/10 text-deep-emerald border-deep-emerald/30'
                       : 'bg-aged-gold/15 text-antique-gold border-antique-gold/40'
-                  }`}
+                    }`}
                 >
                   {order.status}
                 </span>
@@ -170,11 +169,10 @@ export default function OrderTrackingDossierPage({ params }: PageProps) {
                   <div key={idx} className="relative group">
                     {/* Step Dot */}
                     <div
-                      className={`absolute -left-[31px] top-0.5 w-3.5 h-3.5 rounded-full border-2 transition-colors ${
-                        step.completed
+                      className={`absolute -left-[31px] top-0.5 w-3.5 h-3.5 rounded-full border-2 transition-colors ${step.completed
                           ? 'bg-aged-gold border-ivory ring-2 ring-antique-gold/50'
                           : 'bg-surface-muted border-muted/50'
-                      }`}
+                        }`}
                     />
                     <div className="space-y-1">
                       <div className="flex items-center justify-between">
@@ -301,8 +299,8 @@ export default function OrderTrackingDossierPage({ params }: PageProps) {
             </p>
             <p className="text-xs text-muted">
               Our atelier concierge is at your service 24/7 at{' '}
-              <a href="mailto:concierge@oudnomad.com" className="text-antique-gold underline underline-offset-2">
-                concierge@oudnomad.com
+              <a href="mailto:hello.oudnomaddubai@gmail.com" className="text-antique-gold underline underline-offset-2">
+                hello.oudnomaddubai@gmail.com
               </a>
             </p>
           </div>

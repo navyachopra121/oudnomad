@@ -22,7 +22,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     // Client-side authentication check for token / role
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token') || localStorage.getItem('oudnomad_auth_token');
     if (!token) {
       // In dev mode, allow access or check token
       setIsAuthenticated(true);

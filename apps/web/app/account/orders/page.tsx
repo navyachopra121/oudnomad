@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SiteHeader from '../../components/header/SiteHeader';
 import Container from '../../components/Container';
+import { StoreApi } from '../../store-api';
 
 interface OrderItem {
   id: string;
@@ -11,52 +12,67 @@ interface OrderItem {
   date: string;
   items: string;
   total: number;
-  status: 'In Transit' | 'Processing' | 'Delivered';
+  currency?: string;
+  status: string;
   carrier: string;
   trackingNumber: string;
 }
 
-const SAMPLE_ORDERS: OrderItem[] = [
-  {
-    id: 'ord-101',
-    orderNumber: 'OUD-99821',
-    date: 'Sept 14, 2026',
-    items: 'Malaki Extrait No. 1 (50ml Spray Flacon)',
-    total: 450,
-    status: 'In Transit',
-    carrier: 'DHL Express Worldwide Courier',
-    trackingNumber: 'DHL-UAE-982173',
-  },
-  {
-    id: 'ord-102',
-    orderNumber: 'OUD-98104',
-    date: 'Aug 28, 2026',
-    items: 'Noor Pure Attar (3ml Crystal Dipstick Tola)',
-    total: 280,
-    status: 'Delivered',
-    carrier: 'FedEx Priority International',
-    trackingNumber: 'FDX-88219482',
-  },
-  {
-    id: 'ord-103',
-    orderNumber: 'OUD-97210',
-    date: 'Jul 12, 2026',
-    items: 'Royal Cambodi Reserve (3ml Collector Bottle)',
-    total: 620,
-    status: 'Delivered',
-    carrier: 'DHL Express Worldwide Courier',
-    trackingNumber: 'DHL-UAE-119284',
-  },
-];
-
 export default function OrdersPage() {
+  const [orders, setOrders] = useState<OrderItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
+
+  useEffect(() => {
+    async function fetchOrders() {
+      setLoading(true);
+      try {
+        const localOrders: OrderItem[] = JSON.parse(
+          localStorage.getItem('oudnomad_placed_orders') || '[]'
+        );
+
+        let remoteOrders: OrderItem[] = [];
+        try {
+          const res = await StoreApi.getOrders();
+          if (Array.isArray(res)) {
+            remoteOrders = res.map((o: any) => ({
+              id: o.id || o.orderNumber,
+              orderNumber: o.orderNumber || o.id,
+              date: o.date || (o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent'),
+              items: Array.isArray(o.items)
+                ? o.items.map((i: any) => `${i.productName || i.name} (${i.variantSize || i.size || '50ml'}) × ${i.quantity || 1}`).join(', ')
+                : (typeof o.items === 'string' ? o.items : 'Artisanal Flacon'),
+              total: o.total || 0,
+              currency: o.currency || 'AED',
+              status: o.status || 'Processing',
+              carrier: o.carrier || 'DHL Express Worldwide Courier',
+              trackingNumber: o.trackingNumber || `DHL-UAE-${Math.floor(100000 + Math.random() * 900000)}`,
+            }));
+          }
+        } catch (_) {}
+
+        const merged: OrderItem[] = [...localOrders];
+        for (const r of remoteOrders) {
+          if (!merged.some((m) => m.orderNumber === r.orderNumber)) {
+            merged.push(r);
+          }
+        }
+        setOrders(merged);
+      } catch (err) {
+        console.error('Failed to load orders:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchOrders();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-serif">
       <SiteHeader />
 
-      <main className="flex-1 w-full py-6 sm:py-2">
+      <main className="flex-1 w-full py-8 sm:py-12">
         <Container className="space-y-10">
           {/* Breadcrumbs */}
           <nav className="text-[10px] sm:text-[11px] font-sans uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted flex flex-wrap items-center gap-1.5 sm:gap-2 leading-relaxed py-1">
@@ -76,52 +92,75 @@ export default function OrdersPage() {
             </h1>
           </div>
 
-          <div className="space-y-4 font-sans text-xs">
-            {SAMPLE_ORDERS.map((order) => (
-              <div
-                key={order.id}
-                className="p-6 border border-border bg-surface-muted/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all hover:border-antique-gold/40"
-              >
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3 font-mono text-[11px]">
-                    <span className="font-bold text-espresso text-sm">{order.orderNumber}</span>
-                    <span className="text-muted">• {order.date}</span>
-                    <span
-                      className={`px-2.5 py-0.5 text-[10px] uppercase font-sans font-medium border ${order.status === 'In Transit'
-                        ? 'bg-deep-emerald/10 text-deep-emerald border-deep-emerald/30'
-                        : 'bg-surface-muted text-muted border-border'
+          {loading ? (
+            <div className="p-12 text-center border border-border bg-surface-muted/30 font-sans text-xs text-muted">
+              Retrieving orders from atelier...
+            </div>
+          ) : orders.length === 0 ? (
+            <div className="p-12 sm:p-16 text-center border border-border bg-surface-muted/20 space-y-4 font-sans">
+              <div className="text-4xl text-antique-gold opacity-80">📦</div>
+              <h3 className="font-display text-2xl text-espresso">No Orders Placed Yet</h3>
+              <p className="text-xs text-muted max-w-md mx-auto leading-relaxed">
+                You haven&apos;t placed any orders yet. Once an order is made, you will be able to review full invoices, status milestones, and tracking codes here.
+              </p>
+              <div className="pt-2">
+                <Link
+                  href="/collections"
+                  className="inline-block px-7 py-3 bg-antique-gold text-white text-xs font-semibold uppercase tracking-[0.2em] hover:bg-[#c99516] transition-colors"
+                >
+                  Explore Fragrance Catalog →
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4 font-sans text-xs">
+              {orders.map((order) => (
+                <div
+                  key={order.id}
+                  className="p-6 border border-border bg-surface-muted/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all hover:border-antique-gold/40"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3 font-mono text-[11px]">
+                      <span className="font-bold text-espresso text-sm">{order.orderNumber}</span>
+                      <span className="text-muted">• {order.date}</span>
+                      <span
+                        className={`px-2.5 py-0.5 text-[10px] uppercase font-sans font-medium border ${
+                          order.status === 'Delivered'
+                            ? 'bg-surface-muted text-muted border-border'
+                            : 'bg-deep-emerald/10 text-deep-emerald border-deep-emerald/30'
                         }`}
-                    >
-                      {order.status}
-                    </span>
+                      >
+                        {order.status}
+                      </span>
+                    </div>
+
+                    <p className="font-serif text-base text-espresso">{order.items}</p>
+                    <p className="text-[11px] text-muted">Carrier: {order.carrier} (Waybill #{order.trackingNumber})</p>
                   </div>
 
-                  <p className="font-serif text-base text-espresso">{order.items}</p>
-                  <p className="text-[11px] text-muted">Carrier: {order.carrier} (Waybill #{order.trackingNumber})</p>
+                  <div className="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto pt-3 md:pt-0 border-t md:border-t-0 border-border">
+                    <span className="font-serif text-lg text-antique-gold font-medium mr-2">
+                      {order.currency || 'AED'} {order.total.toLocaleString()}
+                    </span>
+
+                    <Link
+                      href={`/account/orders/${order.orderNumber}`}
+                      className="px-4 py-2 bg-aged-gold hover:bg-antique-gold text-accent-on-fill text-[10px] uppercase tracking-wider font-medium transition-colors shadow-sm"
+                    >
+                      Track Dossier →
+                    </Link>
+
+                    <button
+                      onClick={() => setSelectedOrder(order)}
+                      className="px-3 py-2 border border-border text-espresso hover:border-antique-gold text-[10px] uppercase tracking-wider font-medium transition-colors"
+                    >
+                      Quick View
+                    </button>
+                  </div>
                 </div>
-
-                <div className="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto pt-3 md:pt-0 border-t md:border-t-0 border-border">
-                  <span className="font-serif text-lg text-antique-gold font-medium mr-2">
-                    ${order.total}.00 USD
-                  </span>
-
-                  <Link
-                    href={`/account/orders/${order.orderNumber}`}
-                    className="px-4 py-2 bg-aged-gold hover:bg-antique-gold text-accent-on-fill text-[10px] uppercase tracking-wider font-medium transition-colors shadow-sm"
-                  >
-                    Track Dossier →
-                  </Link>
-
-                  <button
-                    onClick={() => setSelectedOrder(order)}
-                    className="px-3 py-2 border border-border text-espresso hover:border-antique-gold text-[10px] uppercase tracking-wider font-medium transition-colors"
-                  >
-                    Quick View
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Order Details Modal */}
           {selectedOrder && (
@@ -151,13 +190,17 @@ export default function OrdersPage() {
                     <p className="text-[10px] uppercase tracking-wider text-muted font-semibold">Acquired Flacon</p>
                     <div className="flex justify-between font-serif text-sm">
                       <span>{selectedOrder.items}</span>
-                      <span className="font-mono text-antique-gold">${selectedOrder.total}.00 USD</span>
+                      <span className="font-mono text-antique-gold">
+                        {selectedOrder.currency || 'AED'} {selectedOrder.total.toLocaleString()}
+                      </span>
                     </div>
                   </div>
 
                   <div className="pt-4 border-t border-border flex justify-between items-center text-xs">
-                    <span className="text-muted">Payment Status: Paid via Stripe</span>
-                    <span className="font-serif text-base text-espresso font-medium">Total: ${selectedOrder.total}.00 USD</span>
+                    <span className="text-muted">Payment Status: Order Confirmed</span>
+                    <span className="font-serif text-base text-espresso font-medium">
+                      Total: {selectedOrder.currency || 'AED'} {selectedOrder.total.toLocaleString()}
+                    </span>
                   </div>
                 </div>
 

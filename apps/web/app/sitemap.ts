@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://oudnomad.com';
+  const baseUrl = 'https://oudnomaddubai.com';
   const now = new Date();
 
   // ── High-priority brand pages ───────────────────────────────────────────────

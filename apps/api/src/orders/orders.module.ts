@@ -8,8 +8,13 @@ import { CartModule } from '../cart/cart.module.js';
 import { PaymentsModule } from '../payments/payments.module.js';
 import { AuditLogModule } from '../audit-log/audit-log.module.js';
 
+import { RefundsModule } from '../refunds/refunds.module.js';
+import { ShippingModule } from '../shipping/shipping.module.js';
+import { InvoiceModule } from '../invoice/invoice.module.js';
+import { KafkaModule } from '../kafka/kafka.module.js';
+
 @Module({
-  imports: [PrismaModule, CartModule, PaymentsModule, AuditLogModule],
+  imports: [PrismaModule, CartModule, PaymentsModule, AuditLogModule, RefundsModule, ShippingModule, InvoiceModule, KafkaModule],
   providers: [OrdersService, OrderExpiryWorkerService],
   controllers: [OrdersController, OrdersAdminController],
   exports: [OrdersService],

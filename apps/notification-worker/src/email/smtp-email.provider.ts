@@ -11,7 +11,7 @@ export class SmtpEmailProvider implements EmailProvider {
     const secure = process.env.SMTP_SECURE === 'true' || port === 465;
     const user = process.env.SMTP_USER;
     const pass = process.env.SMTP_PASS;
-    this.from = process.env.MAIL_FROM_ADDRESS || process.env.SMTP_FROM || 'OudNomad <noreply@oudnomad.com>';
+    this.from = process.env.MAIL_FROM_ADDRESS || process.env.SMTP_FROM || 'OudNomad <noreply@oudnomaddubai.com>';
 
     if (host && user && pass) {
       this.transporter = nodemailer.createTransport({

@@ -24,7 +24,7 @@ export class MailService {
     this.fromAddress =
       this.config.get<string>('MAIL_FROM_ADDRESS') ||
       this.config.get<string>('SMTP_FROM') ||
-      'OudNomad <noreply@oudnomad.com>';
+      'OudNomad <noreply@oudnomaddubai.com>';
 
     this.initTransporter();
   }

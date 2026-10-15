@@ -20,6 +20,9 @@ import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { AuditLogService } from '../audit-log/audit-log.service.js';
 import { KafkaProducerService } from '../kafka/kafka-producer.service.js';
+import { RefundsService } from '../refunds/refunds.service.js';
+import { ShippingService } from '../shipping/shipping.service.js';
+import { InvoiceService } from '../invoice/invoice.service.js';
 
 @Injectable()
 export class OrdersService {
@@ -31,7 +34,10 @@ export class OrdersService {
     private readonly config: ConfigService,
     private readonly auditLogService: AuditLogService,
     private readonly kafka: KafkaProducerService,
+    private readonly refundsService: RefundsService,
     @Inject(PAYMENT_SERVICE) private readonly paymentService: PaymentService,
+    private readonly shippingService: ShippingService,
+    private readonly invoiceService: InvoiceService,
   ) {}
 
   /**
@@ -179,6 +185,15 @@ export class OrdersService {
           discountAmount: 0,
           total,
           reservationExpiresAt,
+          // Immutable address snapshot for invoice and legal purposes
+          snapRecipientName: address.recipientName,
+          snapLine1: address.line1,
+          snapLine2: address.line2,
+          snapCity: address.city,
+          snapState: address.state,
+          snapPostalCode: address.postalCode,
+          snapCountryCode: address.countryCode,
+          snapPhone: address.phone,
         },
       });
 
@@ -210,6 +225,20 @@ export class OrdersService {
             lineTotal: item.lineTotal,
           },
         });
+
+        const inventory = await tx.inventory.findUnique({
+          where: { variantId: item.variantId },
+        });
+        if (inventory) {
+          await tx.inventoryAdjustment.create({
+            data: {
+              inventoryId: inventory.id,
+              adjustedBy: userId,
+              delta: -item.quantity,
+              reason: `Order ${newOrder.id} reserved stock`,
+            },
+          });
+        }
       }
 
       await tx.orderStatusEvent.create({
@@ -310,6 +339,16 @@ export class OrdersService {
         txPrisma,
       );
     }
+
+    // Fire-and-forget: generate invoice PDF and dispatch via DHL
+    // Both are idempotent and logged — failures don't roll back the order
+    void this.invoiceService.generateInvoice(orderId).catch((err: unknown) =>
+      this.logger.error(`Invoice generation failed for order ${orderId}`, err),
+    );
+
+    void this.shippingService.dispatchOrder(orderId).catch((err: unknown) =>
+      this.logger.error(`DHL dispatch failed for order ${orderId}`, err),
+    );
   }
 
   /**
@@ -461,5 +500,115 @@ export class OrdersService {
       );
     }
     return this.transitionStatus(orderId, newStatus, note, undefined, adminId);
+  }
+
+  /**
+   * Cancel an order: checks status eligibility, releases stock, writes inventory adjustments,
+   * writes audit event, cancels expiry job, and auto-refunds if already paid.
+   */
+  async cancelOrder(userId: string, orderId: string, reason: string, isAdmin = false) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        paymentAttempts: {
+          where: { status: 'SUCCEEDED' },
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+    });
+
+    if (!order) throw new NotFoundException(`Order with ID ${orderId} not found`);
+    if (!isAdmin && order.userId !== userId) {
+      throw new ForbiddenException('Access denied to cancel this order');
+    }
+
+    const eligibleStatuses: OrderStatus[] = [
+      OrderStatus.PENDING_PAYMENT,
+      OrderStatus.CONFIRMED,
+      OrderStatus.PLACED,
+    ];
+
+    if (!eligibleStatuses.includes(order.status)) {
+      throw new BadRequestException(
+        `Order in status ${order.status} cannot be cancelled. Cancellation is only allowed prior to shipping.`,
+      );
+    }
+
+    await cancelScheduledExpiry(orderId);
+
+    await this.prisma.$transaction(async (tx) => {
+      const items = await tx.orderItem.findMany({ where: { orderId } });
+      for (const item of items) {
+        await tx.productVariant.update({
+          where: { id: item.variantId },
+          data: { stock: { increment: item.quantity } },
+        });
+
+        const inventory = await tx.inventory.findUnique({
+          where: { variantId: item.variantId },
+        });
+        if (inventory) {
+          await tx.inventoryAdjustment.create({
+            data: {
+              inventoryId: inventory.id,
+              adjustedBy: userId,
+              delta: item.quantity,
+              reason: `Order ${order.orderNumber || order.id} cancelled: ${reason}`,
+            },
+          });
+        }
+      }
+
+      await tx.order.update({
+        where: { id: orderId },
+        data: {
+          status: OrderStatus.CANCELLED,
+          reservationExpiresAt: null,
+        },
+      });
+
+      await tx.orderStatusEvent.create({
+        data: {
+          orderId,
+          status: OrderStatus.CANCELLED,
+          note: `Order cancelled by ${isAdmin ? 'admin' : 'customer'}. Reason: ${reason}`,
+        },
+      });
+    });
+
+    let refundResult: any = null;
+    const paidAttempt = order.paymentAttempts[0];
+    if (paidAttempt && paidAttempt.gatewayPaymentId) {
+      try {
+        refundResult = await this.refundsService.createRefund(userId, {
+          orderId: order.id,
+          amount: Number(paidAttempt.amount),
+          reason: `Auto-refund on cancellation: ${reason}`,
+        });
+
+        await this.transitionStatus(
+          orderId,
+          OrderStatus.REFUNDED,
+          `Full auto-refund processed for cancelled order (Amount: ${paidAttempt.amount})`,
+        );
+      } catch (err: any) {
+        this.logger.error(
+          `Failed auto-refund on order cancellation ${orderId}: ${err.message}`,
+          err.stack,
+        );
+      }
+    }
+
+    this.logger.log(`Order ${orderId} cancelled by ${isAdmin ? 'admin' : 'customer'}: ${reason}`);
+
+    return {
+      success: true,
+      orderId,
+      status: refundResult ? OrderStatus.REFUNDED : OrderStatus.CANCELLED,
+      message: refundResult
+        ? 'Order cancelled and refund processed successfully.'
+        : 'Order cancelled successfully and stock returned to inventory.',
+      refund: refundResult,
+    };
   }
 }

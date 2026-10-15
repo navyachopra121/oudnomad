@@ -8,6 +8,7 @@ import { IconBag, IconChevronDown, IconClose, IconMenu, IconSearch, IconUser } f
 import MobileNavDrawer from './MobileNavDrawer';
 import { useCart } from '../cart/CartContext';
 import { useCurrency } from '../concierge/CurrencyContext';
+import { useAuth } from '../auth/AuthContext';
 import SearchModal from './SearchModal';
 
 type CategoryNode = {
@@ -26,6 +27,7 @@ const FALLBACK_CATEGORIES: CategoryNode[] = [
 export default function SiteHeader({ transparentMode = false }: { transparentMode?: boolean }) {
   const { openDrawer, totalItems } = useCart();
   const { currency, setIsModalOpen } = useCurrency();
+  const { isAuthenticated, openAuthModal } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [catalogOpen, setCatalogOpen] = useState(false);
@@ -160,7 +162,7 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
                   href="/fragrance-finder"
                   className="nav-link py-2 text-[#ffb91d] hover:text-white transition-colors font-medium flex items-center gap-1.5"
                 >
-                  <span className='text-[#ffb91d] text-sm tracking-[0.2em]'>Find your scents</span>
+                  <span className='text-[#ffb91d] text-[12px] tracking-[0.2em]'>Find your scents</span>
                   <span className="text-[9px] px-1 py-0.5 bg-[#ffb91d]/15 text-[#ffb91d] border border-[#ffb91d]/40 rounded-xs tracking-normal">QUIZ</span>
                 </Link>
               </nav>
@@ -228,13 +230,24 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
                 </button>
 
                 {/* User Account Icon */}
-                <Link
-                  href="/account"
-                  className="hidden sm:flex p-2 items-center justify-center text-white hover:text-[#ffb91d] transition-colors"
-                  aria-label="Account"
-                >
-                  <IconUser className="w-6 h-6" />
-                </Link>
+                {isAuthenticated ? (
+                  <Link
+                    href="/account"
+                    className="hidden sm:flex p-2 items-center justify-center text-[#ffb91d] hover:text-white transition-colors"
+                    aria-label="Account"
+                  >
+                    <IconUser className="w-6 h-6" />
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal('login')}
+                    className="hidden sm:flex p-2 items-center justify-center text-white hover:text-[#ffb91d] transition-colors"
+                    aria-label="Sign In or Register"
+                  >
+                    <IconUser className="w-6 h-6" />
+                  </button>
+                )}
 
                 {/* Cart Bag Icon */}
                 <button

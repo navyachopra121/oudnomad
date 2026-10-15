@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service.js';
 import { CheckoutDto } from './dto/checkout.dto.js';
+import { CancelOrderDto } from './dto/cancel-order.dto.js';
 import { CreatePaymentAttemptDto } from '../payments/dto/create-payment-attempt.dto.js';
 import { VerifyPaymentDto } from '../payments/dto/verify-payment.dto.js';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
@@ -80,5 +81,19 @@ export class OrdersController {
   @Get('orders/:id')
   findOrderById(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
     return this.ordersService.findOrderById(user.sub, id);
+  }
+
+  /**
+   * POST /api/orders/:id/cancel
+   * Allows customer to cancel their order with reason. Restocks inventory and triggers auto-refund if paid.
+   */
+  @Post('orders/:id/cancel')
+  @HttpCode(HttpStatus.OK)
+  cancelOrder(
+    @CurrentUser() user: JwtPayload,
+    @Param('id') id: string,
+    @Body() dto: CancelOrderDto,
+  ) {
+    return this.ordersService.cancelOrder(user.sub, id, dto.reason);
   }
 }

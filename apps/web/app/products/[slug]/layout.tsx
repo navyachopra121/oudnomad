@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const image = product.images?.[0] || '/og-image.jpg';
   const price = product.price;
   const currency = product.currency || 'AED';
-  const canonical = 'https://oudnomad.com/products/' + slug;
+  const canonical = 'https://oudnomaddubai.com/products/' + slug;
 
   return {
     title,
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       type: 'website',
       images: [
         {
-          url: image.startsWith('http') ? image : 'https://oudnomad.com' + image,
+          url: image.startsWith('http') ? image : 'https://oudnomaddubai.com' + image,
           width: 1200,
           height: 630,
           alt: product.name + ' - Oud Nomad',
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       card: 'summary_large_image',
       title,
       description,
-      images: [image.startsWith('http') ? image : 'https://oudnomad.com' + image],
+      images: [image.startsWith('http') ? image : 'https://oudnomaddubai.com' + image],
     },
     other: {
       'product:price:amount': String(price),

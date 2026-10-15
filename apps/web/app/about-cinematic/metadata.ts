@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About Oud Nomad | A Fragrance House Born Between Two Worlds',
@@ -14,13 +14,13 @@ export const metadata: Metadata = {
     'niche perfume house story',
   ],
   alternates: {
-    canonical: 'https://oudnomad.com/about',
+    canonical: 'https://oudnomaddubai.com/about',
   },
   openGraph: {
     title: 'About Oud Nomad | A Fragrance House for Women Between Worlds',
     description:
       'From Amritsar to Dubai — a founder who built the fragrance she could not find. Oud Nomad is crafted for the woman who belongs everywhere and is owned by nowhere.',
-    url: 'https://oudnomad.com/about',
+    url: 'https://oudnomaddubai.com/about',
     type: 'website',
     images: [
       {

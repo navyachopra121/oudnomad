@@ -96,7 +96,7 @@ export default function ShippingPolicyPage() {
                 Upon dispatch, your digital Order Dossier is updated with an authoritative waybill number accessible via your <Link href="/account/orders" className="text-antique-gold underline underline-offset-2">Account Orders</Link> dashboard. All deliveries require an adult signature upon delivery.
               </p>
               <p className="text-xs text-muted pt-2">
-                For special courier accommodations, diplomatic delivery, or bespoke hand-courier inquiries, please consult our concierge at <a href="mailto:concierge@oudnomad.com" className="text-antique-gold underline">concierge@oudnomad.com</a>.
+                For special courier accommodations, diplomatic delivery, or bespoke hand-courier inquiries, please consult our concierge at <a href="mailto:hello.oudnomaddubai@gmail.com" className="text-antique-gold underline">hello.oudnomaddubai@gmail.com</a>.
               </p>
             </section>
           </div>

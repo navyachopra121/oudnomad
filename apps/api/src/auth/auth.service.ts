@@ -21,6 +21,12 @@ import { randomUUID } from 'crypto';
 
 export interface TokenPair {
   accessToken: string;
+  user?: {
+    id: string;
+    email: string;
+    name: string;
+    role: string;
+  };
 }
 
 @Injectable()
@@ -50,7 +56,7 @@ export class AuthService {
   // REGISTER
   // ---------------------------------------------------------------------------
 
-  async register(dto: RegisterDto) {
+  async register(dto: RegisterDto, res?: Response) {
     const existing = await this.prisma.user.findUnique({
       where: { email: dto.email.toLowerCase() },
     });
@@ -59,16 +65,24 @@ export class AuthService {
       throw new ConflictException('An account with that email already exists');
     }
 
+    let firstName = dto.firstName;
+    let lastName = dto.lastName;
+    if (!firstName && dto.name) {
+      const parts = dto.name.trim().split(/\s+/);
+      firstName = parts[0];
+      lastName = parts.slice(1).join(' ') || undefined;
+    }
+
     const passwordHash = await hashPassword(dto.password);
 
     const user = await this.prisma.user.create({
       data: {
         email: dto.email.toLowerCase(),
         passwordHash,
-        firstName: dto.firstName,
-        lastName: dto.lastName,
+        firstName,
+        lastName,
       },
-      select: { id: true, email: true, role: true, emailVerified: true },
+      select: { id: true, email: true, firstName: true, lastName: true, role: true, emailVerified: true },
     });
 
     // Issue email verification token
@@ -89,7 +103,34 @@ export class AuthService {
     });
 
     this.logger.log(`User registered: ${user.id}`);
-    return { message: 'Registration successful. Please verify your email.' };
+
+    const accessToken = this.signAccessToken(user.id, user.role);
+    if (res) {
+      const rawRefresh = generateOpaqueToken();
+      await this.prisma.refreshToken.create({
+        data: {
+          userId: user.id,
+          tokenHash: hashToken(rawRefresh),
+          expiresAt: new Date(
+            Date.now() + this.refreshTokenExpiryDays * 24 * 60 * 60 * 1000,
+          ),
+        },
+      });
+      this.setRefreshCookie(res, rawRefresh);
+    }
+
+    const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email.split('@')[0];
+
+    return {
+      message: 'Registration successful.',
+      accessToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: fullName,
+        role: user.role,
+      },
+    };
   }
 
   // ---------------------------------------------------------------------------
@@ -139,7 +180,17 @@ export class AuthService {
     this.setRefreshCookie(res, rawRefresh);
 
     this.logger.log(`User logged in: ${user.id}`);
-    return { accessToken };
+    const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email.split('@')[0];
+
+    return {
+      accessToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: fullName,
+        role: user.role,
+      },
+    };
   }
 
   // ---------------------------------------------------------------------------

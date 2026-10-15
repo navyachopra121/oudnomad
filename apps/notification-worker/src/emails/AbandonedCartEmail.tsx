@@ -35,7 +35,7 @@ export function AbandonedCartEmail({
   items,
   checkoutUrl,
 }: AbandonedCartEmailProps) {
-  const appUrl = process.env.APP_URL ?? 'https://oudnomad.com';
+  const appUrl = process.env.APP_URL ?? 'https://oudnomaddubai.com';
   const link = checkoutUrl ?? `${appUrl}/cart?cart=${cartId}`;
 
   return (

@@ -30,7 +30,7 @@ const arabic = Noto_Naskh_Arabic({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://oudnomad.com'),
+  metadataBase: new URL('https://oudnomaddubai.com'),
 
   // ── Titles ──────────────────────────────────────────────────────────────────
   title: {
@@ -62,18 +62,18 @@ export const metadata: Metadata = {
   ],
 
   // ── Authors & Publisher ───────────────────────────────────────────────────
-  authors: [{ name: 'Oud Nomad', url: 'https://oudnomad.com' }],
+  authors: [{ name: 'Oud Nomad', url: 'https://oudnomaddubai.com' }],
   creator: 'Oud Nomad Parfums',
   publisher: 'Oud Nomad Parfums',
   category: 'Luxury Fragrances',
 
-  // ── Canonical ─────────────────────────────────────────────────────────────
+  // ── Canonical & Hreflang ───────────────────────────────────────────────────
   alternates: {
-    canonical: 'https://oudnomad.com',
+    canonical: 'https://oudnomaddubai.com',
     languages: {
-      'en-US': 'https://oudnomad.com',
-      'en-AE': 'https://oudnomad.com',
-      'ar-AE': 'https://oudnomad.com/ar',
+      'en-US': 'https://oudnomaddubai.com',
+      'en-AE': 'https://oudnomaddubai.com',
+      'x-default': 'https://oudnomaddubai.com',
     },
   },
 
@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     title: 'Oud Nomad | Luxury Oud Perfumes for Women — Dubai',
     description:
       'A fragrance house for women who don\'t fit into one world. Extrait de Parfum built from Kashmir saffron, Taif rose and Assamese oud. Crafted in Dubai. Worn worldwide.',
-    url: 'https://oudnomad.com',
+    url: 'https://oudnomaddubai.com',
     siteName: 'Oud Nomad',
     locale: 'en_US',
     type: 'website',
@@ -144,15 +144,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const organizationJsonLd = {
-    '@context': 'https://schema.org',
     '@type': 'Organization',
-    '@id': 'https://oudnomad.com/#organization',
+    '@id': 'https://oudnomaddubai.com/#organization',
     name: 'Oud Nomad',
     legalName: 'Oud Nomad Parfums FZ LLC',
-    url: 'https://oudnomad.com',
+    url: 'https://oudnomaddubai.com',
     logo: {
       '@type': 'ImageObject',
-      url: 'https://oudnomad.com/camelfinallogo-transparent.png',
+      url: 'https://oudnomaddubai.com/camelfinallogo-transparent.png',
       width: 200,
       height: 80,
     },
@@ -172,7 +171,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     contactPoint: [
       {
         '@type': 'ContactPoint',
-        email: 'support@oudnomad.com',
+        email: 'hello.oudnomaddubai@gmail.com',
         contactType: 'customer service',
         availableLanguage: ['English', 'Arabic'],
       },
@@ -193,8 +192,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   };
 
   const faqJsonLd = {
-    '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    '@id': 'https://oudnomaddubai.com/#faq',
     mainEntity: [
       {
         '@type': 'Question',
@@ -296,21 +295,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   };
 
   const websiteJsonLd = {
-    '@context': 'https://schema.org',
     '@type': 'WebSite',
-    '@id': 'https://oudnomad.com/#website',
-    url: 'https://oudnomad.com',
+    '@id': 'https://oudnomaddubai.com/#website',
+    url: 'https://oudnomaddubai.com',
     name: 'Oud Nomad',
     description: 'Luxury oud perfumes for women — crafted in Dubai.',
-    publisher: { '@id': 'https://oudnomad.com/#organization' },
+    publisher: { '@id': 'https://oudnomaddubai.com/#organization' },
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://oudnomad.com/search?q={search_term_string}',
+        urlTemplate: 'https://oudnomaddubai.com/search?q={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
     },
+  };
+
+  const schemaGraph = {
+    '@context': 'https://schema.org',
+    '@graph': [organizationJsonLd, websiteJsonLd, faqJsonLd],
   };
 
   return (
@@ -322,17 +325,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-        />
-        <link rel="canonical" href="https://oudnomad.com" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground" suppressHydrationWarning>
         <AuthProvider>

@@ -57,7 +57,7 @@ export default function RefundPolicyPage() {
             <section className="space-y-3">
               <h2 className="font-display text-xl text-espresso">3. Transit Damage Guarantee</h2>
               <p>
-                In the rare event that a crystal bottle or coffret sustains damage during courier transit, contact us at <a href="mailto:support@oudnomad.com" className="text-antique-gold underline">support@oudnomad.com</a> within 48 hours of delivery with photographic documentation. We will immediately dispatch a priority replacement or issue a full refund.
+                In the rare event that a crystal bottle or coffret sustains damage during courier transit, contact us at <a href="mailto:hello.oudnomaddubai@gmail.com" className="text-antique-gold underline">hello.oudnomaddubai@gmail.com</a> within 48 hours of delivery with photographic documentation. We will immediately dispatch a priority replacement or issue a full refund.
               </p>
             </section>
 

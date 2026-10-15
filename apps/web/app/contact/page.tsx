@@ -7,11 +7,33 @@ import Container from '../components/Container';
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setErrorMessage('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to submit message.');
+      }
+
+      setSubmitted(true);
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Something went wrong. Please reach out to hello.oudnomaddubai@gmail.com directly.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -40,20 +62,31 @@ export default function ContactPage() {
             <p className="text-xs sm:text-sm text-white/60 leading-relaxed font-sans max-w-md mx-auto">
               For fragrance inquiries, bespoke concierge orders, and shipping assistance, connect with our atelier team.
             </p>
+
+            {/* Quick Contact Chips */}
+            {/* <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <a
+                href="mailto:hello.oudnomaddubai@gmail.com"
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 hover:border-[#ffb91d]/50 text-white/80 hover:text-[#ffb91d] text-xs transition-colors"
+              >
+                <span>✉</span>
+                <span>hello.oudnomaddubai@gmail.com</span>
+              </a>
+              <a
+                href="https://wa.me/971585719731"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 hover:border-[#ffb91d]/50 text-white/80 hover:text-[#ffb91d] text-xs transition-colors"
+              >
+                <span>💬</span>
+                <span>+971 58 571 9731</span>
+              </a>
+            </div> */}
           </div>
 
           {/* Centered Interactive Contact Form */}
           <div className="max-w-2xl mx-auto w-full">
             <div className=" p-2 sm:p-6 shadow-2xl space-y-6">
-              {/* <div className="text-center space-y-1.5 pb-2 ">
-                <h2 className="text-base sm:text-lg font-serif uppercase tracking-wider text-white">
-                  Send Us a Message
-                </h2>
-                <p className="text-[11px] sm:text-xs text-white/45 font-sans">
-                  Our concierge team will respond within 24 hours.
-                </p>
-              </div> */}
-
               {submitted ? (
                 <div className="py-10 sm:py-14 text-center space-y-3.5 bg-[#141414] border border-[#ffb91d]/30 p-6 sm:p-8">
                   <div className="w-12 h-12 rounded-full bg-[#ffb91d]/10 border border-[#ffb91d]/40 flex items-center justify-center mx-auto text-[#ffb91d] text-xl">
@@ -63,7 +96,7 @@ export default function ContactPage() {
                     Message Received
                   </h3>
                   <p className="text-xs sm:text-sm text-white/60 max-w-sm mx-auto leading-relaxed font-sans">
-                    Thank you for contacting Oud Nomad. Our client care team will respond to your inquiry shortly.
+                    Thank you for contacting Oud Nomad. Our client care team will respond to your inquiry at <span className="text-[#ffb91d]">{form.email}</span> shortly.
                   </p>
                   <button
                     onClick={() => {
@@ -77,6 +110,12 @@ export default function ContactPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 text-xs font-sans">
+                  {errorMessage && (
+                    <div className="p-3 bg-red-950/40 border border-red-500/40 text-red-200 text-xs">
+                      {errorMessage}
+                    </div>
+                  )}
+
                   <div>
                     <label className="block text-[10px] sm:text-[11px] uppercase tracking-wider text-white/70 mb-1.5 font-sans font-medium">
                       Your Name
@@ -112,7 +151,6 @@ export default function ContactPage() {
                       </label>
                       <input
                         type="tel"
-                        required
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
                         placeholder="+971 58 571 9731"
@@ -137,9 +175,10 @@ export default function ContactPage() {
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 sm:py-4 bg-[#ffb91d] hover:bg-[#e5a61a] text-black font-semibold text-xs sm:text-[12px] uppercase tracking-[0.25em] transition-all shadow-lg active:scale-[0.99] mt-2"
+                    disabled={loading}
+                    className="w-full py-3.5 sm:py-4 bg-[#ffb91d] hover:bg-[#e5a61a] disabled:opacity-50 text-black font-semibold text-xs sm:text-[12px] uppercase tracking-[0.25em] transition-all shadow-lg active:scale-[0.99] mt-2 cursor-pointer disabled:cursor-not-allowed"
                   >
-                    Send Message
+                    {loading ? 'Sending Message...' : 'Send Message'}
                   </button>
 
                   <p className="text-[10px] sm:text-[11px] text-white/35 text-center font-sans pt-1">

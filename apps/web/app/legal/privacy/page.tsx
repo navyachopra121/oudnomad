@@ -69,7 +69,7 @@ export default function PrivacyPolicyPage() {
             <section className="space-y-3">
               <h2 className="font-display text-xl text-espresso">5. Collector Rights & Inquiries</h2>
               <p>
-                You may exercise your right to access, download, or permanently delete your personal archive data at any time by contacting our privacy compliance officer at <a href="mailto:privacy@oudnomad.com" className="text-antique-gold underline">privacy@oudnomad.com</a>.
+                You may exercise your right to access, download, or permanently delete your personal archive data at any time by contacting our privacy compliance officer at <a href="mailto:hello.oudnomaddubai@gmail.com" className="text-antique-gold underline">hello.oudnomaddubai@gmail.com</a>.
               </p>
             </section>
           </div>

@@ -347,12 +347,12 @@ export default function ProductDetailPage({ params }: PageProps) {
                 </div>
 
                 {/* Rating & Reviews */}
-                <div className="flex items-center gap-3">
+                {/* <div className="flex items-center gap-3">
                   <div className="flex text-[#ffb91d] text-sm">★★★★★</div>
                   <span className="text-xs text-white/60 font-mono">
                     4.9 / 5.0 (28 customer reviews)
                   </span>
-                </div>
+                </div> */}
 
 
 

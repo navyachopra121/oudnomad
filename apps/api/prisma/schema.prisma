@@ -454,10 +454,28 @@ model Order {
   createdAt            DateTime           @default(now()) @map("created_at")
   updatedAt            DateTime           @updatedAt @map("updated_at")
 
+  // Carrier / DHL tracking fields
+  awbCode          String?   @map("awb_code")           // DHL Airway Bill number
+  carrierShipmentId String?  @map("carrier_shipment_id") // DHL shipment ID
+  trackingUrl      String?   @map("tracking_url")
+  dispatchedAt     DateTime? @map("dispatched_at")
+  deliveredAt      DateTime? @map("delivered_at")
+
+  // Immutable address snapshot at time of order (used for invoice)
+  snapRecipientName String? @map("snap_recipient_name")
+  snapLine1         String? @map("snap_line1")
+  snapLine2         String? @map("snap_line2")
+  snapCity          String? @map("snap_city")
+  snapState         String? @map("snap_state")
+  snapPostalCode    String? @map("snap_postal_code")
+  snapCountryCode   String? @map("snap_country_code")
+  snapPhone         String? @map("snap_phone")
+
   items           OrderItem[]
   statusHistory   OrderStatusEvent[]
   paymentAttempts PaymentAttempt[]
   refunds         Refund[]
+  invoice         Invoice?
 
   @@index([userId])
   @@index([status])
@@ -622,3 +640,18 @@ model WishlistItem {
   @@map("wishlist_items")
 }
 
+// =============================================================================
+// INVOICES
+// =============================================================================
+
+model Invoice {
+  id          String   @id @default(uuid())
+  orderId     String   @unique @map("order_id")
+  order       Order    @relation(fields: [orderId], references: [id])
+  /// Sequential invoice number, e.g. OUD-INV-2024-00001
+  invoiceNo   String   @unique @map("invoice_no")
+  pdfUrl      String   @map("pdf_url")  // S3/R2 signed URL
+  generatedAt DateTime @default(now()) @map("generated_at")
+
+  @@map("invoices")
+}
