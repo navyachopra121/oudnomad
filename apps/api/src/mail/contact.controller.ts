@@ -1,5 +1,6 @@
 import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
 import { MailService } from './mail.service.js';
+import { Public } from '../auth/decorators/public.decorator.js';
 
 class ContactDto {
   name!: string;
@@ -38,6 +39,7 @@ class OrderCreateDto {
 export class ContactController {
   constructor(private readonly mailService: MailService) {}
 
+  @Public()
   @Post('contact')
   async handleContact(@Body() dto: ContactDto) {
     if (!dto.name || !dto.email || !dto.message) {
@@ -69,6 +71,7 @@ export class ContactController {
     return { success: true, message: 'Your message has been sent to the Oud Nomad atelier concierge.' };
   }
 
+  @Public()
   @Post('orders/create')
   async handleOrderCreate(@Body() dto: OrderCreateDto) {
     if (!dto.orderId || !dto.customer?.email || !dto.items || dto.items.length === 0) {
