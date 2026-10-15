@@ -2,15 +2,28 @@ import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
 import { MailService } from './mail.service.js';
 import { Public } from '../auth/decorators/public.decorator.js';
 
+import { IsString, IsOptional, IsNumber, IsArray } from 'class-validator';
+
 class ContactDto {
+  @IsString()
   name!: string;
+
+  @IsString()
   email!: string;
+
+  @IsOptional()
+  @IsString()
   phone?: string;
+
+  @IsString()
   message!: string;
 }
 
 class OrderCreateDto {
+  @IsString()
   orderId!: string;
+
+  @IsOptional()
   customer!: {
     name: string;
     email: string;
@@ -20,6 +33,9 @@ class OrderCreateDto {
     country?: string;
     postalCode?: string;
   };
+
+  @IsOptional()
+  @IsArray()
   items!: Array<{
     id?: string;
     name: string;
@@ -27,11 +43,29 @@ class OrderCreateDto {
     quantity: number;
     price: number;
   }>;
+
+  @IsOptional()
+  @IsNumber()
   subtotal!: number;
+
+  @IsOptional()
+  @IsNumber()
   shipping!: number;
+
+  @IsOptional()
+  @IsNumber()
   discount?: number;
+
+  @IsOptional()
+  @IsNumber()
   total!: number;
+
+  @IsOptional()
+  @IsString()
   currency?: string;
+
+  @IsOptional()
+  @IsString()
   paymentMethod?: string;
 }
 
