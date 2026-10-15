@@ -1,9 +1,17 @@
-const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-const API_BASE_URL = RAW_API_URL.replace(/\/+$/, '').endsWith('/api')
-  ? RAW_API_URL.replace(/\/+$/, '')
-  : `${RAW_API_URL.replace(/\/+$/, '')}/api`;
+function getApiBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    if (window.location.protocol === 'https:' || window.location.hostname.includes('oudnomaddubai.com')) {
+      return `${window.location.origin}/api`;
+    }
+  }
+  const raw = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+  return raw.replace(/\/+$/, '').endsWith('/api')
+    ? raw.replace(/\/+$/, '')
+    : `${raw.replace(/\/+$/, '')}/api`;
+}
 
 async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const API_BASE_URL = getApiBaseUrl();
   const token =
     typeof window !== 'undefined'
       ? localStorage.getItem('token') || localStorage.getItem('oudnomad_auth_token')

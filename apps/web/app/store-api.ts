@@ -1,11 +1,22 @@
 import { OUD_PRODUCTS, OUD_COLLECTIONS, OudProduct } from './lib/products-data';
 
-const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-export const API_BASE_URL = RAW_API_URL.replace(/\/+$/, '').endsWith('/api')
-  ? RAW_API_URL.replace(/\/+$/, '')
-  : `${RAW_API_URL.replace(/\/+$/, '')}/api`;
+export function getApiBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    // Prevent Mixed Content: If website is loaded over HTTPS, always use current origin /api
+    if (window.location.protocol === 'https:' || window.location.hostname.includes('oudnomaddubai.com')) {
+      return `${window.location.origin}/api`;
+    }
+  }
+  const raw = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+  return raw.replace(/\/+$/, '').endsWith('/api')
+    ? raw.replace(/\/+$/, '')
+    : `${raw.replace(/\/+$/, '')}/api`;
+}
+
+export const API_BASE_URL = getApiBaseUrl();
 
 async function storeFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const baseUrl = getApiBaseUrl();
   const token =
     typeof window !== 'undefined'
       ? localStorage.getItem('token') || localStorage.getItem('oudnomad_auth_token')
@@ -20,13 +31,13 @@ async function storeFetch<T>(path: string, options: RequestInit = {}): Promise<T
 
   let res: Response;
   try {
-    res = await fetch(`${API_BASE_URL}${path}`, {
+    res = await fetch(`${baseUrl}${path}`, {
       ...options,
       headers,
     });
   } catch (netErr: any) {
     throw new Error(
-      `Unable to reach the backend service at ${API_BASE_URL}. Please ensure the backend server is running (cd apps/api && npm run dev).`
+      `Unable to reach the backend service at ${baseUrl}. Please ensure the backend server is running.`
     );
   }
 
