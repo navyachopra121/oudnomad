@@ -11,6 +11,7 @@ import { useCurrency } from '../concierge/CurrencyContext';
 import { useAuth } from '../auth/AuthContext';
 import SearchModal from './SearchModal';
 import { getGccCountry } from '../../lib/pricing';
+import GccBanner from '../layout/GccBanner';
 
 
 type CategoryNode = {
@@ -28,7 +29,7 @@ const FALLBACK_CATEGORIES: CategoryNode[] = [
 
 export default function SiteHeader({ transparentMode = false }: { transparentMode?: boolean }) {
   const { openDrawer, totalItems } = useCart();
-  const { currency, countryCode, setIsModalOpen } = useCurrency();
+  const { currency, countryCode, setIsModalOpen, showGccBanner } = useCurrency();
   const gccCountry = getGccCountry(countryCode);
   const { isAuthenticated, openAuthModal } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -66,15 +67,17 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
     <>
       <header
         style={{
-          background: `rgba(0, 0, 0, ${bgOpacity * 0.92})`,
-
-          backdropFilter: bgOpacity > 0.3 ? `blur(${bgOpacity * 12}px)` : 'none',
-          WebkitBackdropFilter: bgOpacity > 0.3 ? `blur(${bgOpacity * 12}px)` : 'none',
+          background: `rgba(0, 0, 0, ${showGccBanner ? Math.max(bgOpacity * 0.92, 0.95) : bgOpacity * 0.92})`,
+          backdropFilter: (bgOpacity > 0.3 || showGccBanner) ? `blur(${Math.max(bgOpacity * 12, 12)}px)` : 'none',
+          WebkitBackdropFilter: (bgOpacity > 0.3 || showGccBanner) ? `blur(${Math.max(bgOpacity * 12, 12)}px)` : 'none',
           boxShadow: bgOpacity > 0.5 ? `0 4px 32px rgba(0,0,0,${bgOpacity * 0.7})` : 'none',
           transition: 'background 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease, box-shadow 0.4s ease',
         }}
-        className="fixed top-0 left-0 right-0 z-50"
+        className="fixed top-0 left-0 right-0 z-50 border-b border-white/5"
       >
+        {/* GCC International Visitor Notice — sits cleanly at the very top of the header bar */}
+        <GccBanner />
+
         <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-12">
           <div
             className="grid grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-4"
@@ -282,7 +285,7 @@ export default function SiteHeader({ transparentMode = false }: { transparentMod
 
       {/* Spacer so content is not hidden beneath fixed header — skipped in transparentMode (hero pages) */}
       {!transparentMode && (
-        <div aria-hidden style={{ height: headerHeight }} />
+        <div aria-hidden style={{ height: headerHeight + (showGccBanner ? 38 : 0) }} />
       )}
 
       {/* Mobile Drawer Navigation */}

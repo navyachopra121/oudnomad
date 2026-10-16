@@ -9,7 +9,6 @@ import CartDrawer from "./components/cart/CartDrawer";
 import { AuthProvider } from "./components/auth/AuthContext";
 import { CurrencyProvider } from "./components/concierge/CurrencyContext";
 import CurrencySelectorModal from "./components/concierge/CurrencySelectorModal";
-import GccBanner from "./components/layout/GccBanner";
 import EmailSignupPopup from "./components/EmailSignupPopup";
 
 const display = Cormorant_Garamond({
@@ -333,8 +332,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <CurrencyProvider>
             <CartProvider>
-              {/* GCC Banner — shown to international visitors only */}
-              <GccBanner />
               {/* <Preloader /> */}
               <main className="flex-1">{children}</main>
               <Footer />
