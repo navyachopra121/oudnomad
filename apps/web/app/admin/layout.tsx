@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { AdminApi } from './admin-api';
 
 const navItems = [
   { label: 'Dashboard', href: '/admin', icon: '📊' },
@@ -19,42 +20,167 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [adminUser, setAdminUser] = useState<{ email?: string; role?: string } | null>(null);
 
-  useEffect(() => {
-    // Client-side authentication check for token / role
-    const token = localStorage.getItem('token') || localStorage.getItem('oudnomad_auth_token');
+  // Login form state for unauthenticated access
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loggingIn, setLoggingIn] = useState(false);
+
+  const checkAuth = () => {
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('token') || localStorage.getItem('oudnomad_auth_token')
+        : null;
+
     if (!token) {
-      // In dev mode, allow access or check token
-      setIsAuthenticated(true);
+      setIsAuthenticated(false);
+      setAdminUser(null);
       return;
     }
+
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        setIsAuthenticated(false);
+        return;
+      }
+      const payload = JSON.parse(atob(parts[1]));
+
+      // Check token expiry
+      if (payload.exp && Date.now() / 1000 > payload.exp) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('oudnomad_auth_token');
+        setIsAuthenticated(false);
+        setAdminUser(null);
+        return;
+      }
+
       if (payload.role !== 'ADMIN') {
         setIsAuthenticated(false);
+        setAdminUser({ email: payload.email, role: payload.role });
       } else {
         setIsAuthenticated(true);
+        setAdminUser({ email: payload.email, role: payload.role });
       }
     } catch (_) {
-      setIsAuthenticated(true);
+      setIsAuthenticated(false);
     }
+  };
+
+  useEffect(() => {
+    checkAuth();
   }, []);
+
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoggingIn(true);
+    setLoginError(null);
+    try {
+      const res = await AdminApi.login({ email: loginEmail, password: loginPassword });
+      const token = res.accessToken || res.token;
+      if (!token) {
+        throw new Error('No access token returned from server');
+      }
+
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.role !== 'ADMIN') {
+        throw new Error('This account does not have Administrator privileges');
+      }
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('oudnomad_auth_token', token);
+      setAdminUser({ email: payload.email, role: payload.role });
+      setIsAuthenticated(true);
+    } catch (err: any) {
+      setLoginError(err.message || 'Authentication failed. Please check credentials.');
+    } finally {
+      setLoggingIn(false);
+    }
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('oudnomad_auth_token');
+    setIsAuthenticated(false);
+    setAdminUser(null);
+  };
+
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen bg-stone-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-amber-500 border-t-transparent"></div>
+      </div>
+    );
+  }
 
   if (isAuthenticated === false) {
     return (
       <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col items-center justify-center p-6">
-        <div className="bg-stone-900 border border-red-800/50 p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
-          <div className="text-4xl mb-4">⛔</div>
-          <h1 className="text-xl font-bold text-red-400 mb-2">Access Denied</h1>
-          <p className="text-sm text-stone-400 mb-6">
-            You do not have Administrator permissions required to access the Admin Portal.
-          </p>
-          <Link
-            href="/"
-            className="inline-block bg-amber-600 hover:bg-amber-500 text-stone-950 font-semibold px-6 py-2.5 rounded-lg text-sm transition-all"
-          >
-            Return to Storefront
-          </Link>
+        <div className="bg-stone-900 border border-stone-800 p-8 rounded-2xl max-w-md w-full shadow-2xl">
+          <div className="text-center mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-stone-950 font-bold text-2xl mx-auto mb-3 shadow-lg">
+              O
+            </div>
+            <h1 className="text-xl font-bold text-stone-100 tracking-wide">OUD NOMAD ATELIER</h1>
+            <p className="text-xs text-amber-500 font-semibold tracking-wider uppercase mt-1">
+              Production Admin Portal
+            </p>
+          </div>
+
+          {loginError && (
+            <div className="p-3 mb-4 bg-red-950/60 border border-red-800 text-red-300 text-xs rounded-lg">
+              {loginError}
+            </div>
+          )}
+
+          <form onSubmit={handleAdminLogin} className="space-y-4">
+            <div>
+              <label className="block text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-1">
+                Admin Email
+              </label>
+              <input
+                required
+                type="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="admin@oudnomaddubai.com"
+                className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3.5 py-2.5 text-sm text-stone-200 focus:outline-none focus:border-amber-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-1">
+                Password
+              </label>
+              <input
+                required
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="••••••••••••"
+                className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3.5 py-2.5 text-sm text-stone-200 focus:outline-none focus:border-amber-500"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loggingIn}
+              className="w-full bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold py-2.5 rounded-lg text-sm transition-all shadow-md disabled:opacity-50"
+            >
+              {loggingIn ? 'Authenticating...' : 'Sign In to Admin Portal'}
+            </button>
+          </form>
+
+          <div className="mt-6 pt-5 border-t border-stone-800 text-center">
+            <Link
+              href="/"
+              className="text-xs text-stone-400 hover:text-stone-200 transition-colors"
+            >
+              ← Return to Public Storefront
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -102,13 +228,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="p-4 border-t border-stone-800">
+        <div className="p-4 border-t border-stone-800 space-y-2">
           <Link
             href="/"
             className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold transition-all border border-stone-700/50"
           >
             <span>←</span> Back to Storefront
           </Link>
+          <button
+            onClick={handleSignOut}
+            className="flex items-center justify-center gap-2 w-full py-2 px-4 rounded-lg text-red-400 hover:bg-red-950/40 text-xs font-medium transition-all border border-red-900/30"
+          >
+            <span>🚪</span> Sign Out
+          </button>
         </div>
       </aside>
 
@@ -118,7 +250,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <h2 className="text-sm font-semibold text-stone-300 uppercase tracking-wider">
             {navItems.find((n) => (n.href === '/admin' ? pathname === '/admin' : pathname.startsWith(n.href)))?.label || 'Management Portal'}
           </h2>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            {adminUser?.email && (
+              <span className="text-xs text-stone-400 font-mono hidden sm:inline">
+                {adminUser.email}
+              </span>
+            )}
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
               Live Gateway Active
@@ -133,3 +270,4 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     </div>
   );
 }
+

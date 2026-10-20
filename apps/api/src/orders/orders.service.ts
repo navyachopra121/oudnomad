@@ -397,6 +397,15 @@ export class OrdersService {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
       include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            isBlocked: true,
+          },
+        },
         items: true,
         statusHistory: { orderBy: { createdAt: 'asc' } },
         shippingAddress: true,
@@ -501,6 +510,47 @@ export class OrdersService {
     }
     return this.transitionStatus(orderId, newStatus, note, undefined, adminId);
   }
+
+  /**
+   * Admin: Update carrier tracking details (AWB, tracking URL, carrier ID).
+   */
+  async adminUpdateTracking(
+    orderId: string,
+    data: { awbCode?: string; carrierShipmentId?: string; trackingUrl?: string },
+    adminId: string,
+  ) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+    });
+    if (!order) throw new NotFoundException(`Order with ID ${orderId} not found`);
+
+    const trackingUrl =
+      data.trackingUrl ||
+      (data.awbCode
+        ? `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(data.awbCode)}`
+        : order.trackingUrl);
+
+    const updated = await this.prisma.order.update({
+      where: { id: orderId },
+      data: {
+        awbCode: data.awbCode || order.awbCode,
+        carrierShipmentId: data.carrierShipmentId || order.carrierShipmentId,
+        trackingUrl,
+        dispatchedAt: order.dispatchedAt || (data.awbCode ? new Date() : undefined),
+      },
+    });
+
+    await this.auditLogService.log({
+      actorId: adminId,
+      action: 'order.update_tracking',
+      targetType: 'Order',
+      targetId: orderId,
+      metadata: { awbCode: data.awbCode, carrierShipmentId: data.carrierShipmentId, trackingUrl },
+    });
+
+    return updated;
+  }
+
 
   /**
    * Cancel an order: checks status eligibility, releases stock, writes inventory adjustments,

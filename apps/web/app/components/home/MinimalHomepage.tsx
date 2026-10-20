@@ -58,11 +58,20 @@ export default function MinimalHomepage() {
         <div className="absolute bottom-0 left-0 right-0 z-10 pb-12 sm:pb-16 text-center">
           <Reveal>
             <div className="max-w-2xl mx-auto px-4 space-y-4">
+              <div className="text-[10px] sm:text-[11px] font-sans tracking-[0.3em] uppercase text-[#ffb91d] font-normal flex items-center justify-center gap-2 mb-1">
+                <span>DUBAI ATELIER</span>
+                <span className="text-white/30">·</span>
+                <span className="font-arabic text-xs tracking-normal font-normal text-[#ffb91d]/90">دُبَيّ</span>
+              </div>
               <p className="font-sans text-[13px] sm:text-[14px] leading-[1.7] text-white font-normal tracking-[0.06em] drop-shadow-lg">
                 &ldquo;Born in Dubai, inspired by the spirit of exploration.
                 &mdash; Oud Nomad approaches fragrance as a personal signature — an invisible expression of presence, memory and individuality. Each composition invites a different encounter with the senses, designed to be experienced rather than simply worn.
                 &mdash; Because true luxury does not demand attention.
                 &rdquo;
+              </p>
+              <p className="font-serif italic text-sm sm:text-base text-[#ffb91d] tracking-wide flex items-center justify-center gap-2">
+                {/* <span>It leaves a trace.</span> */}
+                <span className="text-[#ffb91d]/60 font-arabic text-xs sm:text-sm not-italic font-normal">— بَل تَتْرُكُ أَثَراً —</span>
               </p>
               <div className="pt-2">
                 <Link

@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -49,4 +50,43 @@ export class CategoriesController {
   async remove(@Param('id') id: string) {
     await this.categoriesService.delete(id);
   }
+
+  /** Admin — GET /api/admin/collections */
+  @Roles(UserRole.ADMIN)
+  @Get('admin/collections')
+  findCollections(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+  ) {
+    return this.categoriesService.findCollectionsAdmin(
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 20,
+      search,
+    );
+  }
+
+  /** Admin — POST /api/admin/collections */
+  @Roles(UserRole.ADMIN)
+  @Post('admin/collections')
+  @HttpCode(HttpStatus.CREATED)
+  createCollection(@Body() dto: CreateCategoryDto) {
+    return this.categoriesService.create(dto);
+  }
+
+  /** Admin — PATCH /api/admin/collections/:id */
+  @Roles(UserRole.ADMIN)
+  @Patch('admin/collections/:id')
+  updateCollection(@Param('id') id: string, @Body() dto: UpdateCategoryDto) {
+    return this.categoriesService.update(id, dto);
+  }
+
+  /** Admin — DELETE /api/admin/collections/:id */
+  @Roles(UserRole.ADMIN)
+  @Delete('admin/collections/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeCollection(@Param('id') id: string) {
+    await this.categoriesService.delete(id);
+  }
 }
+

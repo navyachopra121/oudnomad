@@ -23,14 +23,34 @@ export class ProductsService {
    * Admin: Create product. Auto-creates default variant if no explicit variants are passed.
    */
   async create(dto: CreateProductDto) {
-    const category = await this.prisma.category.findFirst({
-      where: { id: dto.categoryId, deletedAt: null },
-    });
-    if (!category) {
-      throw new NotFoundException(`Category with ID ${dto.categoryId} not found`);
+    // 1. Resolve Category
+    let categoryId = dto.categoryId;
+    if (!categoryId && dto.categoryName) {
+      let cat = await this.prisma.category.findFirst({
+        where: { name: { equals: dto.categoryName, mode: 'insensitive' }, deletedAt: null },
+      });
+      if (!cat) {
+        const catSlug = await generateUniqueSlug(dto.categoryName, async (candidate) => {
+          const found = await this.prisma.category.findUnique({ where: { slug: candidate } });
+          return !!found;
+        });
+        cat = await this.prisma.category.create({
+          data: { name: dto.categoryName, slug: catSlug },
+        });
+      }
+      categoryId = cat.id;
+    } else if (!categoryId) {
+      let cat = await this.prisma.category.findFirst({ where: { deletedAt: null } });
+      if (!cat) {
+        cat = await this.prisma.category.create({
+          data: { name: 'Mists', slug: 'mists', description: 'Oud Nomad Mists Collection' },
+        });
+      }
+      categoryId = cat.id;
     }
 
-    const slug = await generateUniqueSlug(dto.name, async (candidate) => {
+    const baseSlug = (dto.slug && dto.slug.trim()) || dto.name;
+    const slug = await generateUniqueSlug(baseSlug, async (candidate) => {
       const found = await this.prisma.product.findUnique({ where: { slug: candidate } });
       return !!found;
     });
@@ -41,62 +61,167 @@ export class ProductsService {
       data: {
         name: dto.name,
         slug,
-        description: dto.description,
-        categoryId: dto.categoryId,
+        description: dto.description || dto.tagline || dto.name,
+        categoryId,
         status,
       },
     });
 
-    // Handle Variants — auto-create default variant if none provided
-    const variantsToCreate: CreateVariantDto[] =
-      dto.variants && dto.variants.length > 0
-        ? dto.variants
-        : [
-            {
-              sku: dto.sku ?? `${slug}-def`,
-              price: dto.price ?? 0,
-              stock: dto.stock ?? 0,
+    // 2. Handle Images
+    if (dto.images && Array.isArray(dto.images)) {
+      for (let i = 0; i < dto.images.length; i++) {
+        const url = dto.images[i];
+        if (url && typeof url === 'string') {
+          await this.prisma.productImage.create({
+            data: {
+              productId: product.id,
+              url,
+              path: url,
+              sortOrder: i,
             },
-          ];
+          });
+        }
+      }
+    }
 
-    for (const v of variantsToCreate) {
-      await this.prisma.productVariant.create({
-        data: {
-          productId: product.id,
-          sku: v.sku,
-          size: v.size,
-          color: v.color,
-          price: v.price,
-          stock: v.stock ?? 0,
-        },
-      });
+    // 3. Handle Variants — auto-create default variant with attributes
+    const attributes: Record<string, any> = {
+      tagline: dto.tagline,
+      signature: dto.signature,
+      moodAndCharacter: dto.moodAndCharacter,
+      olfactoryStory: dto.olfactoryStory,
+      ingredients: dto.ingredients,
+      features: dto.features,
+    };
+
+    const sku = dto.sku ?? `${slug}-100ml`;
+    const price = dto.price ?? 495;
+    const stock = dto.stock ?? 100;
+
+    const variant = await this.prisma.productVariant.create({
+      data: {
+        productId: product.id,
+        sku,
+        size: dto.features?.quantity || '100ml',
+        price,
+        stock,
+        attributes,
+      },
+    });
+
+    // 4. Upsert initial inventory
+    await this.prisma.inventory.upsert({
+      where: { variantId: variant.id },
+      update: { quantityAvailable: stock },
+      create: {
+        variantId: variant.id,
+        quantityAvailable: stock,
+        lowStockThreshold: 5,
+      },
+    });
+
+    // 5. Upsert GCC Regional Prices
+    if (dto.regionalPrices && typeof dto.regionalPrices === 'object') {
+      const currencyMap: Record<string, string> = {
+        AE: 'AED', SA: 'SAR', KW: 'KWD', QA: 'QAR', OM: 'OMR', BH: 'BHD',
+        AED: 'AED', SAR: 'SAR', KWD: 'KWD', QAR: 'QAR', OMR: 'OMR', BHD: 'BHD',
+      };
+      for (const [key, val] of Object.entries(dto.regionalPrices)) {
+        const countryCode =
+          key.length === 2
+            ? key.toUpperCase()
+            : key === 'AED'
+            ? 'AE'
+            : key === 'SAR'
+            ? 'SA'
+            : key === 'KWD'
+            ? 'KW'
+            : key === 'QAR'
+            ? 'QA'
+            : key === 'OMR'
+            ? 'OM'
+            : 'BH';
+        const currencyCode = currencyMap[key] || 'AED';
+        if (val !== undefined && val !== null && !isNaN(Number(val))) {
+          await this.prisma.regionalPrice.upsert({
+            where: {
+              variantId_countryCode: {
+                variantId: variant.id,
+                countryCode,
+              },
+            },
+            update: { price: Number(val), currencyCode },
+            create: {
+              variantId: variant.id,
+              countryCode,
+              currencyCode,
+              price: Number(val),
+            },
+          });
+        }
+      }
     }
 
     return this.findByIdAdmin(product.id);
   }
 
   /**
-   * Admin: Get all products (including archived, paginated).
+   * Admin: Get all products (including archived, paginated, searchable).
    */
-  async findAllAdmin(page = 1, limit = 20) {
+  async findAllAdmin(page = 1, limit = 20, search?: string) {
     const skip = (page - 1) * limit;
+    const where: any = { deletedAt: null };
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { slug: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
     const [items, total] = await Promise.all([
       this.prisma.product.findMany({
-        where: { deletedAt: null },
+        where,
         include: {
           category: { select: { id: true, name: true, slug: true } },
-          variants: { where: { deletedAt: null } },
+          variants: {
+            where: { deletedAt: null },
+            include: { regionalPrices: true },
+          },
           images: { orderBy: { sortOrder: 'asc' } },
         },
         orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
       }),
-      this.prisma.product.count({ where: { deletedAt: null } }),
+      this.prisma.product.count({ where }),
     ]);
 
+    const formatted = items.map((p) => {
+      const firstVariant = p.variants[0];
+      const attributes = (firstVariant?.attributes as any) || {};
+
+      const regionalPrices: Record<string, number> = {};
+      firstVariant?.regionalPrices?.forEach((rp) => {
+        regionalPrices[rp.currencyCode] = Number(rp.price);
+      });
+
+      return {
+        ...p,
+        sku: firstVariant?.sku || '',
+        price: firstVariant ? Number(firstVariant.price) : 0,
+        images: p.images.map((img) => img.url),
+        tagline: attributes.tagline,
+        signature: attributes.signature,
+        moodAndCharacter: attributes.moodAndCharacter,
+        olfactoryStory: attributes.olfactoryStory,
+        ingredients: attributes.ingredients,
+        features: attributes.features,
+        regionalPrices: Object.keys(regionalPrices).length > 0 ? regionalPrices : undefined,
+      };
+    });
+
     return {
-      items,
+      items: formatted,
       total,
       page,
       limit,
@@ -112,30 +237,55 @@ export class ProductsService {
       where: { id, deletedAt: null },
       include: {
         category: true,
-        variants: { where: { deletedAt: null } },
+        variants: {
+          where: { deletedAt: null },
+          include: { regionalPrices: true },
+        },
         images: { orderBy: { sortOrder: 'asc' } },
       },
     });
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
-    return product;
+
+    const firstVariant = product.variants[0];
+    const attributes = (firstVariant?.attributes as any) || {};
+    const regionalPrices: Record<string, number> = {};
+    firstVariant?.regionalPrices?.forEach((rp) => {
+      regionalPrices[rp.currencyCode] = Number(rp.price);
+    });
+
+    return {
+      ...product,
+      sku: firstVariant?.sku || '',
+      price: firstVariant ? Number(firstVariant.price) : 0,
+      images: product.images.map((img) => img.url),
+      tagline: attributes.tagline,
+      signature: attributes.signature,
+      moodAndCharacter: attributes.moodAndCharacter,
+      olfactoryStory: attributes.olfactoryStory,
+      ingredients: attributes.ingredients,
+      features: attributes.features,
+      regionalPrices: Object.keys(regionalPrices).length > 0 ? regionalPrices : undefined,
+    };
   }
 
   /**
-   * Admin: Update product metadata. Slug remains immutable.
+   * Admin: Update product metadata, variants, images, regional prices.
    */
   async update(id: string, dto: UpdateProductDto) {
     const product = await this.prisma.product.findFirst({
       where: { id, deletedAt: null },
+      include: { variants: true },
     });
     if (!product) throw new NotFoundException(`Product with ID ${id} not found`);
 
-    if (dto.categoryId) {
-      const category = await this.prisma.category.findFirst({
-        where: { id: dto.categoryId, deletedAt: null },
+    let categoryId = dto.categoryId;
+    if (!categoryId && dto.categoryName) {
+      let cat = await this.prisma.category.findFirst({
+        where: { name: { equals: dto.categoryName, mode: 'insensitive' }, deletedAt: null },
       });
-      if (!category) throw new NotFoundException(`Category with ID ${dto.categoryId} not found`);
+      if (cat) categoryId = cat.id;
     }
 
     const updated = await this.prisma.product.update({
@@ -143,7 +293,7 @@ export class ProductsService {
       data: {
         name: dto.name,
         description: dto.description,
-        categoryId: dto.categoryId,
+        categoryId: categoryId || undefined,
         status: dto.status,
       },
       include: {
@@ -153,14 +303,95 @@ export class ProductsService {
       },
     });
 
+    // Update Images if provided
+    if (dto.images && Array.isArray(dto.images)) {
+      await this.prisma.productImage.deleteMany({ where: { productId: id } });
+      for (let i = 0; i < dto.images.length; i++) {
+        const url = dto.images[i];
+        if (url && typeof url === 'string') {
+          await this.prisma.productImage.create({
+            data: {
+              productId: id,
+              url,
+              path: url,
+              sortOrder: i,
+            },
+          });
+        }
+      }
+    }
+
+    // Update primary variant
+    const firstVariant = product.variants[0];
+    if (firstVariant) {
+      const existingAttributes = (firstVariant.attributes as any) || {};
+      const newAttributes = {
+        ...existingAttributes,
+        ...(dto.tagline !== undefined && { tagline: dto.tagline }),
+        ...(dto.signature !== undefined && { signature: dto.signature }),
+        ...(dto.moodAndCharacter !== undefined && { moodAndCharacter: dto.moodAndCharacter }),
+        ...(dto.olfactoryStory !== undefined && { olfactoryStory: dto.olfactoryStory }),
+        ...(dto.ingredients !== undefined && { ingredients: dto.ingredients }),
+        ...(dto.features !== undefined && { features: dto.features }),
+      };
+
+      await this.prisma.productVariant.update({
+        where: { id: firstVariant.id },
+        data: {
+          sku: dto.sku || undefined,
+          price: dto.price !== undefined ? dto.price : undefined,
+          attributes: newAttributes,
+        },
+      });
+
+      // Update regional prices
+      if (dto.regionalPrices && typeof dto.regionalPrices === 'object') {
+        const currencyMap: Record<string, string> = {
+          AE: 'AED', SA: 'SAR', KW: 'KWD', QA: 'QAR', OM: 'OMR', BH: 'BHD',
+          AED: 'AED', SAR: 'SAR', KWD: 'KWD', QAR: 'QAR', OMR: 'OMR', BHD: 'BHD',
+        };
+        for (const [key, val] of Object.entries(dto.regionalPrices)) {
+          const countryCode =
+            key.length === 2
+              ? key.toUpperCase()
+              : key === 'AED'
+              ? 'AE'
+              : key === 'SAR'
+              ? 'SA'
+              : key === 'KWD'
+              ? 'KW'
+              : key === 'QAR'
+              ? 'QA'
+              : key === 'OMR'
+              ? 'OM'
+              : 'BH';
+          const currencyCode = currencyMap[key] || 'AED';
+          if (val !== undefined && val !== null && !isNaN(Number(val))) {
+            await this.prisma.regionalPrice.upsert({
+              where: {
+                variantId_countryCode: {
+                  variantId: firstVariant.id,
+                  countryCode,
+                },
+              },
+              update: { price: Number(val), currencyCode },
+              create: {
+                variantId: firstVariant.id,
+                countryCode,
+                currencyCode,
+                price: Number(val),
+              },
+            });
+          }
+        }
+      }
+    }
+
     // Invalidate product cache
     await this.cache.del(`product:${id}`);
     await this.cache.del(`product:slug:${product.slug}`);
-    if (updated.slug !== product.slug) {
-      await this.cache.del(`product:slug:${updated.slug}`);
-    }
 
-    return updated;
+    return this.findByIdAdmin(id);
   }
 
   /**

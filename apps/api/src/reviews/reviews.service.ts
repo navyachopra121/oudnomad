@@ -234,6 +234,40 @@ export class ReviewsService {
     };
   }
 
+  async approveAdmin(adminUserId: string, reviewId: string) {
+    const review = await this.prisma.review.findUnique({
+      where: { id: reviewId },
+    });
+    if (!review || review.deletedAt) {
+      throw new NotFoundException(`Review with ID ${reviewId} not found`);
+    }
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const r = await tx.review.update({
+        where: { id: reviewId },
+        data: { isReported: false },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          actorId: adminUserId,
+          action: 'review.approve',
+          targetType: 'Review',
+          targetId: reviewId,
+          metadata: {
+            productId: review.productId,
+            userId: review.userId,
+            rating: review.rating,
+          },
+        },
+      });
+
+      return r;
+    });
+
+    return { success: true, review: updated };
+  }
+
   async removeAdmin(adminUserId: string, reviewId: string) {
     const review = await this.prisma.review.findUnique({
       where: { id: reviewId },

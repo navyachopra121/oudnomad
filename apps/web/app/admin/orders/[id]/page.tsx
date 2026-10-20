@@ -27,12 +27,22 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
   const [refundReason, setRefundReason] = useState('');
   const [refundStatusMsg, setRefundStatusMsg] = useState<string | null>(null);
 
+  // Carrier tracking state
+  const [awbCode, setAwbCode] = useState('');
+  const [carrierShipmentId, setCarrierShipmentId] = useState('');
+  const [trackingUrl, setTrackingUrl] = useState('');
+  const [savingTracking, setSavingTracking] = useState(false);
+  const [trackingMsg, setTrackingMsg] = useState<string | null>(null);
+
   const fetchOrder = () => {
     setLoading(true);
     AdminApi.getOrderById(id)
       .then((res) => {
         setOrder(res);
         setRefundAmount(Number(res.total));
+        setAwbCode(res.awbCode || '');
+        setCarrierShipmentId(res.carrierShipmentId || '');
+        setTrackingUrl(res.trackingUrl || '');
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -41,6 +51,26 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
   useEffect(() => {
     fetchOrder();
   }, [id]);
+
+  const handleSaveTracking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingTracking(true);
+    setTrackingMsg(null);
+    try {
+      await AdminApi.updateOrderTracking(id, {
+        awbCode,
+        carrierShipmentId,
+        trackingUrl,
+      });
+      setTrackingMsg('DHL tracking details saved and dispatched timestamp updated.');
+      fetchOrder();
+      setTimeout(() => setTrackingMsg(null), 3000);
+    } catch (err: any) {
+      alert(`Failed to save tracking: ${err.message}`);
+    } finally {
+      setSavingTracking(false);
+    }
+  };
 
   const handleStatusTransition = async (targetStatus: string) => {
     if (targetStatus === 'REFUNDED') {
@@ -180,14 +210,14 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
                     </div>
                   </div>
                   <div className="font-bold text-stone-100 text-sm">
-                    ₹{Number(item.lineTotal).toFixed(2)}
+                    AED {Number(item.lineTotal).toFixed(2)}
                   </div>
                 </div>
               ))}
             </div>
             <div className="p-4 bg-stone-950/60 border-t border-stone-800 flex justify-between items-center text-sm font-bold text-stone-100">
               <span>Total Amount</span>
-              <span className="text-amber-400 text-lg">₹{Number(order.total).toFixed(2)}</span>
+              <span className="text-amber-400 text-lg">AED {Number(order.total).toFixed(2)}</span>
             </div>
           </div>
 
@@ -196,38 +226,159 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
             <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-4">
               Status Event History
             </h3>
-            <div className="space-y-4">
-              {order.statusHistory?.map((event: any) => (
-                <div key={event.id} className="flex gap-4 text-xs border-l-2 border-amber-500 pl-4 py-1">
-                  <div>
-                    <div className="font-bold text-stone-200">{event.status}</div>
-                    <div className="text-stone-400">{event.note}</div>
-                    <div className="text-stone-500 text-[10px] mt-0.5">
-                      {new Date(event.createdAt).toLocaleString()}
+            {(!order.statusHistory || order.statusHistory.length === 0) ? (
+              <div className="text-xs text-stone-500 py-2">No status history recorded.</div>
+            ) : (
+              <div className="space-y-4">
+                {order.statusHistory.map((event: any) => (
+                  <div key={event.id} className="flex gap-4 text-xs border-l-2 border-amber-500 pl-4 py-1">
+                    <div>
+                      <div className="font-bold text-stone-200">{event.status}</div>
+                      {event.note && <div className="text-stone-400">{event.note}</div>}
+                      <div className="text-stone-500 text-[10px] mt-0.5">
+                        {new Date(event.createdAt).toLocaleString()}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Sidebar Info */}
         <div className="space-y-6">
+          {/* Customer Info Card */}
+          <div className="bg-stone-900 border border-stone-800 rounded-xl p-6 shadow-md">
+            <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">
+              Customer Information
+            </h3>
+            {order.user ? (
+              <div className="text-xs text-stone-300 space-y-1.5">
+                <div className="font-semibold text-stone-100 text-sm">
+                  {order.user.firstName || order.user.lastName
+                    ? `${order.user.firstName ?? ''} ${order.user.lastName ?? ''}`.trim()
+                    : 'Unknown Customer'}
+                </div>
+                <div className="text-stone-400 font-mono">{order.user.email}</div>
+                {order.user.phone && (
+                  <div className="text-stone-400">{order.user.phone}</div>
+                )}
+                <div className="pt-1">
+                  <span className={`inline-flex px-2 py-0.5 text-[10px] font-bold rounded-full border ${
+                    order.user.isBlocked
+                      ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                      : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                  }`}>
+                    {order.user.isBlocked ? 'BLOCKED' : 'ACTIVE'}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="text-xs text-stone-500">Customer details unavailable</div>
+            )}
+          </div>
+
+          {/* DHL / Carrier Fulfillment Card */}
+          <div className="bg-stone-900 border border-stone-800 rounded-xl p-6 shadow-md">
+            <h3 className="text-xs font-bold text-amber-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+              <span>🚚</span> DHL Carrier Fulfillment
+            </h3>
+            <p className="text-[11px] text-stone-400 mb-4">
+              Assign AWB code or update tracking URL to provide customer with real-time DHL tracking.
+            </p>
+
+            {trackingMsg && (
+              <div className="p-2.5 mb-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-lg text-xs">
+                {trackingMsg}
+              </div>
+            )}
+
+            <form onSubmit={handleSaveTracking} className="space-y-3">
+              <div>
+                <label className="block text-[10px] font-semibold text-stone-400 uppercase tracking-wider mb-1">
+                  DHL Waybill / AWB Code
+                </label>
+                <input
+                  type="text"
+                  value={awbCode}
+                  onChange={(e) => setAwbCode(e.target.value)}
+                  placeholder="e.g. 1234567890"
+                  className="w-full bg-stone-950 border border-stone-800 rounded px-3 py-1.5 text-xs text-stone-200 font-mono focus:border-amber-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-semibold text-stone-400 uppercase tracking-wider mb-1">
+                  Carrier Shipment ID
+                </label>
+                <input
+                  type="text"
+                  value={carrierShipmentId}
+                  onChange={(e) => setCarrierShipmentId(e.target.value)}
+                  placeholder="Optional internal shipment ID"
+                  className="w-full bg-stone-950 border border-stone-800 rounded px-3 py-1.5 text-xs text-stone-200 font-mono focus:border-amber-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-semibold text-stone-400 uppercase tracking-wider mb-1">
+                  Tracking URL
+                </label>
+                <input
+                  type="text"
+                  value={trackingUrl}
+                  onChange={(e) => setTrackingUrl(e.target.value)}
+                  placeholder="https://www.dhl.com/..."
+                  className="w-full bg-stone-950 border border-stone-800 rounded px-3 py-1.5 text-xs text-stone-200 focus:border-amber-500 outline-none"
+                />
+              </div>
+
+              {order.trackingUrl && (
+                <div className="pt-1">
+                  <a
+                    href={order.trackingUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[11px] text-amber-400 hover:underline flex items-center gap-1 font-medium"
+                  >
+                    <span>🔗</span> Open Live Tracking Page ↗
+                  </a>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={savingTracking}
+                className="w-full bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold py-2 rounded text-xs transition-all shadow disabled:opacity-50 mt-2"
+              >
+                {savingTracking ? 'Saving...' : 'Save Tracking Information'}
+              </button>
+            </form>
+          </div>
+
           {/* Shipping Address */}
           <div className="bg-stone-900 border border-stone-800 rounded-xl p-6 shadow-md">
             <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">
               Shipping Address
             </h3>
-            {order.shippingAddress ? (
+            {(order.shippingAddress || order.snapLine1) ? (
               <div className="text-xs text-stone-300 space-y-1">
-                <div className="font-semibold text-stone-100">{order.shippingAddress.recipientName}</div>
-                <div>{order.shippingAddress.line1}</div>
-                {order.shippingAddress.line2 && <div>{order.shippingAddress.line2}</div>}
-                <div>
-                  {order.shippingAddress.city}, {order.shippingAddress.postalCode}
+                <div className="font-semibold text-stone-100">
+                  {order.shippingAddress?.recipientName || order.snapRecipientName}
                 </div>
-                <div>{order.shippingAddress.countryCode}</div>
+                <div>{order.shippingAddress?.line1 || order.snapLine1}</div>
+                {(order.shippingAddress?.line2 || order.snapLine2) && (
+                  <div>{order.shippingAddress?.line2 || order.snapLine2}</div>
+                )}
+                <div>
+                  {order.shippingAddress?.city || order.snapCity},{' '}
+                  {order.shippingAddress?.postalCode || order.snapPostalCode}
+                </div>
+                <div>{order.shippingAddress?.countryCode || order.snapCountryCode}</div>
+                {(order.shippingAddress?.phone || order.snapPhone) && (
+                  <div className="text-stone-400">{order.shippingAddress?.phone || order.snapPhone}</div>
+                )}
               </div>
             ) : (
               <div className="text-xs text-stone-500">No shipping address recorded</div>
@@ -239,20 +390,59 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
             <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">
               Payment Attempts ({order.paymentAttempts?.length || 0})
             </h3>
-            <div className="space-y-3">
-              {order.paymentAttempts?.map((attempt: any) => (
-                <div key={attempt.id} className="p-3 bg-stone-950 rounded-lg text-xs border border-stone-800">
-                  <div className="flex justify-between font-medium">
-                    <span className="text-amber-400 font-mono">{attempt.gatewayOrderId}</span>
-                    <span className="font-bold text-stone-200">{attempt.status}</span>
+            {!order.paymentAttempts || order.paymentAttempts.length === 0 ? (
+              <div className="text-xs text-stone-500 py-2">No payment attempts recorded.</div>
+            ) : (
+              <div className="space-y-3">
+                {order.paymentAttempts.map((attempt: any) => (
+                  <div key={attempt.id} className="p-3 bg-stone-950 rounded-lg text-xs border border-stone-800">
+                    <div className="flex justify-between font-medium">
+                      <span className="text-amber-400 font-mono">{attempt.gatewayOrderId}</span>
+                      <span className={`font-bold ${attempt.status === 'SUCCEEDED' ? 'text-emerald-400' : attempt.status === 'FAILED' ? 'text-red-400' : 'text-stone-300'}`}>
+                        {attempt.status}
+                      </span>
+                    </div>
+                    {attempt.amount && (
+                      <div className="text-stone-300 mt-0.5">AED {Number(attempt.amount).toFixed(2)}</div>
+                    )}
+                    {attempt.failureReason && (
+                      <div className="text-red-400 mt-0.5 text-[10px]">{attempt.failureReason}</div>
+                    )}
+                    <div className="text-stone-500 text-[10px] mt-1">
+                      {new Date(attempt.createdAt).toLocaleString()}
+                    </div>
                   </div>
-                  <div className="text-stone-500 text-[10px] mt-1">
-                    {new Date(attempt.createdAt).toLocaleString()}
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
+
+          {/* Refunds */}
+          {order.refunds && order.refunds.length > 0 && (
+            <div className="bg-stone-900 border border-rose-900/40 rounded-xl p-6 shadow-md">
+              <h3 className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-3">
+                Refunds ({order.refunds.length})
+              </h3>
+              <div className="space-y-3">
+                {order.refunds.map((refund: any) => (
+                  <div key={refund.id} className="p-3 bg-stone-950 rounded-lg text-xs border border-rose-900/30">
+                    <div className="flex justify-between font-medium">
+                      <span className="text-rose-300 font-bold">AED {Number(refund.amount).toFixed(2)}</span>
+                      <span className={`font-bold text-[10px] uppercase ${refund.status === 'PROCESSED' ? 'text-emerald-400' : refund.status === 'FAILED' ? 'text-red-400' : 'text-amber-400'}`}>
+                        {refund.status}
+                      </span>
+                    </div>
+                    {refund.reason && (
+                      <div className="text-stone-400 mt-0.5">{refund.reason}</div>
+                    )}
+                    <div className="text-stone-500 text-[10px] mt-1">
+                      {new Date(refund.createdAt).toLocaleString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -268,7 +458,7 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
             <form onSubmit={handleRefundSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-stone-300 mb-1">
-                  Refund Amount (INR)
+                  Refund Amount (AED)
                 </label>
                 <input
                   type="number"

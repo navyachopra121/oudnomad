@@ -63,6 +63,20 @@ export default function AdminProductsPage() {
   const [formData, setFormData] = useState<FormData>(defaultForm());
   const [activeTab, setActiveTab] = useState<Tab>('basic');
   const [saving, setSaving] = useState(false);
+  const [categories, setCategories] = useState<string[]>(['Mists', 'Perfumes', 'Royal Oud & Extraits', 'Pure Concentrated Attars', 'Incense & Sacred Bakhoor', 'Luxury Perfumes']);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch(`${(typeof window !== 'undefined' && window.location.hostname.includes('oudnomaddubai.com')) ? window.location.origin + '/api' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api')}/categories`);
+      if (res.ok) {
+        const tree = await res.json();
+        const names = (tree || []).map((c: any) => c.name).filter(Boolean);
+        if (names.length > 0) setCategories(names);
+      }
+    } catch {
+      // Keep hardcoded fallback
+    }
+  };
 
   const fetchProducts = (p = page) => {
     setLoading(true);
@@ -84,6 +98,7 @@ export default function AdminProductsPage() {
     setFormData(defaultForm());
     setActiveTab('basic');
     setShowModal(true);
+    fetchCategories();
   };
 
   const openEdit = (product: any) => {
@@ -124,6 +139,7 @@ export default function AdminProductsPage() {
       },
     });
     setShowModal(true);
+    fetchCategories();
   };
 
   const autoCalculateGccPrices = (baseAed: number) => {
@@ -396,12 +412,9 @@ export default function AdminProductsPage() {
                       <div>
                         <label className={labelClass}>Category *</label>
                         <select value={formData.categoryName} onChange={(e) => set('categoryName', e.target.value)} className={inputClass}>
-                          <option value="Mists">Mists</option>
-                          <option value="Perfumes">Perfumes</option>
-                          <option value="Royal Oud & Extraits">Royal Oud &amp; Extraits</option>
-                          <option value="Pure Concentrated Attars">Pure Concentrated Attars</option>
-                          <option value="Incense & Sacred Bakhoor">Incense &amp; Sacred Bakhoor</option>
-                          <option value="Luxury Perfumes">Luxury Perfumes</option>
+                          {categories.map((cat) => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
                         </select>
                       </div>
                       <div>

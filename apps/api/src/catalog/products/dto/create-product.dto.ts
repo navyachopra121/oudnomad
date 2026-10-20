@@ -39,10 +39,20 @@ export class CreateProductDto {
   name!: string;
 
   @IsString()
-  description!: string;
+  @IsOptional()
+  slug?: string;
 
   @IsString()
-  categoryId!: string;
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  @IsOptional()
+  categoryId?: string;
+
+  @IsString()
+  @IsOptional()
+  categoryName?: string;
 
   @IsEnum(ProductStatus)
   @IsOptional()
@@ -53,6 +63,11 @@ export class CreateProductDto {
   @IsOptional()
   @Min(0)
   price?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  compareAtPrice?: number;
 
   /** Optional top-level initial stock for single-SKU product creation */
   @IsNumber()
@@ -65,10 +80,39 @@ export class CreateProductDto {
   @IsOptional()
   sku?: string;
 
+  @IsString()
+  @IsOptional()
+  tagline?: string;
+
+  @IsString()
+  @IsOptional()
+  signature?: string;
+
+  @IsString()
+  @IsOptional()
+  moodAndCharacter?: string;
+
+  @IsString()
+  @IsOptional()
+  olfactoryStory?: string;
+
+  @IsString()
+  @IsOptional()
+  ingredients?: string;
+
+  @IsOptional()
+  features?: any;
+
+  @IsArray()
+  @IsOptional()
+  images?: string[];
+
+  @IsOptional()
+  regionalPrices?: Record<string, number>;
+
   /** Optional array of variants — if empty or omitted, a default variant is auto-created */
   @IsArray()
   @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => CreateVariantDto)
-  variants?: CreateVariantDto[];
+  variants?: any[];
 }
+

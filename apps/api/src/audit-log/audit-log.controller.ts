@@ -15,13 +15,21 @@ export class AuditLogController {
     @Query('actorId') actorId?: string,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
+    @Query('page') page?: string,
   ) {
+    const parsedLimit = limit ? parseInt(limit, 10) : 50;
+    const parsedOffset = page
+      ? (parseInt(page, 10) - 1) * parsedLimit
+      : offset
+        ? parseInt(offset, 10)
+        : 0;
+
     return this.auditLogService.findLogs({
       targetType,
       targetId,
       actorId,
-      limit: limit ? parseInt(limit, 10) : undefined,
-      offset: offset ? parseInt(offset, 10) : undefined,
+      limit: parsedLimit,
+      offset: parsedOffset,
     });
   }
 }

@@ -70,4 +70,16 @@ export class OrdersAdminController {
   ) {
     return this.ordersService.adminUpdateStatus(id, dto.status, dto.note, user.sub);
   }
+
+  /** Admin — PATCH /api/admin/orders/:id/tracking */
+  @Patch(':id/tracking')
+  @HttpCode(HttpStatus.OK)
+  updateTracking(
+    @CurrentUser() user: JwtPayload,
+    @Param('id') id: string,
+    @Body() body: { awbCode?: string; carrierShipmentId?: string; trackingUrl?: string },
+  ) {
+    return this.ordersService.adminUpdateTracking(id, body, user.sub);
+  }
 }
+

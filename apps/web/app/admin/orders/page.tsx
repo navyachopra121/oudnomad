@@ -28,7 +28,7 @@ export default function AdminOrdersPage() {
   }, [page, statusFilter]);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+    return 'AED ' + Number(amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   const getStatusBadge = (status: string) => {

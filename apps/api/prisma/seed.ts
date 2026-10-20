@@ -411,7 +411,37 @@ async function main() {
     console.log(`✅ Seeded product: ${p.name}`);
   }
 
-  console.log('🎉 Database seed complete! GCC currencies, regions, tax rules, and luxury products are live.');
+  // 6. Default Administrator Account
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@oudnomaddubai.com';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'OudNomadAdmin2026!';
+  const argon2 = await import('argon2');
+  const passwordHash = await argon2.hash(adminPassword, {
+    type: argon2.argon2id,
+    memoryCost: 19456,
+    timeCost: 2,
+    parallelism: 1,
+  });
+
+  const adminUser = await prisma.user.upsert({
+    where: { email: adminEmail },
+    update: {
+      role: 'ADMIN',
+      emailVerified: true,
+      isBlocked: false,
+    },
+    create: {
+      email: adminEmail,
+      passwordHash,
+      firstName: 'Atelier',
+      lastName: 'Administrator',
+      role: 'ADMIN',
+      emailVerified: true,
+      isBlocked: false,
+    },
+  });
+  console.log(`👤 Seeded Administrator: ${adminUser.email}`);
+
+  console.log('🎉 Database seed complete! GCC currencies, regions, tax rules, luxury products, and Administrator are live.');
 }
 
 main()

@@ -152,4 +152,57 @@ export class CategoriesService {
       data: { deletedAt: new Date() },
     });
   }
+
+  /**
+   * Admin: List collections/categories with product counts for Admin Portal.
+   */
+  async findCollectionsAdmin(page = 1, limit = 20, search?: string) {
+    const where: any = { deletedAt: null };
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { slug: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const [categories, total] = await Promise.all([
+      this.prisma.category.findMany({
+        where,
+        include: {
+          _count: {
+            select: { products: { where: { deletedAt: null } } },
+          },
+          products: {
+            where: { deletedAt: null },
+            select: { id: true, name: true, slug: true },
+          },
+        },
+        orderBy: { createdAt: 'asc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.category.count({ where }),
+    ]);
+
+    const items = categories.map((c, index) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      description: c.description || '',
+      bannerImage: '/banners.jpg',
+      status: 'ACTIVE',
+      sortOrder: index,
+      productCount: c._count.products,
+      products: c.products.map((p) => p.id),
+    }));
+
+    return {
+      items,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 }
+

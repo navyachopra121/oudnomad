@@ -7,12 +7,21 @@ import Link from 'next/link';
 export default function AdminDashboardPage() {
   const [summary, setSummary] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  useEffect(() => {
+  const loadSummary = () => {
+    setLoading(true);
     AdminApi.getDashboardSummary()
-      .then((data) => setSummary(data))
+      .then((data) => {
+        setSummary(data);
+        setLastUpdated(new Date());
+      })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadSummary();
   }, []);
 
   if (loading) {
@@ -41,9 +50,21 @@ export default function AdminDashboardPage() {
           <h1 className="text-2xl font-bold text-stone-100">Atelier Operations Control</h1>
           <p className="text-sm text-stone-400">
             Real-time metrics, revenue totals, stock alerts, and store controls.
+            {lastUpdated && (
+              <span className="ml-2 text-xs text-stone-600">
+                Last updated: {lastUpdated.toLocaleTimeString()}
+              </span>
+            )}
           </p>
         </div>
         <div className="flex flex-wrap gap-2.5">
+          <button
+            onClick={loadSummary}
+            disabled={loading}
+            className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all border border-stone-700 disabled:opacity-50"
+          >
+            {loading ? '↻ Refreshing...' : '↻ Refresh'}
+          </button>
           <Link
             href="/admin/products"
             className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-stone-950 text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-sm"

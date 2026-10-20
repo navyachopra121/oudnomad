@@ -86,6 +86,16 @@ export class ReviewsController {
     );
   }
 
+  /** Admin — PATCH /api/admin/reviews/:id/approve */
+  @Roles(UserRole.ADMIN)
+  @Patch('admin/reviews/:id/approve')
+  async approveReviewAdmin(
+    @CurrentUser() user: JwtPayload,
+    @Param('id') reviewId: string,
+  ) {
+    return this.reviewsService.approveAdmin(user.sub, reviewId);
+  }
+
   /** Admin — DELETE /api/admin/reviews/:id */
   @Roles(UserRole.ADMIN)
   @Delete('admin/reviews/:id')
@@ -96,3 +106,4 @@ export class ReviewsController {
     return this.reviewsService.removeAdmin(user.sub, reviewId);
   }
 }
+

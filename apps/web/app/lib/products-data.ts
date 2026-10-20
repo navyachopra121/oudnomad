@@ -59,6 +59,7 @@ export const OUD_NOMAD_PHILOSOPHY = {
     'Oud Nomad approaches fragrance as a personal signature — an invisible expression of presence, memory and individuality. Each composition invites a different encounter with the senses, designed to be experienced rather than simply worn.',
   luxuryStatement: 'Because true luxury does not demand attention.',
   signatureLine: 'It leaves a trace.',
+  signatureArabic: 'بَل تَتْرُكُ أَثَراً',
 };
 
 // ── Collections ───────────────────────────────────────────────────────────────

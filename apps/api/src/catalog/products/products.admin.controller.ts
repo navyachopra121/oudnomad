@@ -42,10 +42,12 @@ export class ProductsAdminController {
   findAll(
     @Query('page') page?: number,
     @Query('limit') limit?: number,
+    @Query('search') search?: string,
   ) {
     return this.productsService.findAllAdmin(
       page ? Number(page) : 1,
       limit ? Number(limit) : 20,
+      search,
     );
   }
 

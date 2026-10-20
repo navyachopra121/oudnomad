@@ -41,7 +41,11 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
 
     return await res.json();
   } catch (err) {
-    // If backend API fetch fails or is unreachable, fallback to clean initial state
+    // For mutations (POST, PATCH, DELETE), propagate the real error so user sees failure reason
+    if (options.method && options.method !== 'GET') {
+      throw err;
+    }
+    // If backend API fetch fails or is unreachable, fallback to clean initial state for GET
     return getFallbackData<T>(path, options);
   }
 }
@@ -59,7 +63,9 @@ function getFallbackData<T>(path: string, options: RequestInit): Promise<T> {
             thisMonth: [{ totalMinor: 0 }],
           },
           ordersByStatus: {
+            PENDING_PAYMENT: 0,
             CONFIRMED: 0,
+            PLACED: 0,
             SHIPPED: 0,
             DELIVERED: 0,
             CANCELLED: 0,
@@ -70,7 +76,7 @@ function getFallbackData<T>(path: string, options: RequestInit): Promise<T> {
         return;
       }
 
-      if (path.includes('/catalog/products')) {
+      if (path.includes('/admin/products') || path.includes('/catalog/products')) {
         const catalogProducts = [
           {
             id: 'prod-cedre',
@@ -164,17 +170,21 @@ function getFallbackData<T>(path: string, options: RequestInit): Promise<T> {
 }
 
 export const AdminApi = {
+  // Authentication
+  login: (credentials: { email: string; password: string }) =>
+    apiFetch<any>('/auth/login', { method: 'POST', body: JSON.stringify(credentials) }),
+
   // Dashboard
   getDashboardSummary: () => apiFetch<any>('/admin/dashboard/summary'),
 
   // Products
   getProducts: (params: { page?: number; limit?: number; search?: string } = {}) => {
     const query = new URLSearchParams(params as any).toString();
-    return apiFetch<any>(`/catalog/products?${query}`);
+    return apiFetch<any>(`/admin/products?${query}`);
   },
-  createProduct: (data: any) => apiFetch<any>('/catalog/products', { method: 'POST', body: JSON.stringify(data) }),
-  updateProduct: (id: string, data: any) => apiFetch<any>(`/catalog/products/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
-  deleteProduct: (id: string) => apiFetch<any>(`/catalog/products/${id}`, { method: 'DELETE' }),
+  createProduct: (data: any) => apiFetch<any>('/admin/products', { method: 'POST', body: JSON.stringify(data) }),
+  updateProduct: (id: string, data: any) => apiFetch<any>(`/admin/products/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  deleteProduct: (id: string) => apiFetch<any>(`/admin/products/${id}`, { method: 'DELETE' }),
 
   // Collections
   getCollections: (params: { page?: number; limit?: number; search?: string } = {}) => {
@@ -193,6 +203,8 @@ export const AdminApi = {
   getOrderById: (id: string) => apiFetch<any>(`/admin/orders/${id}`),
   updateOrderStatus: (id: string, status: string, note?: string) =>
     apiFetch<any>(`/admin/orders/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status, note }) }),
+  updateOrderTracking: (id: string, data: { awbCode?: string; carrierShipmentId?: string; trackingUrl?: string }) =>
+    apiFetch<any>(`/admin/orders/${id}/tracking`, { method: 'PATCH', body: JSON.stringify(data) }),
   releaseOrder: (id: string, note?: string) =>
     apiFetch<any>(`/admin/orders/${id}/release`, { method: 'PATCH', body: JSON.stringify({ note }) }),
   createRefund: (orderId: string, amount: number, reason?: string) =>
@@ -234,3 +246,4 @@ export const AdminApi = {
   approveReview: (id: string) => apiFetch<any>(`/admin/reviews/${id}/approve`, { method: 'PATCH' }),
   deleteReview: (id: string) => apiFetch<any>(`/admin/reviews/${id}`, { method: 'DELETE' }),
 };
+

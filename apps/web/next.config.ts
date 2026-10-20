@@ -36,6 +36,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    const raw = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const apiUrl = raw.replace(/\/+$/, '').replace(/\/api$/, '');
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${apiUrl}/api/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
