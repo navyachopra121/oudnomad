@@ -94,7 +94,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       setAdminUser({ email: payload.email, role: payload.role });
       setIsAuthenticated(true);
     } catch (err: any) {
-      setLoginError(err.message || 'Authentication failed. Please check credentials.');
+      if (err.message === 'Failed to fetch' || err.name === 'TypeError') {
+        setLoginError('Cannot reach the API server at http://localhost:3001. Please make sure the backend API is running.');
+      } else {
+        setLoginError(err.message || 'Authentication failed. Please check credentials.');
+      }
     } finally {
       setLoggingIn(false);
     }
@@ -143,9 +147,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <input
                 required
                 type="email"
+                autoComplete="email"
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="admin@oudnomaddubai.com"
+                placeholder="Enter Your Email Or Phon
+                
+                e"
                 className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3.5 py-2.5 text-sm text-stone-200 focus:outline-none focus:border-amber-500"
               />
             </div>
@@ -157,6 +164,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <input
                 required
                 type="password"
+                autoComplete="current-password"
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
                 placeholder="••••••••••••"
@@ -215,11 +223,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                  isActive
-                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                    : 'text-stone-400 hover:bg-stone-800/60 hover:text-stone-200'
-                }`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
+                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                  : 'text-stone-400 hover:bg-stone-800/60 hover:text-stone-200'
+                  }`}
               >
                 <span className="text-lg">{item.icon}</span>
                 <span>{item.label}</span>
