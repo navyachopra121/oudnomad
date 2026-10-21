@@ -4,10 +4,10 @@ import * as argon2 from 'argon2';
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = process.argv[2] || process.env.ADMIN_EMAIL || 'admin@oudnomaddubai.com';
-  const password = process.argv[3] || process.env.ADMIN_PASSWORD || 'OudNomadAdmin2026!';
-  const firstName = process.argv[4] || 'Atelier';
-  const lastName = process.argv[5] || 'Admin';
+  const email = process.argv[2] || process.env.ADMIN_EMAIL || 'navyachopra121@gmail.com';
+  const password = process.argv[3] || process.env.ADMIN_PASSWORD || 'Oudnomad@2026';
+  const firstName = process.argv[4] || 'Navya';
+  const lastName = process.argv[5] || 'Chopra';
 
   console.log(`Setting up Admin account for ${email}...`);
 
@@ -37,7 +37,21 @@ async function main() {
     },
   });
 
-  console.log(`✅ Administrator active: ${user.email} (ID: ${user.id}, Role: ${user.role})`);
+  // Revoke admin access for all other accounts
+  const revoked = await prisma.user.updateMany({
+    where: {
+      email: { not: email },
+      role: 'ADMIN',
+    },
+    data: {
+      role: 'CUSTOMER',
+    },
+  });
+  if (revoked.count > 0) {
+    console.log(`🔒 Revoked admin privileges from ${revoked.count} other account(s)`);
+  }
+
+  console.log(`✅ Sole Administrator active: ${user.email} (ID: ${user.id}, Role: ${user.role})`);
 }
 
 main()

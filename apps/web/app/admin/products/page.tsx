@@ -238,33 +238,53 @@ export default function AdminProductsPage() {
     {
       header: 'Product',
       accessorKey: 'name',
-      cell: (row) => (
-        <div className="flex items-center gap-3">
-          {row.images?.[0] && (
-            <img src={row.images[0]} alt="" className="w-10 h-14 object-cover rounded opacity-80 flex-shrink-0" />
-          )}
-          <div>
-            <div className="font-semibold text-stone-100 text-sm">{row.name}</div>
-            <div className="text-[10px] text-stone-500 font-mono">/{row.slug}</div>
-            <div className="text-[10px] text-stone-600 font-mono">{row.sku}</div>
+      cell: (row) => {
+        const firstImg = row.images?.[0];
+        const imgUrl = typeof firstImg === 'string' ? firstImg : firstImg?.url || firstImg?.path || '';
+        return (
+          <div className="flex items-center gap-3">
+            {imgUrl ? (
+              <img
+                src={imgUrl}
+                alt={row.name || ''}
+                className="w-10 h-14 object-cover rounded opacity-90 flex-shrink-0 bg-stone-800 border border-stone-700"
+                onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+              />
+            ) : (
+              <div className="w-10 h-14 rounded bg-stone-800 border border-stone-700 flex items-center justify-center text-stone-600 text-lg flex-shrink-0">
+                🧴
+              </div>
+            )}
+            <div>
+              <div className="font-semibold text-stone-100 text-sm">{row.name}</div>
+              <div className="text-[10px] text-stone-500 font-mono">/{row.slug}</div>
+              {row.sku && <div className="text-[10px] text-stone-600 font-mono">{row.sku}</div>}
+            </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
     {
       header: 'Category',
-      cell: (row) => <span className="text-xs text-stone-300">{row.category?.name || row.categoryName || '—'}</span>,
+      cell: (row) => (
+        <span className="text-xs text-stone-300">
+          {typeof row.category === 'object' ? row.category?.name : (row.category || row.categoryName || 'Mists')}
+        </span>
+      ),
     },
     {
       header: 'Price',
-      cell: (row) => (
-        <div>
-          <span className="font-mono text-amber-400 font-bold">AED {row.price}</span>
-          {row.compareAtPrice && (
-            <div className="text-[10px] text-stone-500 line-through font-mono">AED {row.compareAtPrice}</div>
-          )}
-        </div>
-      ),
+      cell: (row) => {
+        const displayPrice = row.price || row.variants?.[0]?.price || 495;
+        return (
+          <div>
+            <span className="font-mono text-amber-400 font-bold">AED {displayPrice}</span>
+            {row.compareAtPrice && (
+              <div className="text-[10px] text-stone-500 line-through font-mono">AED {row.compareAtPrice}</div>
+            )}
+          </div>
+        );
+      },
     },
     {
       header: 'Status',

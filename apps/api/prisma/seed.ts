@@ -412,8 +412,8 @@ async function main() {
   }
 
   // 6. Default Administrator Account
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@oudnomaddubai.com';
-  const adminPassword = process.env.ADMIN_PASSWORD || 'OudNomadAdmin2026!';
+  const adminEmail = process.env.ADMIN_EMAIL || 'navyachopra121@gmail.com';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'Oudnomad@2026';
   const argon2 = await import('argon2');
   const passwordHash = await argon2.hash(adminPassword, {
     type: argon2.argon2id,
@@ -425,6 +425,7 @@ async function main() {
   const adminUser = await prisma.user.upsert({
     where: { email: adminEmail },
     update: {
+      passwordHash,
       role: 'ADMIN',
       emailVerified: true,
       isBlocked: false,
@@ -432,14 +433,29 @@ async function main() {
     create: {
       email: adminEmail,
       passwordHash,
-      firstName: 'Atelier',
-      lastName: 'Administrator',
+      firstName: 'Navya',
+      lastName: 'Chopra',
       role: 'ADMIN',
       emailVerified: true,
       isBlocked: false,
     },
   });
-  console.log(`👤 Seeded Administrator: ${adminUser.email}`);
+
+  // Revoke admin access for all other accounts
+  const revoked = await prisma.user.updateMany({
+    where: {
+      email: { not: adminEmail },
+      role: 'ADMIN',
+    },
+    data: {
+      role: 'CUSTOMER',
+    },
+  });
+  if (revoked.count > 0) {
+    console.log(`🔒 Revoked admin privileges from ${revoked.count} other account(s)`);
+  }
+
+  console.log(`👤 Active Administrator: ${adminUser.email}`);
 
   console.log('🎉 Database seed complete! GCC currencies, regions, tax rules, luxury products, and Administrator are live.');
 }

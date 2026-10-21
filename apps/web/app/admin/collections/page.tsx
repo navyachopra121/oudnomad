@@ -571,7 +571,7 @@ export default function AdminCollectionsPage() {
                               <div className="flex-1 min-w-0">
                                 <div className="text-xs font-medium truncate">{product.name}</div>
                                 <div className="text-[10px] text-stone-500 font-mono">
-                                  AED {product.price} · {product.category || 'uncategorized'}
+                                  AED {product.price ?? 495} · {typeof product.category === 'object' ? (product.category as any)?.name : (product.category || 'Mists')}
                                 </div>
                               </div>
                               <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 transition-all ${

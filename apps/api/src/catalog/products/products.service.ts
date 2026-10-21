@@ -143,21 +143,27 @@ export class ProductsService {
             : 'BH';
         const currencyCode = currencyMap[key] || 'AED';
         if (val !== undefined && val !== null && !isNaN(Number(val))) {
-          await this.prisma.regionalPrice.upsert({
-            where: {
-              variantId_countryCode: {
-                variantId: variant.id,
-                countryCode,
-              },
-            },
-            update: { price: Number(val), currencyCode },
-            create: {
-              variantId: variant.id,
-              countryCode,
-              currencyCode,
-              price: Number(val),
-            },
-          });
+          const region = await this.prisma.region.findUnique({ where: { code: countryCode } });
+          if (region) {
+            const existingPrice = await this.prisma.productPrice.findFirst({
+              where: { variantId: variant.id, regionId: region.id },
+            });
+            if (existingPrice) {
+              await this.prisma.productPrice.update({
+                where: { id: existingPrice.id },
+                data: { amountMinor: Math.round(Number(val) * 100), currencyCode },
+              });
+            } else {
+              await this.prisma.productPrice.create({
+                data: {
+                  variantId: variant.id,
+                  regionId: region.id,
+                  currencyCode,
+                  amountMinor: Math.round(Number(val) * 100),
+                },
+              });
+            }
+          }
         }
       }
     }
@@ -185,7 +191,7 @@ export class ProductsService {
           category: { select: { id: true, name: true, slug: true } },
           variants: {
             where: { deletedAt: null },
-            include: { regionalPrices: true },
+            include: { prices: true },
           },
           images: { orderBy: { sortOrder: 'asc' } },
         },
@@ -196,20 +202,20 @@ export class ProductsService {
       this.prisma.product.count({ where }),
     ]);
 
-    const formatted = items.map((p) => {
-      const firstVariant = p.variants[0];
+    const formatted = items.map((p: any) => {
+      const firstVariant = p.variants?.[0];
       const attributes = (firstVariant?.attributes as any) || {};
 
       const regionalPrices: Record<string, number> = {};
-      firstVariant?.regionalPrices?.forEach((rp) => {
-        regionalPrices[rp.currencyCode] = Number(rp.price);
+      firstVariant?.prices?.forEach((rp: any) => {
+        regionalPrices[rp.currencyCode] = rp.amountMinor ? rp.amountMinor / 100 : Number(rp.price);
       });
 
       return {
         ...p,
         sku: firstVariant?.sku || '',
         price: firstVariant ? Number(firstVariant.price) : 0,
-        images: p.images.map((img) => img.url),
+        images: (p.images || []).map((img: any) => typeof img === 'string' ? img : img.url),
         tagline: attributes.tagline,
         signature: attributes.signature,
         moodAndCharacter: attributes.moodAndCharacter,
@@ -233,13 +239,13 @@ export class ProductsService {
    * Admin: Get single product for editing.
    */
   async findByIdAdmin(id: string) {
-    const product = await this.prisma.product.findFirst({
+    const product: any = await this.prisma.product.findFirst({
       where: { id, deletedAt: null },
       include: {
         category: true,
         variants: {
           where: { deletedAt: null },
-          include: { regionalPrices: true },
+          include: { prices: true },
         },
         images: { orderBy: { sortOrder: 'asc' } },
       },
@@ -248,18 +254,18 @@ export class ProductsService {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
 
-    const firstVariant = product.variants[0];
+    const firstVariant = product.variants?.[0];
     const attributes = (firstVariant?.attributes as any) || {};
     const regionalPrices: Record<string, number> = {};
-    firstVariant?.regionalPrices?.forEach((rp) => {
-      regionalPrices[rp.currencyCode] = Number(rp.price);
+    firstVariant?.prices?.forEach((rp: any) => {
+      regionalPrices[rp.currencyCode] = rp.amountMinor ? rp.amountMinor / 100 : Number(rp.price);
     });
 
     return {
       ...product,
       sku: firstVariant?.sku || '',
       price: firstVariant ? Number(firstVariant.price) : 0,
-      images: product.images.map((img) => img.url),
+      images: (product.images || []).map((img: any) => typeof img === 'string' ? img : img.url),
       tagline: attributes.tagline,
       signature: attributes.signature,
       moodAndCharacter: attributes.moodAndCharacter,
@@ -367,21 +373,27 @@ export class ProductsService {
               : 'BH';
           const currencyCode = currencyMap[key] || 'AED';
           if (val !== undefined && val !== null && !isNaN(Number(val))) {
-            await this.prisma.regionalPrice.upsert({
-              where: {
-                variantId_countryCode: {
-                  variantId: firstVariant.id,
-                  countryCode,
-                },
-              },
-              update: { price: Number(val), currencyCode },
-              create: {
-                variantId: firstVariant.id,
-                countryCode,
-                currencyCode,
-                price: Number(val),
-              },
-            });
+            const region = await this.prisma.region.findUnique({ where: { code: countryCode } });
+            if (region) {
+              const existingPrice = await this.prisma.productPrice.findFirst({
+                where: { variantId: firstVariant.id, regionId: region.id },
+              });
+              if (existingPrice) {
+                await this.prisma.productPrice.update({
+                  where: { id: existingPrice.id },
+                  data: { amountMinor: Math.round(Number(val) * 100), currencyCode },
+                });
+              } else {
+                await this.prisma.productPrice.create({
+                  data: {
+                    variantId: firstVariant.id,
+                    regionId: region.id,
+                    currencyCode,
+                    amountMinor: Math.round(Number(val) * 100),
+                  },
+                });
+              }
+            }
           }
         }
       }
