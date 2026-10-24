@@ -289,9 +289,24 @@ export class ProductsService {
     let categoryId = dto.categoryId;
     if (!categoryId && dto.categoryName) {
       let cat = await this.prisma.category.findFirst({
-        where: { name: { equals: dto.categoryName, mode: 'insensitive' }, deletedAt: null },
+        where: {
+          OR: [
+            { name: { equals: dto.categoryName, mode: 'insensitive' } },
+            { slug: { equals: dto.categoryName.toLowerCase().replace(/\s+/g, '-') } },
+          ],
+          deletedAt: null,
+        },
       });
-      if (cat) categoryId = cat.id;
+      if (!cat) {
+        const catSlug = await generateUniqueSlug(dto.categoryName, async (candidate) => {
+          const found = await this.prisma.category.findUnique({ where: { slug: candidate } });
+          return !found;
+        });
+        cat = await this.prisma.category.create({
+          data: { name: dto.categoryName, slug: catSlug },
+        });
+      }
+      categoryId = cat.id;
     }
 
     const updated = await this.prisma.product.update({
@@ -518,10 +533,27 @@ export class ProductsService {
   async findAllPublic(query: ProductQueryDto) {
     const limit = query.limit ?? 20;
 
-    // Resolve category subtree IDs if categoryId parameter is supplied
+    // Resolve category subtree IDs if categoryId or category parameter is supplied
     let categoryIds: string[] | undefined;
     if (query.categoryId) {
       categoryIds = await this.getCategorySubtreeIds(query.categoryId);
+    } else if (query.category && query.category.toLowerCase() !== 'all') {
+      const catSlugOrName = query.category.toLowerCase().trim();
+      const cat = await this.prisma.category.findFirst({
+        where: {
+          OR: [
+            { slug: { equals: catSlugOrName } },
+            { name: { equals: catSlugOrName, mode: 'insensitive' } },
+            { slug: { startsWith: catSlugOrName.slice(0, 4) } },
+          ],
+          deletedAt: null,
+        },
+      });
+      if (cat) {
+        categoryIds = await this.getCategorySubtreeIds(cat.id);
+      } else {
+        categoryIds = ['non-existent-category-id'];
+      }
     }
 
     const where: any = {
@@ -547,9 +579,9 @@ export class ProductsService {
 
     // Configure Order By
     let orderBy: any = { createdAt: 'desc' };
-    if (query.sort === ProductSortOption.PRICE_ASC) {
+    if (query.sort === ProductSortOption.PRICE_ASC || query.sort === 'price_asc' || query.sort === 'price-low-high') {
       orderBy = { createdAt: 'asc' };
-    } else if (query.sort === ProductSortOption.PRICE_DESC) {
+    } else if (query.sort === ProductSortOption.PRICE_DESC || query.sort === 'price_desc' || query.sort === 'price-high-low') {
       orderBy = { createdAt: 'desc' };
     }
 
@@ -561,7 +593,7 @@ export class ProductsService {
       orderBy,
       include: {
         category: { select: { id: true, name: true, slug: true } },
-        variants: { where: { deletedAt: null } },
+        variants: { where: { deletedAt: null }, include: { prices: true } },
         images: { orderBy: { sortOrder: 'asc' } },
       },
     });
@@ -572,8 +604,52 @@ export class ProductsService {
       nextCursor = nextItem?.id ?? null;
     }
 
+    const mappedItems = items.map((product: any) => {
+      const firstVariant = product.variants?.[0];
+      const attributes = (firstVariant?.attributes as any) || {};
+      const price = firstVariant ? Number(firstVariant.price) : 495;
+      const images = (product.images || [])
+        .map((img: any) => (typeof img === 'string' ? img : img.url))
+        .filter(Boolean);
+
+      const catSlug = product.category?.slug?.toLowerCase() || 'perfumes';
+      const catName = product.category?.name || (catSlug.includes('mist') ? 'Mists' : 'Perfumes');
+
+      const regionalPrices: Record<string, number> = {};
+      firstVariant?.prices?.forEach((rp: any) => {
+        regionalPrices[rp.currencyCode] = rp.amountMinor ? rp.amountMinor / 100 : Number(rp.price);
+      });
+
+      return {
+        ...product,
+        price,
+        currency: 'AED',
+        category: catSlug.includes('mist') ? 'mists' : 'perfumes',
+        categoryName: catName,
+        images:
+          images.length > 0
+            ? images
+            : ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618'],
+        tagline: attributes.tagline || product.tagline || '',
+        signature: attributes.signature || product.signature || '',
+        moodAndCharacter: attributes.moodAndCharacter || product.moodAndCharacter || '',
+        olfactoryStory: attributes.olfactoryStory || product.olfactoryStory || '',
+        ingredients: attributes.ingredients || product.ingredients || '',
+        features: attributes.features || product.features || {},
+        regionalPrices: Object.keys(regionalPrices).length > 0 ? regionalPrices : undefined,
+        variants: (product.variants || []).map((v: any) => ({
+          id: v.id,
+          sku: v.sku,
+          size: v.size || '100ml',
+          price: Number(v.price) || price,
+          stock: v.stock ?? 100,
+          inStock: (v.stock ?? 1) > 0,
+        })),
+      };
+    });
+
     return {
-      items,
+      items: mappedItems,
       nextCursor,
     };
   }
@@ -588,11 +664,11 @@ export class ProductsService {
       return cached;
     }
 
-    const product = await this.prisma.product.findFirst({
+    const product: any = await this.prisma.product.findFirst({
       where: { slug, status: ProductStatus.ACTIVE, deletedAt: null },
       include: {
         category: true,
-        variants: { where: { deletedAt: null } },
+        variants: { where: { deletedAt: null }, include: { prices: true } },
         images: { orderBy: { sortOrder: 'asc' } },
       },
     });
@@ -604,8 +680,46 @@ export class ProductsService {
     // Build category breadcrumb chain walking parent relations up
     const breadcrumbs = await this.getCategoryBreadcrumbs(product.categoryId);
 
+    const firstVariant = product.variants?.[0];
+    const attributes = (firstVariant?.attributes as any) || {};
+    const price = firstVariant ? Number(firstVariant.price) : 495;
+    const images = (product.images || [])
+      .map((img: any) => (typeof img === 'string' ? img : img.url))
+      .filter(Boolean);
+
+    const catSlug = product.category?.slug?.toLowerCase() || 'perfumes';
+    const catName = product.category?.name || (catSlug.includes('mist') ? 'Mists' : 'Perfumes');
+
+    const regionalPrices: Record<string, number> = {};
+    firstVariant?.prices?.forEach((rp: any) => {
+      regionalPrices[rp.currencyCode] = rp.amountMinor ? rp.amountMinor / 100 : Number(rp.price);
+    });
+
     const result = {
       ...product,
+      price,
+      currency: 'AED',
+      category: catSlug.includes('mist') ? 'mists' : 'perfumes',
+      categoryName: catName,
+      images:
+        images.length > 0
+          ? images
+          : ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618'],
+      tagline: attributes.tagline || product.tagline || '',
+      signature: attributes.signature || product.signature || '',
+      moodAndCharacter: attributes.moodAndCharacter || product.moodAndCharacter || '',
+      olfactoryStory: attributes.olfactoryStory || product.olfactoryStory || '',
+      ingredients: attributes.ingredients || product.ingredients || '',
+      features: attributes.features || product.features || {},
+      regionalPrices: Object.keys(regionalPrices).length > 0 ? regionalPrices : undefined,
+      variants: (product.variants || []).map((v: any) => ({
+        id: v.id,
+        sku: v.sku,
+        size: v.size || '100ml',
+        price: Number(v.price) || price,
+        stock: v.stock ?? 100,
+        inStock: (v.stock ?? 1) > 0,
+      })),
       breadcrumbs,
     };
 

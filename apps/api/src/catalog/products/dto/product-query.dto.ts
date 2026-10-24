@@ -12,6 +12,16 @@ export class ProductQueryDto {
   @IsOptional()
   categoryId?: string;
 
+  @IsString()
+  @IsOptional()
+  category?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  @Min(1)
+  page?: number;
+
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
@@ -24,9 +34,9 @@ export class ProductQueryDto {
   @Min(0)
   maxPrice?: number;
 
-  @IsEnum(ProductSortOption)
+  @IsString()
   @IsOptional()
-  sort?: ProductSortOption = ProductSortOption.NEWEST;
+  sort?: string;
 
   @IsString()
   @IsOptional()

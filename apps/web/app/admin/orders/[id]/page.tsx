@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, use } from 'react';
+import { useParams } from 'next/navigation';
 import { AdminApi } from '../../admin-api';
 import Link from 'next/link';
 
@@ -16,8 +17,19 @@ const ALLOWED_TRANSITIONS: Record<string, string[]> = {
   REFUNDED: [],
 };
 
-export default function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function AdminOrderDetailPage({ params }: { params?: Promise<{ id: string }> | { id: string } }) {
+  const routeParams = useParams();
+  let paramId = '';
+  if (params) {
+    if (typeof (params as any).then === 'function') {
+      try {
+        paramId = (use(params as Promise<{ id: string }>) as any)?.id || '';
+      } catch (_) {}
+    } else if (typeof (params as any)?.id === 'string') {
+      paramId = (params as any).id;
+    }
+  }
+  const id = (typeof routeParams?.id === 'string' ? routeParams.id : paramId) || '';
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

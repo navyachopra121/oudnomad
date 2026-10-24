@@ -1,15 +1,21 @@
 'use client';
 
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 
 const POPUP_STORAGE_KEY = 'oudnomad_email_popup_session_shown';
 
 export default function EmailSignupPopup() {
+  const pathname = usePathname();
   const [visible, setVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+
+  if (pathname?.startsWith('/about') || pathname?.includes('about-us')) {
+    return null;
+  }
 
   useEffect(() => {
     // Don't show if already shown or dismissed in this browser session

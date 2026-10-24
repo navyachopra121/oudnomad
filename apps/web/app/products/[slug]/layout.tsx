@@ -1,12 +1,15 @@
 import type { Metadata } from 'next';
 import { StoreApi } from '../../store-api';
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> | { slug: string } }): Promise<Metadata> {
+  const resolvedParams = await Promise.resolve(params);
+  const slug = resolvedParams?.slug || '';
   let product = null;
-  try {
-    product = await StoreApi.getProductBySlug(slug);
-  } catch (_) {}
+  if (slug) {
+    try {
+      product = await StoreApi.getProductBySlug(slug);
+    } catch (_) {}
+  }
 
   if (!product) {
     return {
@@ -18,10 +21,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = product.name + ' | Oud Nomad';
   const description = product.description?.slice(0, 160) ||
     'A luxury oud fragrance crafted in Dubai. Built to endure heat, not dissolve in it.';
-  const image = product.images?.[0] || '/og-image.jpg';
-  const price = product.price;
+  const rawImg = product.images?.[0];
+  const image = (typeof rawImg === 'string' && rawImg.length > 0 ? rawImg : (rawImg as any)?.url) || '/og-image.jpg';
+  const price = typeof product.price === 'number' && !isNaN(product.price) ? product.price : 495;
   const currency = product.currency || 'AED';
   const canonical = 'https://oudnomaddubai.com/products/' + slug;
+  const cat = typeof product.category === 'string' ? product.category : (product.category as any)?.name || 'perfumes';
 
   return {
     title,
@@ -30,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       product.name,
       'oud perfume',
       'luxury fragrance Dubai',
-      product.category || 'extrait de parfum',
+      cat,
       'Oud Nomad',
       'buy oud perfume',
     ].filter(Boolean),

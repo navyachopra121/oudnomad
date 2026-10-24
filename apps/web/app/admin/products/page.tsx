@@ -8,7 +8,7 @@ const defaultForm = () => ({
   name: '',
   slug: '',
   sku: 'OUD-' + Math.floor(100 + Math.random() * 900),
-  categoryName: 'Mists',
+  categoryName: 'Perfumes',
   tagline: '',
   moodAndCharacter: '',
   signature: '',
@@ -63,7 +63,7 @@ export default function AdminProductsPage() {
   const [formData, setFormData] = useState<FormData>(defaultForm());
   const [activeTab, setActiveTab] = useState<Tab>('basic');
   const [saving, setSaving] = useState(false);
-  const [categories, setCategories] = useState<string[]>(['Mists', 'Perfumes', 'Royal Oud & Extraits', 'Pure Concentrated Attars', 'Incense & Sacred Bakhoor', 'Luxury Perfumes']);
+  const [categories, setCategories] = useState<string[]>(['Perfumes', 'Mists']);
 
   const fetchCategories = async () => {
     try {
@@ -71,10 +71,15 @@ export default function AdminProductsPage() {
       if (res.ok) {
         const tree = await res.json();
         const names = (tree || []).map((c: any) => c.name).filter(Boolean);
-        if (names.length > 0) setCategories(names);
+        const filtered = names.filter((n: string) => ['perfumes', 'mists'].includes(n.toLowerCase()));
+        if (filtered.length > 0) {
+          setCategories(Array.from(new Set([...filtered, 'Perfumes', 'Mists'])));
+        } else {
+          setCategories(['Perfumes', 'Mists']);
+        }
       }
     } catch {
-      // Keep hardcoded fallback
+      setCategories(['Perfumes', 'Mists']);
     }
   };
 
@@ -104,11 +109,13 @@ export default function AdminProductsPage() {
   const openEdit = (product: any) => {
     setEditingId(product.id);
     setActiveTab('basic');
+    const rawCat = product.category?.name || product.categoryName || (typeof product.category === 'string' ? product.category : '') || '';
+    const safeCatName = rawCat.toLowerCase().includes('mist') ? 'Mists' : 'Perfumes';
     setFormData({
       name: product.name || '',
       slug: product.slug || '',
       sku: product.sku || '',
-      categoryName: product.category?.name || 'Mists',
+      categoryName: safeCatName,
       tagline: product.tagline || '',
       moodAndCharacter: product.moodAndCharacter || '',
       signature: product.signature || '',
@@ -432,9 +439,8 @@ export default function AdminProductsPage() {
                       <div>
                         <label className={labelClass}>Category *</label>
                         <select value={formData.categoryName} onChange={(e) => set('categoryName', e.target.value)} className={inputClass}>
-                          {categories.map((cat) => (
-                            <option key={cat} value={cat}>{cat}</option>
-                          ))}
+                          <option value="Perfumes">Perfumes</option>
+                          <option value="Mists">Mists</option>
                         </select>
                       </div>
                       <div>

@@ -3,17 +3,28 @@
 import React, { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import SiteHeader from '../../../components/header/SiteHeader';
 import Container from '../../../components/Container';
 import { StoreApi, OrderDetail } from '../../../store-api';
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params?: Promise<{ id: string }> | { id: string };
 }
 
 export default function OrderTrackingDossierPage({ params }: PageProps) {
-  const resolvedParams = use(params);
-  const orderId = resolvedParams.id;
+  const routeParams = useParams();
+  let paramId = '';
+  if (params) {
+    if (typeof (params as any).then === 'function') {
+      try {
+        paramId = (use(params as Promise<{ id: string }>) as any)?.id || '';
+      } catch (_) {}
+    } else if (typeof (params as any)?.id === 'string') {
+      paramId = (params as any).id;
+    }
+  }
+  const orderId = (typeof routeParams?.id === 'string' ? routeParams.id : paramId) || '';
 
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);

@@ -409,6 +409,82 @@ export const MAPPED_OUD_PRODUCTS: ProductItem[] = OUD_PRODUCTS.map((p) => ({
 
 const FALLBACK_PRODUCTS: ProductItem[] = MAPPED_OUD_PRODUCTS;
 
+export function normalizeProduct(p: any): ProductItem {
+  if (!p) return p;
+  const firstVariant = p.variants?.[0];
+  const attributes = (firstVariant?.attributes as any) || {};
+
+  // Extract images safely whether strings or objects
+  const rawImages = Array.isArray(p.images) ? p.images : [];
+  const images = rawImages
+    .map((img: any) => {
+      if (typeof img === 'string') return img;
+      if (img && typeof img === 'object' && img.url) return img.url;
+      return '';
+    })
+    .filter((u: string) => typeof u === 'string' && u.length > 0);
+
+  // Extract category slug and name safely
+  let categorySlug = 'perfumes';
+  let categoryName = 'Perfumes';
+  if (typeof p.category === 'string') {
+    categorySlug = p.category.toLowerCase();
+    categoryName = p.category;
+  } else if (p.category && typeof p.category === 'object') {
+    categorySlug = (p.category.slug || p.category.name || 'perfumes').toLowerCase();
+    categoryName = p.category.name || 'Perfumes';
+  }
+  if (categorySlug.includes('mist')) {
+    categorySlug = 'mists';
+    categoryName = 'Mists';
+  } else {
+    categorySlug = 'perfumes';
+    categoryName = 'Perfumes';
+  }
+
+  // Extract price — hardened: NEVER produce NaN, always fallback to 495
+  let price = 495;
+  if (typeof p.price === 'number' && !isNaN(p.price) && p.price > 0) {
+    price = p.price;
+  } else if (firstVariant && typeof firstVariant.price === 'number' && !isNaN(firstVariant.price) && firstVariant.price > 0) {
+    price = firstVariant.price;
+  } else if (firstVariant && !isNaN(Number(firstVariant.price)) && Number(firstVariant.price) > 0) {
+    price = Number(firstVariant.price);
+  } else {
+    price = 495;
+  }
+
+  return {
+    id: p.id || p.slug,
+    name: p.name || 'Oud Nomad Fragrance',
+    slug: p.slug || '',
+    tagline: p.tagline || attributes.tagline || '',
+    description: p.description || '',
+    olfactoryStory: p.olfactoryStory || attributes.olfactoryStory || '',
+    moodAndCharacter: p.moodAndCharacter || attributes.moodAndCharacter || '',
+    signature: p.signature || attributes.signature || '',
+    ingredients: p.ingredients || attributes.ingredients || '',
+    price,
+    currency: p.currency || 'AED',
+    category: categorySlug,
+    categoryName,
+    images: images.length > 0 ? images : ['https://cdn.shopify.com/s/files/1/0812/5077/9453/files/Jannat-e-zuhur-1.jpg?v=1692390618'],
+    variants: (p.variants || []).map((v: any) => ({
+      id: v.id || `${p.id || p.slug}-std`,
+      size: v.size || '100ml',
+      price: !isNaN(Number(v.price)) ? Number(v.price) : price,
+      sku: v.sku || p.slug,
+      inStock: v.stock !== undefined ? v.stock > 0 : true,
+    })),
+    rating: p.rating || 4.9,
+    reviewCount: p.reviewCount || 24,
+    features: p.features || attributes.features || {},
+    compareAtPrice: p.compareAtPrice,
+    regionalPrices: p.regionalPrices,
+    categories: [categorySlug, 'all'],
+  } as any;
+}
+
 export const StoreApi = {
   // Search
   search: async (params: { q?: string; category?: string; minPrice?: number; maxPrice?: number; minRating?: number; page?: number; limit?: number }) => {
@@ -418,7 +494,12 @@ export const StoreApi = {
           .filter(([_, v]) => v !== undefined && v !== '')
           .map(([k, v]) => [k, String(v)])
       ).toString();
-      return await storeFetch<any>(`/search?${query}`);
+      const res = await storeFetch<any>(`/search?${query}`);
+      const rawItems = Array.isArray(res) ? res : res?.items || [];
+      return {
+        items: rawItems.map(normalizeProduct),
+        total: res?.total ?? rawItems.length,
+      };
     } catch (_) {
       // Fallback filtering over sample products
       let items = [...FALLBACK_PRODUCTS];
@@ -431,16 +512,7 @@ export const StoreApi = {
         items = items.filter((p) => p.category.toLowerCase() === catLower || p.categories?.includes(catLower));
       }
       return {
-        items: items.map((p) => ({
-          productId: p.id,
-          name: p.name,
-          slug: p.slug,
-          description: p.description,
-          priceMinor: p.price * 100,
-          category: p.category,
-          avgRating: p.rating,
-          reviewCount: p.reviewCount,
-        })),
+        items: items.map(normalizeProduct),
         total: items.length,
       };
     }
@@ -455,7 +527,13 @@ export const StoreApi = {
           .map(([k, v]) => [k, String(v)])
       ).toString();
       const res = await storeFetch<any>(`/products?${query}`);
-      return res;
+      const rawItems = Array.isArray(res) ? res : res?.items || [];
+      const normalizedItems = rawItems.map(normalizeProduct);
+      return {
+        items: normalizedItems,
+        total: res?.total ?? normalizedItems.length,
+        nextCursor: res?.nextCursor ?? null,
+      };
     } catch (_) {
       let filtered = [...FALLBACK_PRODUCTS];
       if (params?.category && params.category !== 'all' && params.category !== 'catalog') {
@@ -473,19 +551,22 @@ export const StoreApi = {
       } else if (params?.sort === 'title-desc') {
         filtered.sort((a, b) => b.name.localeCompare(a.name));
       }
+      // FALLBACK_PRODUCTS are already normalized ProductItem objects — return directly
       return { items: filtered, total: filtered.length };
     }
   },
 
   getProductBySlug: async (slug: string) => {
     try {
-      return await storeFetch<any>(`/products/${slug}`);
+      const data = await storeFetch<any>(`/products/${slug}`);
+      if (!data) return null;
+      return normalizeProduct(data);
     } catch (_) {
       const cleanSlug = slug.toLowerCase().trim();
       const match = FALLBACK_PRODUCTS.find(
         (p) => p.slug.toLowerCase() === cleanSlug || p.id === cleanSlug || cleanSlug.includes(p.slug.toLowerCase()) || p.slug.toLowerCase().includes(cleanSlug)
       );
-      if (match) return match;
+      if (match) return normalizeProduct(match);
       return null;
     }
   },
@@ -493,24 +574,48 @@ export const StoreApi = {
   // Recommendations
   getRecommendations: async (productId: string) => {
     try {
-      return await storeFetch<any>(`/products/${productId}/recommendations`);
+      const res = await storeFetch<any>(`/products/${productId}/recommendations`);
+      const rawItems = Array.isArray(res) ? res : res?.items || [];
+      return rawItems.map(normalizeProduct);
     } catch (_) {
-      return FALLBACK_PRODUCTS.filter((p) => p.id !== productId && p.slug !== productId).slice(0, 4);
+      return FALLBACK_PRODUCTS.filter((p) => p.id !== productId && p.slug !== productId).slice(0, 4).map(normalizeProduct);
     }
   },
 
   // Categories (public tree for navigation)
   getCategories: async () => {
     try {
-      return await storeFetch<
+      const tree = await storeFetch<any[]>('/categories');
+      if (Array.isArray(tree) && tree.length > 0) {
+        const filtered = tree.filter((c: any) => {
+          const s = (c.slug || c.name || '').toLowerCase();
+          return s.includes('mist') || s.includes('perfume') || s === 'all';
+        });
+        if (filtered.length > 0) return filtered;
+      }
+      return [
         {
-          id: string;
-          name: string;
-          slug: string;
-          description: string | null;
-          children: { id: string; name: string; slug: string; description: string | null; children: unknown[] }[];
-        }[]
-      >('/categories');
+          id: 'all',
+          name: 'All Fragrances',
+          slug: 'all',
+          description: 'Explore the complete Oud Nomad universe — luxury perfumes and refreshing mists.',
+          children: [],
+        },
+        {
+          id: 'perfumes',
+          name: 'Perfumes',
+          slug: 'perfumes',
+          description: 'Intense, long-lasting luxury perfumes crafted with rare botanicals and precious resins.',
+          children: [],
+        },
+        {
+          id: 'mists',
+          name: 'Mists',
+          slug: 'mists',
+          description: 'Light, refreshing body and hair mists — the perfect everyday scent for warm GCC days.',
+          children: [],
+        },
+      ];
     } catch (_) {
       return [
         {
@@ -524,14 +629,14 @@ export const StoreApi = {
           id: 'perfumes',
           name: 'Perfumes',
           slug: 'perfumes',
-          description: 'Intense, long-lasting Extrait de Parfum and Eau de Parfum blends built around rare agarwood, saffron, and precious florals.',
+          description: 'Intense, long-lasting luxury perfumes crafted with rare botanicals and precious resins.',
           children: [],
         },
         {
           id: 'mists',
           name: 'Mists',
           slug: 'mists',
-          description: 'Light, refreshing body and hair mists — the perfect everyday scent for warm GCC days and effortless layering.',
+          description: 'Light, refreshing body and hair mists — the perfect everyday scent for warm GCC days.',
           children: [],
         },
       ];

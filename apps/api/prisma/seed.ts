@@ -209,10 +209,27 @@ async function main() {
 
   console.log('✅ Shipping Methods seeded');
 
-  // 5. Categories
+  // 5. Categories — Only Perfumes & Mists
+  const categoryPerfumes = await prisma.category.upsert({
+    where: { slug: 'perfumes' },
+    update: {
+      name: 'Perfumes', 
+      description: 'Intense, long-lasting luxury perfumes crafted with rare botanicals and precious resins',
+    },
+    create: {
+      name: 'Perfumes',
+      slug: 'perfumes',
+      description: 'Intense, long-lasting luxury perfumes crafted with rare botanicals and precious resins',
+    },
+    
+  });
+
   const categoryMists = await prisma.category.upsert({
     where: { slug: 'mists' },
-    update: {},
+    update: {
+      name: 'Mists',
+      description: 'Refreshing luxury body and hair mists crafted for the GCC',
+    },
     create: {
       name: 'Mists',
       slug: 'mists',
@@ -220,37 +237,22 @@ async function main() {
     },
   });
 
-  const categoryParfum = await prisma.category.upsert({
-    where: { slug: 'extrait-de-parfum' },
-    update: {},
-    create: {
-      name: 'Extrait de Parfum',
-      slug: 'extrait-de-parfum',
-      description: 'Handcrafted luxury spray perfumes with extraordinary 35%+ oil concentration',
+  // Reassign any legacy categories (extrait-de-parfum, attar-oils, dehn-al-oud) to Perfumes and clean up
+  const legacyCategories = await prisma.category.findMany({
+    where: {
+      slug: { in: ['extrait-de-parfum', 'attar-oils', 'dehn-al-oud'] },
     },
   });
 
-  const categoryAttar = await prisma.category.upsert({
-    where: { slug: 'attar-oils' },
-    update: {},
-    create: {
-      name: 'Artisanal Attar Oils',
-      slug: 'attar-oils',
-      description: 'Pure concentrated artisanal perfume oils aged in traditional copper stills',
-    },
-  });
+  for (const legacy of legacyCategories) {
+    await prisma.product.updateMany({
+      where: { categoryId: legacy.id },
+      data: { categoryId: categoryPerfumes.id },
+    });
+    await prisma.category.delete({ where: { id: legacy.id } }).catch(() => {});
+  }
 
-  const categoryDehn = await prisma.category.upsert({
-    where: { slug: 'dehn-al-oud' },
-    update: {},
-    create: {
-      name: 'Vintage Dehn Al Oud',
-      slug: 'dehn-al-oud',
-      description: 'Rare wild-harvested vintage agarwood distillations from Cambodia, Assam & Trat',
-    },
-  });
-
-  console.log('✅ Categories seeded');
+  console.log('✅ Categories seeded: Perfumes & Mists only');
 
   // 6. Products & Variants — Cèdre, Sélène, Ivoire (Mists Collection)
   const productsData = [

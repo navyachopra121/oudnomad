@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 import Container from './Container';
 import { useCurrency } from './concierge/CurrencyContext';
@@ -22,9 +23,14 @@ const QUICK_LINKS = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
   const { currency, setIsModalOpen } = useCurrency();
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+
+  if (pathname?.startsWith('/about') || pathname?.includes('about-us')) {
+    return null;
+  }
 
   const handleSubscribe = (e: FormEvent) => {
     e.preventDefault();
