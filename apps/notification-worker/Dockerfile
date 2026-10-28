@@ -9,14 +9,14 @@ RUN corepack enable && pnpm install --filter notification-worker... --frozen-loc
 
 # ── build layer ───────────────────────────────────────────────────────────────
 FROM base AS builder
+# Copy workspace config so pnpm & Prisma can resolve the project root correctly
+COPY package.json pnpm-workspace.yaml ./
 COPY apps/notification-worker/ ./apps/notification-worker/
 COPY apps/api/prisma ./apps/api/prisma
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/notification-worker/node_modules ./apps/notification-worker/node_modules
-# Generate Prisma client into the worker's own node_modules before compiling
-RUN corepack enable && \
-    cd apps/notification-worker && \
-    npx prisma generate --schema=../api/prisma/schema.prisma
+# Generate Prisma client using the workspace-installed binary (avoids npx auto-install)
+RUN corepack enable && pnpm --filter notification-worker db:generate
 RUN corepack enable && pnpm --filter notification-worker build
 
 # ── runner layer ─────────────────────────────────────────────────────────────
