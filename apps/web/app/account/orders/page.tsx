@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import SiteHeader from '../../components/header/SiteHeader';
 import Container from '../../components/Container';
 import { StoreApi } from '../../store-api';
+import { useAuth } from '../../components/auth/AuthContext';
 
 interface OrderItem {
   id: string;
@@ -19,11 +21,24 @@ interface OrderItem {
 }
 
 export default function OrdersPage() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
   const [orders, setOrders] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
 
   useEffect(() => {
+    // Skip API call if not authenticated — avoids 401 errors and unnecessary network requests
+    if (!isAuthenticated) {
+      // Load only locally-stored orders (placed via guest checkout)
+      const localOrders: OrderItem[] = JSON.parse(
+        localStorage.getItem('oudnomad_placed_orders') || '[]'
+      );
+      setOrders(localOrders);
+      setLoading(false);
+      return;
+    }
+
     async function fetchOrders() {
       setLoading(true);
       try {
@@ -66,7 +81,7 @@ export default function OrdersPage() {
     }
 
     fetchOrders();
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-serif">

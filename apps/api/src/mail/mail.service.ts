@@ -82,10 +82,11 @@ export class MailService {
   }
 
   async sendVerificationEmail(to: string, token: string): Promise<void> {
-    const appUrl =
-      this.config.get<string>('NEXT_PUBLIC_API_URL') ??
+    const rawUrl =
       this.config.get<string>('FRONTEND_URL') ??
-      'http://187.126.116.61';
+      this.config.get<string>('APP_URL') ??
+      'https://oudnomaddubai.com';
+    const appUrl = rawUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
     const link = `${appUrl}/verify-email?token=${token}`;
 
     await this.sendMail({
@@ -107,10 +108,11 @@ export class MailService {
   }
 
   async sendPasswordResetEmail(to: string, token: string): Promise<void> {
-    const appUrl =
-      this.config.get<string>('NEXT_PUBLIC_API_URL') ??
+    const rawUrl =
       this.config.get<string>('FRONTEND_URL') ??
-      'http://187.126.116.61';
+      this.config.get<string>('APP_URL') ??
+      'https://oudnomaddubai.com';
+    const appUrl = rawUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
     const link = `${appUrl}/reset-password?token=${token}`;
 
     await this.sendMail({

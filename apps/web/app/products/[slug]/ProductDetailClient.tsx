@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import SiteHeader from '../../components/header/SiteHeader';
 import Container from '../../components/Container';
-import { ProductItem, ReviewItem } from '../../store-api';
+import { ProductItem, ReviewItem, MAPPED_OUD_PRODUCTS } from '../../store-api';
 import { useCart } from '../../components/cart/CartContext';
 import { useCurrency } from '../../components/concierge/CurrencyContext';
 import JsonLd, { generateProductJsonLd } from '../../components/seo/JsonLd';
@@ -36,6 +36,36 @@ export default function ProductDetailClient({
   const [addedToCart, setAddedToCart] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const primaryCtaRef = useRef<HTMLDivElement>(null);
+
+  // Recommendations: exclude current product, fallback to catalog if empty
+  const currentSlug = (product?.slug || '').toLowerCase().trim();
+  const currentId = (product?.id || '').toLowerCase().trim();
+  const currentName = (product?.name || '').toLowerCase().trim();
+
+  const filteredRecs = (recommendations || []).filter((rec) => {
+    const s = (rec?.slug || '').toLowerCase().trim();
+    const id = (rec?.id || '').toLowerCase().trim();
+    const n = (rec?.name || '').toLowerCase().trim();
+    if (s && s === currentSlug) return false;
+    if (id && id === currentId) return false;
+    if (n && n === currentName) return false;
+    if (currentSlug.length > 2 && (currentSlug.includes(s) || s.includes(currentSlug))) return false;
+    return true;
+  });
+
+  const finalRecommendations = (filteredRecs.length > 0
+    ? filteredRecs
+    : MAPPED_OUD_PRODUCTS.filter((p) => {
+        const s = (p.slug || '').toLowerCase().trim();
+        const id = (p.id || '').toLowerCase().trim();
+        const n = (p.name || '').toLowerCase().trim();
+        if (s && s === currentSlug) return false;
+        if (id && id === currentId) return false;
+        if (n && n === currentName) return false;
+        if (currentSlug.length > 2 && (currentSlug.includes(s) || s.includes(currentSlug))) return false;
+        return true;
+      })
+  ).slice(0, 4);
 
   // Lightbox + carousel state
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -519,44 +549,61 @@ export default function ProductDetailClient({
           </div>
 
           {/* ── YOU MAY ALSO LIKE ── */}
-          <section className="pt-16 border-t border-white/10 space-y-8">
-            <div className="text-center space-y-2">
-              <span className="text-[10px] font-mono tracking-[0.35em] uppercase text-[#ffb91d]">
-                CURATED RECOMMENDATIONS
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-serif text-white uppercase tracking-wider">
-                You May Also Like
-              </h2>
-            </div>
+          {finalRecommendations.length > 0 && (
+            <section className="pt-16 border-t border-white/10 space-y-8">
+              <div className="text-center space-y-2">
+                <span className="text-[10px] font-mono tracking-[0.35em] uppercase text-[#ffb91d]">
+                  CURATED RECOMMENDATIONS
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-serif text-white uppercase tracking-wider">
+                  You May Also Like
+                </h2>
+              </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              {recommendations.slice(0, 4).map((rec) => (
-                <Link
-                  key={rec.id}
-                  href={`/products/${rec.slug}`}
-                  className="group border border-white/10 bg-[#0e0e0e] hover:border-[#ffb91d]/50 transition-all overflow-hidden"
-                >
-                  <div className="relative aspect-[4/5] w-full bg-[#141414] overflow-hidden">
-                    <Image
-                      src={rec.images?.[0] || ''}
-                      alt={rec.name}
-                      fill
-                      sizes="(max-width: 640px) 50vw, 25vw"
-                      className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <div className="px-3.5 py-3 flex items-center justify-between gap-2">
-                    <h4 className="text-xs sm:text-sm font-serif text-white uppercase group-hover:text-[#ffb91d] transition-colors truncate tracking-wide">
-                      {rec.name}
-                    </h4>
-                    <p className="text-xs sm:text-sm font-mono text-[#ffb91d] font-medium shrink-0">
-                      {formatPrice(rec.price)}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto gap-4 sm:gap-6">
+                {finalRecommendations.map((rec) => {
+                  const rawImg = rec.images?.[0];
+                  const imgSrc =
+                    (typeof rawImg === 'string' && rawImg.length > 0
+                      ? rawImg
+                      : (rawImg as any)?.url) ||
+                    'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1000&q=80';
+
+                  return (
+                    <Link
+                      key={rec.id || rec.slug}
+                      href={`/products/${rec.slug}`}
+                      className="group border border-white/10 bg-[#0e0e0e] hover:border-[#ffb91d]/50 transition-all overflow-hidden flex flex-col"
+                    >
+                      <div className="relative aspect-[4/5] w-full bg-[#141414] overflow-hidden">
+                        <Image
+                          src={imgSrc}
+                          alt={rec.name || 'Oud Nomad Product'}
+                          fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
+                      <div className="px-3.5 py-3 flex items-center justify-between gap-2 bg-[#0e0e0e]">
+                        <div className="min-w-0">
+                          <h4 className="text-xs sm:text-sm font-serif text-white uppercase group-hover:text-[#ffb91d] transition-colors truncate tracking-wide">
+                            {rec.name}
+                          </h4>
+                          <p className="text-[10px] font-mono text-white/50 uppercase tracking-widest truncate">
+                            {rec.concentration || rec.category || 'Fragrance Mist'}
+                          </p>
+                        </div>
+                        <p className="text-xs sm:text-sm font-mono text-[#ffb91d] font-medium shrink-0">
+                          {formatPrice(rec.price || 495)}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          )}
 
         </Container>
       </main>

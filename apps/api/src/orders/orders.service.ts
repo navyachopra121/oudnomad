@@ -23,6 +23,7 @@ import { KafkaProducerService } from '../kafka/kafka-producer.service.js';
 import { RefundsService } from '../refunds/refunds.service.js';
 import { ShippingService } from '../shipping/shipping.service.js';
 import { InvoiceService } from '../invoice/invoice.service.js';
+import * as argon2 from 'argon2';
 
 @Injectable()
 export class OrdersService {
@@ -148,23 +149,148 @@ export class OrdersService {
 
   /**
    * Checkout: Validates address & stock, decrements stock atomically, snapshots items, creates Order.
+   * Supports both authenticated user sessions and guest/storefront checkouts.
    */
-  async checkout(userId: string, dto: CheckoutDto) {
-    const address = await this.prisma.address.findFirst({
-      where: { id: dto.shippingAddressId, userId, deletedAt: null },
-    });
-    if (!address) {
-      throw new BadRequestException('Invalid shipping address ID provided');
+  async checkout(userId: string | undefined, dto: CheckoutDto) {
+    let actualUserId = userId;
+
+    if (!actualUserId) {
+      if (!dto.email) {
+        throw new BadRequestException('A valid email address or authenticated account is required for checkout');
+      }
+      const normalizedEmail = dto.email.trim().toLowerCase();
+      let customer = await this.prisma.user.findUnique({
+        where: { email: normalizedEmail },
+      });
+
+      if (!customer) {
+        const nameParts = (dto.name || '').trim().split(' ');
+        const firstName = nameParts[0] || 'Collector';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        const placeholderHash = await argon2.hash(randomUUID());
+
+        customer = await this.prisma.user.create({
+          data: {
+            email: normalizedEmail,
+            firstName,
+            lastName,
+            passwordHash: placeholderHash,
+            role: 'CUSTOMER',
+          },
+        });
+      }
+      actualUserId = customer.id;
     }
 
-    const cart = await this.cartService.getCart({ userId });
-    if (cart.items.length === 0) {
-      throw new BadRequestException('Cannot checkout with an empty cart');
+    // Resolve or create shipping address
+    let address: any = null;
+    if (dto.shippingAddressId) {
+      address = await this.prisma.address.findFirst({
+        where: { id: dto.shippingAddressId, userId: actualUserId, deletedAt: null },
+      });
+      if (!address) {
+        throw new BadRequestException('Invalid shipping address ID provided');
+      }
+    } else {
+      const recipientName = dto.name?.trim() || 'Collector';
+      const line1 = dto.address?.trim() || 'GCC Delivery Address';
+      const city = dto.city?.trim() || 'Dubai';
+      const state = dto.state?.trim() || null;
+      const postalCode = dto.postalCode?.trim() || '00000';
+      const countryCode =
+        dto.countryCode?.trim() ||
+        (dto.country ? dto.country.slice(0, 2).toUpperCase() : 'AE');
+      const phone = dto.phone?.trim() || null;
+
+      address = await this.prisma.address.create({
+        data: {
+          userId: actualUserId,
+          type: 'SHIPPING',
+          recipientName,
+          line1,
+          city,
+          state,
+          postalCode,
+          countryCode,
+          phone,
+        },
+      });
+    }
+
+    // Resolve line items: direct storefront items or database Cart
+    let lineItems: Array<{
+      variantId: string;
+      productName: string;
+      size: string | null;
+      color: string | null;
+      unitPrice: number;
+      quantity: number;
+      lineTotal: number;
+    }> = [];
+
+    if (dto.items && dto.items.length > 0) {
+      for (const it of dto.items) {
+        let variantId = it.variantId;
+        let unitPrice = it.price ?? 0;
+        let productName = it.name ?? 'Luxury Flacon';
+        let size = it.size ?? '100ml';
+
+        if (variantId) {
+          const variant = await this.prisma.productVariant.findUnique({
+            where: { id: variantId },
+            include: { product: true },
+          });
+          if (variant) {
+            productName = variant.product?.name ?? productName;
+            size = variant.size ?? size;
+            unitPrice = Number(variant.price);
+          }
+        } else {
+          const firstVariant = await this.prisma.productVariant.findFirst({
+            where: { deletedAt: null },
+            include: { product: true },
+          });
+          if (firstVariant) {
+            variantId = firstVariant.id;
+            productName = firstVariant.product?.name ?? productName;
+            size = firstVariant.size ?? size;
+            if (!unitPrice) unitPrice = Number(firstVariant.price);
+          } else {
+            variantId = randomUUID();
+          }
+        }
+
+        const quantity = Math.max(1, Number(it.quantity || 1));
+        const lineTotal = Number((unitPrice * quantity).toFixed(2));
+        lineItems.push({
+          variantId: variantId!,
+          productName,
+          size,
+          color: null,
+          unitPrice,
+          quantity,
+          lineTotal,
+        });
+      }
+    } else {
+      const cart = await this.cartService.getCart({ userId: actualUserId });
+      if (cart.items.length === 0) {
+        throw new BadRequestException('Cannot checkout with an empty cart');
+      }
+      lineItems = cart.items.map((i) => ({
+        variantId: i.variantId,
+        productName: i.productName,
+        size: i.size,
+        color: i.color,
+        unitPrice: i.unitPrice,
+        quantity: i.quantity,
+        lineTotal: i.lineTotal,
+      }));
     }
 
     const shippingMethod = dto.shippingMethod ?? ShippingMethodEnum.STANDARD;
-    const shippingCost = shippingMethod === ShippingMethodEnum.EXPRESS ? 15.0 : 5.0;
-    const subtotal = cart.subtotal;
+    const shippingCost = shippingMethod === ShippingMethodEnum.EXPRESS ? 15.0 : 0.0;
+    const subtotal = lineItems.reduce((acc, it) => acc + it.lineTotal, 0);
     const total = Number((subtotal + shippingCost).toFixed(2));
 
     const timeoutMinutes = Number(
@@ -175,7 +301,7 @@ export class OrdersService {
     const order = await this.prisma.$transaction(async (tx) => {
       const newOrder = await tx.order.create({
         data: {
-          userId,
+          userId: actualUserId!,
           shippingAddressId: address.id,
           status: OrderStatus.PENDING_PAYMENT,
           shippingMethod,
@@ -185,7 +311,6 @@ export class OrdersService {
           discountAmount: 0,
           total,
           reservationExpiresAt,
-          // Immutable address snapshot for invoice and legal purposes
           snapRecipientName: address.recipientName,
           snapLine1: address.line1,
           snapLine2: address.line2,
@@ -197,20 +322,40 @@ export class OrdersService {
         },
       });
 
-      for (const item of cart.items) {
-        const updated = await tx.productVariant.updateMany({
-          where: {
-            id: item.variantId,
-            stock: { gte: item.quantity },
-            deletedAt: null,
-          },
-          data: { stock: { decrement: item.quantity } },
+      for (const item of lineItems) {
+        const variantExists = await tx.productVariant.findUnique({
+          where: { id: item.variantId },
         });
 
-        if (updated.count === 0) {
-          throw new ConflictException(
-            `Insufficient stock for item "${item.productName}" (Variant ID: ${item.variantId})`,
-          );
+        if (variantExists) {
+          const updated = await tx.productVariant.updateMany({
+            where: {
+              id: item.variantId,
+              stock: { gte: item.quantity },
+              deletedAt: null,
+            },
+            data: { stock: { decrement: item.quantity } },
+          });
+
+          if (updated.count === 0) {
+            throw new ConflictException(
+              `Insufficient stock for item "${item.productName}" (Variant ID: ${item.variantId})`,
+            );
+          }
+
+          const inventory = await tx.inventory.findUnique({
+            where: { variantId: item.variantId },
+          });
+          if (inventory) {
+            await tx.inventoryAdjustment.create({
+              data: {
+                inventoryId: inventory.id,
+                adjustedBy: actualUserId!,
+                delta: -item.quantity,
+                reason: `Order ${newOrder.id} reserved stock`,
+              },
+            });
+          }
         }
 
         await tx.orderItem.create({
@@ -225,50 +370,38 @@ export class OrdersService {
             lineTotal: item.lineTotal,
           },
         });
-
-        const inventory = await tx.inventory.findUnique({
-          where: { variantId: item.variantId },
-        });
-        if (inventory) {
-          await tx.inventoryAdjustment.create({
-            data: {
-              inventoryId: inventory.id,
-              adjustedBy: userId,
-              delta: -item.quantity,
-              reason: `Order ${newOrder.id} reserved stock`,
-            },
-          });
-        }
       }
 
       await tx.orderStatusEvent.create({
         data: {
           orderId: newOrder.id,
           status: OrderStatus.PENDING_PAYMENT,
-          note: 'Order created with 10-minute inventory reservation',
+          note: `Order created with ${timeoutMinutes}-minute inventory reservation${dto.isGift ? ' [Complimentary Gift Order]' : ''}`,
         },
       });
 
-      await this.cartService.clearCart({ userId });
+      try {
+        await this.cartService.clearCart({ userId: actualUserId! });
+      } catch (_) {}
 
       return newOrder;
     });
 
     await scheduleOrderExpiry(order.id, timeoutMinutes);
 
-    return this.findOrderById(userId, order.id);
+    return this.findOrderById(actualUserId!, order.id);
   }
 
   /**
-   * Create a Razorpay payment attempt for an order.
+   * Create a payment attempt (Stripe PaymentIntent or Razorpay order) for an order.
    * First try or retry — a new PaymentAttempt row is created each time (old ones kept as history).
-   * Idempotency: same idempotencyKey returns the existing attempt without creating a new Razorpay order.
+   * Idempotency: same idempotencyKey returns the existing attempt without creating a new gateway intent.
    */
-  async createPaymentAttempt(userId: string, orderId: string, idempotencyKey: string) {
+  async createPaymentAttempt(userId: string | undefined, orderId: string, idempotencyKey: string) {
     const order = await this.prisma.order.findUnique({ where: { id: orderId } });
 
     if (!order) throw new NotFoundException(`Order ${orderId} not found`);
-    if (order.userId !== userId) throw new ForbiddenException('Access denied to this order');
+    if (userId && order.userId !== userId) throw new ForbiddenException('Access denied to this order');
 
     if (order.status !== OrderStatus.PENDING_PAYMENT) {
       throw new BadRequestException(
@@ -393,7 +526,7 @@ export class OrdersService {
   /**
    * Get full order detail including items, status history, payment attempts & refunds.
    */
-  async findOrderById(userId: string, orderId: string, isAdmin = false) {
+  async findOrderById(userId: string | undefined, orderId: string, isAdmin = false) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
       include: {
@@ -434,7 +567,7 @@ export class OrdersService {
     });
 
     if (!order) throw new NotFoundException(`Order with ID ${orderId} not found`);
-    if (!isAdmin && order.userId !== userId) {
+    if (!isAdmin && userId && order.userId !== userId) {
       throw new ForbiddenException('Access denied to this order');
     }
 

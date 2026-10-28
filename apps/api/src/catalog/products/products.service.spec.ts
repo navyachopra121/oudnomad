@@ -21,6 +21,9 @@ describe('ProductsService', () => {
         findMany: vi.fn(),
         update: vi.fn(),
       },
+      inventory: {
+        upsert: vi.fn().mockResolvedValue({}),
+      },
     };
     const cacheMock = {
       get: vi.fn(),
@@ -44,6 +47,11 @@ describe('ProductsService', () => {
       name: 'Royal Oud',
       variants: [{ id: 'v-1', sku: 'royal-oud-def', price: 150, stock: 10 }],
     });
+    prismaMock.productVariant.create.mockResolvedValue({
+      id: 'v-1',
+      productId: 'prod-1',
+      sku: 'royal-oud-def',
+    });
 
     await service.create({
       name: 'Royal Oud',
@@ -56,11 +64,18 @@ describe('ProductsService', () => {
     expect(prismaMock.productVariant.create).toHaveBeenCalledWith({
       data: {
         productId: 'prod-1',
-        sku: 'royal-oud-def',
-        size: undefined,
-        color: undefined,
+        sku: 'royal-oud-100ml',
+        size: '100ml',
         price: 150,
         stock: 10,
+        attributes: {
+          features: undefined,
+          ingredients: undefined,
+          moodAndCharacter: undefined,
+          olfactoryStory: undefined,
+          signature: undefined,
+          tagline: undefined,
+        },
       },
     });
   });

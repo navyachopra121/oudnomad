@@ -55,6 +55,92 @@ export class PaymentWebhookService {
     }
   }
 
+  async handleStripeEvent(event: any): Promise<void> {
+    this.logger.log(`Received Stripe webhook event: ${event.type}`);
+
+    switch (event.type) {
+      case 'payment_intent.succeeded': {
+        const intent = event.data?.object;
+        if (!intent) break;
+        await this.handleStripePaymentIntentSucceeded(intent);
+        break;
+      }
+      case 'payment_intent.payment_failed': {
+        const intent = event.data?.object;
+        if (!intent) break;
+        await this.handleStripePaymentIntentFailed(intent);
+        break;
+      }
+      case 'charge.refunded': {
+        const charge = event.data?.object;
+        if (charge?.refunds?.data?.length) {
+          for (const ref of charge.refunds.data) {
+            await this.handleRefundUpdate(ref.id, 'PROCESSED');
+          }
+        }
+        break;
+      }
+      default:
+        this.logger.log(`Unhandled Stripe event type: ${event.type} — ignoring`);
+    }
+  }
+
+  private async handleStripePaymentIntentSucceeded(intent: any): Promise<void> {
+    const gatewayOrderId = intent.id;
+    let attempt = await this.prisma.paymentAttempt.findUnique({
+      where: { gatewayOrderId },
+      include: { order: true },
+    });
+
+    if (!attempt && intent.metadata?.orderId) {
+      attempt = await this.prisma.paymentAttempt.findFirst({
+        where: { orderId: intent.metadata.orderId },
+        include: { order: true },
+      });
+    }
+
+    if (!attempt) {
+      this.logger.warn(`Stripe payment_intent.succeeded: no attempt found for ${gatewayOrderId}`);
+      return;
+    }
+
+    if (attempt.status === PaymentAttemptStatus.SUCCEEDED) {
+      this.logger.log(`Stripe payment_intent.succeeded: attempt ${attempt.id} already SUCCEEDED`);
+      return;
+    }
+
+    if (attempt.order.status !== 'PENDING_PAYMENT') {
+      this.logger.warn(
+        `Stripe payment_intent.succeeded: order ${attempt.orderId} status is ${attempt.order.status}, not PENDING_PAYMENT`,
+      );
+      return;
+    }
+
+    const gatewayPaymentId = typeof intent.latest_charge === 'string' ? intent.latest_charge : intent.id;
+    await this.applyPaymentSuccess(attempt, gatewayPaymentId, 'Stripe');
+  }
+
+  private async handleStripePaymentIntentFailed(intent: any): Promise<void> {
+    const gatewayOrderId = intent.id;
+    const attempt = await this.prisma.paymentAttempt.findUnique({
+      where: { gatewayOrderId },
+    });
+
+    if (!attempt || attempt.status !== PaymentAttemptStatus.CREATED) {
+      return;
+    }
+
+    await this.prisma.paymentAttempt.update({
+      where: { id: attempt.id },
+      data: {
+        status: PaymentAttemptStatus.FAILED,
+        failureReason: intent.last_payment_error?.message ?? 'Stripe payment failed',
+      },
+    });
+
+    this.logger.log(`Stripe attempt ${attempt.id} marked FAILED for order ${attempt.orderId}`);
+  }
+
   private async handlePaymentCaptured(payment: RazorpayPaymentEntity): Promise<void> {
     const attempt = await this.prisma.paymentAttempt.findUnique({
       where: { gatewayOrderId: payment.order_id },
@@ -80,10 +166,18 @@ export class PaymentWebhookService {
       return;
     }
 
+    await this.applyPaymentSuccess(attempt, payment.id, 'Razorpay');
+  }
+
+  private async applyPaymentSuccess(
+    attempt: any,
+    gatewayPaymentId: string,
+    gatewayName: string,
+  ): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
       await tx.paymentAttempt.update({
         where: { id: attempt.id },
-        data: { status: PaymentAttemptStatus.SUCCEEDED, gatewayPaymentId: payment.id },
+        data: { status: PaymentAttemptStatus.SUCCEEDED, gatewayPaymentId },
       });
 
       // Import OrdersService dynamically to avoid circular dependency
@@ -99,7 +193,7 @@ export class PaymentWebhookService {
         data: {
           orderId: attempt.orderId,
           status: 'CONFIRMED',
-          note: `Payment confirmed via Razorpay webhook — paymentId: ${payment.id}`,
+          note: `Payment confirmed via ${gatewayName} webhook — paymentId: ${gatewayPaymentId}`,
         },
       });
     });
@@ -112,9 +206,9 @@ export class PaymentWebhookService {
         items: true,
       },
     });
-    if (orderWithUser) {
+    if (orderWithUser && orderWithUser.user?.email) {
       this.kafka.publish({
-        idempotencyKey: `order-confirmation-${attempt.orderId}-${payment.id}`,
+        idempotencyKey: `order-confirmation-${attempt.orderId}-${gatewayPaymentId}`,
         type: 'ORDER_CONFIRMATION',
         recipient: orderWithUser.user.email,
         payload: {
@@ -134,7 +228,7 @@ export class PaymentWebhookService {
       );
     }
 
-    this.logger.log(`Order ${attempt.orderId} confirmed via payment.captured webhook`);
+    this.logger.log(`Order ${attempt.orderId} confirmed via ${gatewayName} payment webhook`);
   }
 
   private async handlePaymentFailed(payment: RazorpayPaymentEntity): Promise<void> {

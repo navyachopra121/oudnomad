@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/${GITHUB_REPOSITORY:-your-org/oudnomad}/app:${IMAGE_TAG:-latest}
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-org/oudnomad}/api:${IMAGE_TAG:-latest}
     environment:
       NODE_ENV: staging
       LOG_LEVEL: debug

@@ -15,6 +15,13 @@ export function getApiBaseUrl(): string {
 
 export const API_BASE_URL = getApiBaseUrl();
 
+/** Returns true only if there is a non-empty auth token in localStorage. */
+function hasAuthToken(): boolean {
+  if (typeof window === 'undefined') return false;
+  const token = localStorage.getItem('token') || localStorage.getItem('oudnomad_auth_token');
+  return Boolean(token && token.trim().length > 0 && !token.startsWith('demo-'));
+}
+
 async function storeFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const baseUrl = getApiBaseUrl();
   const token =
@@ -572,13 +579,28 @@ export const StoreApi = {
   },
 
   // Recommendations
-  getRecommendations: async (productId: string) => {
+  getRecommendations: async (productId: string, currentSlug?: string) => {
+    const target = (currentSlug || productId || '').toLowerCase().trim();
+
+    // Build the fallback immediately (FALLBACK_PRODUCTS are already normalized ProductItems)
+    const fallbackRecs = FALLBACK_PRODUCTS.filter((p) => {
+      const pSlug = (p.slug || '').toLowerCase().trim();
+      const pId = (p.id || '').toLowerCase().trim();
+      if (pId === target || pSlug === target) return false;
+      if (target.length > 2 && (target.includes(pSlug) || pSlug.includes(target))) return false;
+      return true;
+    }).slice(0, 4);
+
     try {
       const res = await storeFetch<any>(`/products/${productId}/recommendations`);
       const rawItems = Array.isArray(res) ? res : res?.items || [];
+      if (rawItems.length === 0) {
+        return fallbackRecs.length > 0 ? fallbackRecs : FALLBACK_PRODUCTS.filter((p) => (p.slug || '').toLowerCase() !== target).slice(0, 4);
+      }
       return rawItems.map(normalizeProduct);
     } catch (_) {
-      return FALLBACK_PRODUCTS.filter((p) => p.id !== productId && p.slug !== productId).slice(0, 4).map(normalizeProduct);
+      // API has no recommendations endpoint — return other products from local catalog
+      return fallbackRecs.length > 0 ? fallbackRecs : FALLBACK_PRODUCTS.filter((p) => (p.slug || '').toLowerCase() !== target).slice(0, 4);
     }
   },
 
@@ -673,6 +695,8 @@ export const StoreApi = {
 
   // Orders & Checkout
   getOrders: async (): Promise<OrderDetail[]> => {
+    // Skip the network request entirely when unauthenticated to avoid 401 console noise
+    if (!hasAuthToken()) return Object.values(FALLBACK_ORDER_DOSSIERS);
     try {
       const res = await storeFetch<any>('/orders');
       if (Array.isArray(res) && res.length > 0) return res;
@@ -683,6 +707,10 @@ export const StoreApi = {
     }
   },
   getOrderById: async (id: string): Promise<OrderDetail> => {
+    // Skip the network request entirely when unauthenticated to avoid 401 console noise
+    if (!hasAuthToken()) {
+      if (FALLBACK_ORDER_DOSSIERS[id]) return FALLBACK_ORDER_DOSSIERS[id];
+    }
     try {
       const res = await storeFetch<any>(`/orders/${id}`);
       if (res && res.id) return res;

@@ -27,29 +27,45 @@ jobs:
             set -e
             cd /var/www/oudnomad
 
-            echo "📦 Pulling latest main..."
+            echo "📦 Pulling latest compose & config files..."
             git fetch origin main
             git checkout main
             git pull origin main
 
-            echo "🔧 Installing dependencies..."
-            pnpm install --filter api --filter notification-worker --filter web --frozen-lockfile
+            echo "🔑 Authenticating with GitHub Container Registry..."
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-            echo "🔨 Building all apps..."
-            pnpm --filter api build
-            pnpm --filter notification-worker build
-            pnpm --filter web build
+            echo "🛑 Stopping PM2 legacy processes if active..."
+            if command -v pm2 >/dev/null 2>&1; then
+              pm2 stop ecosystem.config.cjs 2>/dev/null || true
+              pm2 delete ecosystem.config.cjs 2>/dev/null || true
+              pm2 save 2>/dev/null || true
+            fi
 
-            echo "🗄️  Running database migrations..."
-            pnpm --filter api exec prisma migrate deploy
+            TAG="${{ github.event.inputs.sha }}"
+            if [ -z "$TAG" ]; then
+              TAG="latest"
+            fi
+            echo "📥 Pulling Docker containers for tag: $TAG..."
 
-            echo "🔄 Restarting services via PM2..."
-            pm2 restart ecosystem.config.cjs --update-env
-            pm2 save
+            REPO_LOWER=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')
+            export GITHUB_REPOSITORY="$REPO_LOWER"
+            export IMAGE_TAG="$TAG"
+
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull app web notification-worker
+
+            echo "🚀 Launching production containers..."
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --no-deps --remove-orphans app web notification-worker
+
+            echo "🗄️ Running database migrations inside container..."
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T app npx prisma migrate deploy
+
+            echo "🧹 Cleaning old Docker layers to protect VPS disk space..."
+            docker image prune -f
 
             echo "🏥 Health check..."
             sleep 5
             curl -sf https://oudnomaddubai.com/api/health || \
               (echo "❌ Health check failed!" && exit 1)
 
-            echo "✅ Manual production deploy complete!"
+            echo "✅ Manual production Docker deploy complete!"

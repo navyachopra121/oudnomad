@@ -31,7 +31,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
   }
 
   try {
-    recommendations = await StoreApi.getRecommendations(product.id);
+    recommendations = await StoreApi.getRecommendations(product.id, product.slug);
+    if (!recommendations || recommendations.length === 0) {
+      const allRes = await StoreApi.getProducts();
+      const allItems = Array.isArray(allRes) ? allRes : allRes?.items || [];
+      recommendations = allItems.filter(
+        (p: any) => p.slug?.toLowerCase() !== product.slug?.toLowerCase() && p.id !== product.id
+      ).slice(0, 4);
+    }
   } catch (_) {
     recommendations = [];
   }

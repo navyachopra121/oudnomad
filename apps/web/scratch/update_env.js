@@ -11,7 +11,7 @@ if (fs.existsSync(apiEnvPath)) {
 SMTP_PORT=465
 SMTP_SECURE=true
 SMTP_USER=hello.oudnomaddubai@gmail.com
-SMTP_PASS=ivafqgvoulkucnio
+SMTP_PASS=${process.env.SMTP_PASS || ''}
 SMTP_FROM=hello.oudnomaddubai@gmail.com
 MAIL_FROM_ADDRESS=hello.oudnomaddubai@gmail.com
 `;
@@ -27,7 +27,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
 SMTP_SECURE=true
 SMTP_USER=hello.oudnomaddubai@gmail.com
-SMTP_PASS=ivafqgvoulkucnio
+SMTP_PASS=${process.env.SMTP_PASS || ''}
 `;
 fs.writeFileSync(webEnvPath, webEnvContent, 'utf8');
 console.log('WEB_ENV_UPDATED');

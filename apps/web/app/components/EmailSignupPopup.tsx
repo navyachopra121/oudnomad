@@ -13,11 +13,10 @@ export default function EmailSignupPopup() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
-  if (pathname?.startsWith('/about') || pathname?.includes('about-us')) {
-    return null;
-  }
+  const isAboutPage = Boolean(pathname?.startsWith('/about') || pathname?.includes('about-us'));
 
   useEffect(() => {
+    if (isAboutPage) return;
     // Don't show if already shown or dismissed in this browser session
     try {
       if (sessionStorage.getItem(POPUP_STORAGE_KEY)) {
@@ -80,7 +79,7 @@ export default function EmailSignupPopup() {
     }
   };
 
-  if (!visible) return null;
+  if (isAboutPage || !visible) return null;
 
   return (
     <>

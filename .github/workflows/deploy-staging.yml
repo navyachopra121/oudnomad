@@ -27,17 +27,35 @@ jobs:
             set -e
             cd /var/www/oudnomad
 
+            echo "📦 Pulling latest compose & config files..."
             git pull origin dev
 
-            pnpm install --filter api --filter notification-worker --filter web --frozen-lockfile
-            pnpm --filter api build
-            pnpm --filter notification-worker build
-            pnpm --filter web build
-            pnpm --filter api exec prisma migrate deploy
+            echo "🔑 Authenticating with GitHub Container Registry..."
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-            pm2 restart ecosystem.config.cjs --update-env
-            pm2 save
+            echo "🛑 Stopping PM2 legacy processes if active..."
+            if command -v pm2 >/dev/null 2>&1; then
+              pm2 stop ecosystem.config.cjs 2>/dev/null || true
+              pm2 delete ecosystem.config.cjs 2>/dev/null || true
+              pm2 save 2>/dev/null || true
+            fi
+
+            echo "📥 Pulling staging Docker containers..."
+            REPO_LOWER=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')
+            export GITHUB_REPOSITORY="$REPO_LOWER"
+            export IMAGE_TAG="${{ github.sha }}"
+
+            docker compose -f docker-compose.yml -f docker-compose.staging.yml pull app web notification-worker
+
+            echo "🚀 Launching staging containers..."
+            docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d --no-deps --remove-orphans app web notification-worker
+
+            echo "🗄️ Running database migrations inside container..."
+            docker compose -f docker-compose.yml -f docker-compose.staging.yml exec -T app npx prisma migrate deploy
+
+            echo "🧹 Cleaning old Docker layers to protect VPS disk space..."
+            docker image prune -f
 
             sleep 5
             curl -sf http://localhost:3001/api/health || exit 1
-            echo "✅ Staging deploy complete"
+            echo "✅ Staging Docker deploy complete"

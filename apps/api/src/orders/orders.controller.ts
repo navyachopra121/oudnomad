@@ -15,37 +15,41 @@ import { CreatePaymentAttemptDto } from '../payments/dto/create-payment-attempt.
 import { VerifyPaymentDto } from '../payments/dto/verify-payment.dto.js';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import type { JwtPayload } from '../auth/decorators/current-user.decorator.js';
+import { Public } from '../auth/decorators/public.decorator.js';
 
 @Controller()
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   /** GET /api/checkout/shipping-methods */
+  @Public()
   @Get('checkout/shipping-methods')
   getShippingMethods() {
     return this.ordersService.getShippingMethods();
   }
 
   /** POST /api/checkout */
+  @Public()
   @Post('checkout')
   @HttpCode(HttpStatus.CREATED)
-  checkout(@CurrentUser() user: JwtPayload, @Body() dto: CheckoutDto) {
-    return this.ordersService.checkout(user.sub, dto);
+  checkout(@CurrentUser() user: JwtPayload | undefined, @Body() dto: CheckoutDto) {
+    return this.ordersService.checkout(user?.sub, dto);
   }
 
   /**
    * POST /api/checkout/:orderId/payment-attempts
-   * Creates a Razorpay order for first payment attempt or retry.
-   * Returns { gatewayOrderId, amount, currency, razorpayKeyId } for frontend Checkout.js.
+   * Creates a payment attempt (Stripe PaymentIntent or Razorpay order) for initial payment or retry.
+   * Returns gateway order identifiers & publishable keys for the frontend payment SDK.
    */
+  @Public()
   @Post('checkout/:orderId/payment-attempts')
   @HttpCode(HttpStatus.CREATED)
   createPaymentAttempt(
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: JwtPayload | undefined,
     @Param('orderId') orderId: string,
     @Body() dto: CreatePaymentAttemptDto,
   ) {
-    return this.ordersService.createPaymentAttempt(user.sub, orderId, dto.idempotencyKey);
+    return this.ordersService.createPaymentAttempt(user?.sub, orderId, dto.idempotencyKey);
   }
 
   /**
@@ -78,9 +82,10 @@ export class OrdersController {
   }
 
   /** GET /api/orders/:id */
+  @Public()
   @Get('orders/:id')
-  findOrderById(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
-    return this.ordersService.findOrderById(user.sub, id);
+  findOrderById(@CurrentUser() user: JwtPayload | undefined, @Param('id') id: string) {
+    return this.ordersService.findOrderById(user?.sub, id);
   }
 
   /**
