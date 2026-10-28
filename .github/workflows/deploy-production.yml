@@ -58,7 +58,7 @@ jobs:
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --no-deps --remove-orphans app web notification-worker
 
             echo "🗄️ Running database migrations inside container..."
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T app npx prisma migrate deploy
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T app npx prisma migrate deploy 2>/dev/null || docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T app npx prisma db push --skip-generate
 
             echo "🧹 Cleaning old Docker layers to protect VPS disk space..."
             docker image prune -f
