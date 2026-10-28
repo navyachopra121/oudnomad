@@ -27,7 +27,8 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      - run: pnpm install --no-frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client (api)
         run: pnpm --filter api db:generate
@@ -39,7 +40,8 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dummy
 
-      - run: pnpm typecheck
+      - name: Type-check all packages
+        run: pnpm typecheck
 
   # ─── 2. Unit Tests ──────────────────────────────────────────────────────────
   test:
@@ -72,7 +74,8 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      - run: pnpm install --no-frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
         run: pnpm --filter api db:generate
