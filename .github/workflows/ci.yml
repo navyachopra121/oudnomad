@@ -29,8 +29,13 @@ jobs:
 
       - run: pnpm install --no-frozen-lockfile
 
-      - name: Generate Prisma Client
+      - name: Generate Prisma Client (api)
         run: pnpm --filter api db:generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dummy
+
+      - name: Generate Prisma Client (notification-worker)
+        run: pnpm --filter notification-worker db:generate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dummy
 
