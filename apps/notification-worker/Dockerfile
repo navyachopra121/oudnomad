@@ -13,6 +13,10 @@ COPY apps/notification-worker/ ./apps/notification-worker/
 COPY apps/api/prisma ./apps/api/prisma
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/notification-worker/node_modules ./apps/notification-worker/node_modules
+# Generate Prisma client into the worker's own node_modules before compiling
+RUN corepack enable && \
+    cd apps/notification-worker && \
+    npx prisma generate --schema=../api/prisma/schema.prisma
 RUN corepack enable && pnpm --filter notification-worker build
 
 # ── runner layer ─────────────────────────────────────────────────────────────
@@ -25,6 +29,8 @@ RUN addgroup --system --gid 1001 workergroup && \
 
 COPY --chown=workeruser:workergroup --from=builder /app/apps/notification-worker/dist ./dist
 COPY --chown=workeruser:workergroup --from=deps /app/apps/notification-worker/node_modules ./node_modules
+# Copy the generated Prisma client binaries into the runtime image
+COPY --chown=workeruser:workergroup --from=builder /app/apps/notification-worker/node_modules/.prisma ./node_modules/.prisma
 
 USER workeruser
 
