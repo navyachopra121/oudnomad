@@ -23,8 +23,9 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 apigroup && \
     adduser --system --uid 1001 apiuser
 
+COPY --chown=apiuser:apigroup --from=build /app/node_modules ./node_modules
+COPY --chown=apiuser:apigroup --from=build /app/apps/api/node_modules ./apps/api/node_modules
 COPY --chown=apiuser:apigroup --from=build /app/apps/api/dist ./dist
-COPY --chown=apiuser:apigroup --from=build /app/apps/api/node_modules ./node_modules
 COPY --chown=apiuser:apigroup --from=build /app/apps/api/prisma ./prisma
 COPY --chown=apiuser:apigroup --from=build /app/apps/api/package.json ./package.json
 

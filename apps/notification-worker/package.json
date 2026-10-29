@@ -9,7 +9,7 @@
     "start": "node --experimental-specifier-resolution=node dist/index.js",
     "build": "tsc --project tsconfig.json",
     "typecheck": "tsc --noEmit",
-    "db:generate": "prisma generate --schema=../api/prisma/schema.prisma"
+    "db:generate": "prisma generate"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.0.0",
